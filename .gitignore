@@ -9,4 +9,3 @@ target/
 local.properties
 .metadata
 public-transport-enabler/enabler/src/de/schildbach/pte/SadProvider.java
-
