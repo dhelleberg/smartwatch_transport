@@ -1,6 +1,7 @@
 package org.cirrus.mobi.smarttransport;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +19,8 @@ import de.schildbach.pte.BahnProvider;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.QueryDeparturesResult;
+import de.schildbach.pte.dto.StationDepartures;
 
 public class StartUpActivity extends Activity {
 
@@ -25,7 +28,7 @@ public class StartUpActivity extends Activity {
 	private NetworkProvider networkProvider;
 
 	private Location clocation;
-	private FetchNearByStationsTask fnbst;
+	private FetchNearByStationsTask fnbst = null;
 
 	public static final String TAG = "SMT/StartUpActivity";
 
@@ -96,6 +99,25 @@ public class StartUpActivity extends Activity {
 		public void onProviderDisabled(String provider) {}
 	};
 
+	class FetchDepaturesTask extends AsyncTask<List<de.schildbach.pte.dto.Location>, QueryDeparturesResult, Void>
+	{
+
+		@Override
+		protected Void doInBackground(
+				List<de.schildbach.pte.dto.Location>... params) {
+			for (de.schildbach.pte.dto.Location station : params[0]) {
+				try {
+					QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, false);
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}
+		
+	}
 
 	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
 	{
@@ -103,8 +125,7 @@ public class StartUpActivity extends Activity {
 
 		@Override
 		protected NearbyStationsResult doInBackground(Location... params) {
-			//kick location updates
-
+	
 			if(BuildConfig.DEBUG)
 				Log.v(TAG, "fetching stations....");
 			de.schildbach.pte.dto.Location pteLoc = new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(params[0].getLatitude()*1E6), (int)(params[0].getLongitude()*1E6));
@@ -114,19 +135,22 @@ public class StartUpActivity extends Activity {
 				if(nsr.status == nsr.status.OK)
 				{
 					if(BuildConfig.DEBUG)
-						Log.v(TAG, "!! Status ok, found "+nsr.stations.size()+ "stations");	
+					{
+						Log.v(TAG, "!! Status ok, found "+nsr.stations.size()+ "stations");
+						List<de.schildbach.pte.dto.Location> stations = nsr.stations;
+						for (de.schildbach.pte.dto.Location station : stations) {
+							if(BuildConfig.DEBUG)
+								Log.v(TAG, "Station: "+station.id+ " name: "+station.name+ "place "+station.place+ " short "+station.uniqueShortName());
+						}
+					}
+					return nsr;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				Log.e(TAG, "IOException fetching stations");
 				e.printStackTrace();
 			}
 			return null;
 		}
-
-
-
-		// Register the listener with the Location Manager to receive location updates
-
 
 	}
 
