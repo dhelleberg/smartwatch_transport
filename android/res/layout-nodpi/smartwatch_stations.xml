@@ -8,28 +8,35 @@
     <LinearLayout
         android:id="@+id/station_header"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content" >
 
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/stop_sign_15px"
-            android:paddingLeft="3px" />
+            android:paddingLeft="3px"
+            android:src="@drawable/stop_sign_15px" />
 
         <TextView
             android:id="@+id/Station"
             style="@style/textSize"
-            android:paddingLeft="3px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/imageView1"
+            android:paddingLeft="3px"
             android:text="St.Vinzenz Krankenhaus"
             android:textColor="@color/white"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/station_header"
+        android:stretchColumns="1" >
+		<!-- for debug: comment this in -->
+		<include layout="@layout/table_row_departure"/>
+    </TableLayout>
 
 </RelativeLayout>
