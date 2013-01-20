@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import de.schildbach.pte.BahnProvider;
 import de.schildbach.pte.NetworkProvider;
+import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
@@ -108,6 +109,16 @@ public class StartUpActivity extends Activity {
 			for (de.schildbach.pte.dto.Location station : params[0]) {
 				try {
 					QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, false);
+					if(BuildConfig.DEBUG)
+					{
+						if(qdr.status == qdr.status.OK)
+						{
+							Log.v(TAG, "QDR: Okay Headers: "+qdr.header+" dep: "+qdr.stationDepartures);
+						}
+						StationDepartures blah = qdr.stationDepartures.get(0);
+						Departure blubs = blah.departures.get(0);
+						//blubs.line.
+					}
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -122,6 +133,7 @@ public class StartUpActivity extends Activity {
 	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
 	{
 		public static final String TAG = "SMT/FNBST";
+		private static final int MAX_STATIONS = 1;
 
 		@Override
 		protected NearbyStationsResult doInBackground(Location... params) {
@@ -130,7 +142,7 @@ public class StartUpActivity extends Activity {
 				Log.v(TAG, "fetching stations....");
 			de.schildbach.pte.dto.Location pteLoc = new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(params[0].getLatitude()*1E6), (int)(params[0].getLongitude()*1E6));
 			try {
-				NearbyStationsResult nsr = networkProvider.queryNearbyStations(pteLoc, 0, 10);
+				NearbyStationsResult nsr = networkProvider.queryNearbyStations(pteLoc, 0, MAX_STATIONS);
 				
 				if(nsr.status == nsr.status.OK)
 				{
