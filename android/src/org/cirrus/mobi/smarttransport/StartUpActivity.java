@@ -55,8 +55,8 @@ public class StartUpActivity extends Activity {
 	@Override
 	protected void onStart() {	
 		super.onStart();
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);		
+		//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);		
 	}
 
 	@Override
@@ -78,7 +78,12 @@ public class StartUpActivity extends Activity {
 		fnbst = new FetchNearByStationsTask();
 		if(clocation != null)
 			fnbst.execute(clocation);
+	}
 
+	private void recievedStations(NearbyStationsResult result) {
+		//query depatures
+		FetchDepaturesTask fetchDepaturesTask = new FetchDepaturesTask();
+		fetchDepaturesTask.execute(result.stations);
 	}
 
 
@@ -108,16 +113,23 @@ public class StartUpActivity extends Activity {
 				List<de.schildbach.pte.dto.Location>... params) {
 			for (de.schildbach.pte.dto.Location station : params[0]) {
 				try {
-					QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, false);
+					QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, true);
 					if(BuildConfig.DEBUG)
 					{
 						if(qdr.status == qdr.status.OK)
 						{
 							Log.v(TAG, "QDR: Okay Headers: "+qdr.header+" dep: "+qdr.stationDepartures);
 						}
-						StationDepartures blah = qdr.stationDepartures.get(0);
-						Departure blubs = blah.departures.get(0);
-						//blubs.line.
+						List<StationDepartures> statDep = qdr.stationDepartures;
+						for (StationDepartures stationDepartures : statDep) {
+							Log.v(TAG, "stationDep: "+stationDepartures);
+							List<Departure> depatures = stationDepartures.departures;
+							for (Departure departure : depatures) {
+								Log.v(TAG, "Depature: "+departure);
+							}
+						}
+						
+						
 					}
 					
 				} catch (IOException e) {
@@ -127,7 +139,7 @@ public class StartUpActivity extends Activity {
 			}
 			return null;
 		}
-		
+	
 	}
 
 	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
@@ -163,7 +175,12 @@ public class StartUpActivity extends Activity {
 			}
 			return null;
 		}
-
+		@Override
+		protected void onPostExecute(NearbyStationsResult result) {		
+			super.onPostExecute(result);
+			recievedStations(result);
+		}
 	}
+
 
 }
