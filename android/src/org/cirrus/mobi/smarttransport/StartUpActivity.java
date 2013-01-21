@@ -3,6 +3,8 @@ package org.cirrus.mobi.smarttransport;
 import java.io.IOException;
 import java.util.List;
 
+import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
+
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
@@ -23,13 +25,13 @@ import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
 
-public class StartUpActivity extends Activity {
+public class StartUpActivity extends Activity implements ResultCallbacks {
 
 	private LocationManager locationManager;
 	private NetworkProvider networkProvider;
 
 	private Location clocation;
-	private FetchNearByStationsTask fnbst = null;
+	private PublicNetworkProvider publicNetworkProvider;
 
 	public static final String TAG = "SMT/StartUpActivity";
 
@@ -41,6 +43,7 @@ public class StartUpActivity extends Activity {
 		networkProvider = new BahnProvider();
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
 
 		/*Button b1 = (Button) findViewById(R.id.button1);
 		b1.setOnClickListener(new OnClickListener() {
@@ -72,19 +75,6 @@ public class StartUpActivity extends Activity {
 		return true;
 	}
 
-	private void getNearbyStations() {
-		if(fnbst != null) //we already search
-			return;
-		fnbst = new FetchNearByStationsTask();
-		if(clocation != null)
-			fnbst.execute(clocation);
-	}
-
-	private void recievedStations(NearbyStationsResult result) {
-		//query depatures
-		FetchDepaturesTask fetchDepaturesTask = new FetchDepaturesTask();
-		fetchDepaturesTask.execute(result.stations);
-	}
 
 
 	// Define a listener that responds to location updates
@@ -94,7 +84,7 @@ public class StartUpActivity extends Activity {
 			// Called when a new location is found by the network location provider.
 			clocation = location;
 			Log.v(TAG, "got location to: "+location);
-			getNearbyStations();
+			publicNetworkProvider.getNearbyStations(location);
 			locationManager.removeUpdates(locationListener);
 		};
 
@@ -105,82 +95,17 @@ public class StartUpActivity extends Activity {
 		public void onProviderDisabled(String provider) {}
 	};
 
-	class FetchDepaturesTask extends AsyncTask<List<de.schildbach.pte.dto.Location>, QueryDeparturesResult, Void>
-	{
-
-		@Override
-		protected Void doInBackground(
-				List<de.schildbach.pte.dto.Location>... params) {
-			for (de.schildbach.pte.dto.Location station : params[0]) {
-				try {
-					QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, true);
-					if(BuildConfig.DEBUG)
-					{
-						if(qdr.status == qdr.status.OK)
-						{
-							Log.v(TAG, "QDR: Okay Headers: "+qdr.header+" dep: "+qdr.stationDepartures);
-						}
-						List<StationDepartures> statDep = qdr.stationDepartures;
-						for (StationDepartures stationDepartures : statDep) {
-							Log.v(TAG, "stationDep: "+stationDepartures);
-							List<Departure> depatures = stationDepartures.departures;
-							for (Departure departure : depatures) {
-								Log.v(TAG, "Depature: "+departure);
-							}
-						}
-						
-						
-					}
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			return null;
-		}
-	
+	@Override
+	public void nearbyStationsReceived(NearbyStationsResult result) {
+		publicNetworkProvider.getDepatures(result.stations);
+		
+	}
+	@Override
+	public void DepaturesReceived(QueryDeparturesResult result) {
+		
+		
 	}
 
-	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
-	{
-		public static final String TAG = "SMT/FNBST";
-		private static final int MAX_STATIONS = 1;
-
-		@Override
-		protected NearbyStationsResult doInBackground(Location... params) {
-	
-			if(BuildConfig.DEBUG)
-				Log.v(TAG, "fetching stations....");
-			de.schildbach.pte.dto.Location pteLoc = new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(params[0].getLatitude()*1E6), (int)(params[0].getLongitude()*1E6));
-			try {
-				NearbyStationsResult nsr = networkProvider.queryNearbyStations(pteLoc, 0, MAX_STATIONS);
-				
-				if(nsr.status == nsr.status.OK)
-				{
-					if(BuildConfig.DEBUG)
-					{
-						Log.v(TAG, "!! Status ok, found "+nsr.stations.size()+ "stations");
-						List<de.schildbach.pte.dto.Location> stations = nsr.stations;
-						for (de.schildbach.pte.dto.Location station : stations) {
-							if(BuildConfig.DEBUG)
-								Log.v(TAG, "Station: "+station.id+ " name: "+station.name+ "place "+station.place+ " short "+station.uniqueShortName());
-						}
-					}
-					return nsr;
-				}
-			} catch (IOException e) {
-				Log.e(TAG, "IOException fetching stations");
-				e.printStackTrace();
-			}
-			return null;
-		}
-		@Override
-		protected void onPostExecute(NearbyStationsResult result) {		
-			super.onPostExecute(result);
-			recievedStations(result);
-		}
-	}
 
 
 }
