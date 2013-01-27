@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/RelativeLayout1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SmartWatchLayout1"
     android:layout_width="128px"
     android:layout_height="128px"
     android:orientation="vertical" >
@@ -20,7 +20,7 @@
 
         <TextView
             android:id="@+id/Station"
-            style="@style/textSize"
+            style="@style/textHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="3px"
@@ -37,6 +37,8 @@
         android:stretchColumns="1" >
 		<!-- for debug: comment this in -->
 		<include layout="@layout/table_row_departure"/>
+		<include layout="@layout/table_row_departure"/>
+		<include layout="@layout/table_row_departure"/>		
     </TableLayout>
 
-</RelativeLayout>
+</LinearLayout>

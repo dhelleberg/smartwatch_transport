@@ -8,26 +8,29 @@
 
         <TextView
             android:id="@+id/textView1"
+            style="@style/textSmaller"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/red"
             android:text="706"
-            android:textColor="@color/white" />
+             />
 
         <TextView
             android:id="@+id/textView2"
+            style="@style/textSmaller"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
-            android:text="6 min (+1)"
-            android:textColor="@color/white" />
+            android:text="6 min (+1)" />
     </TableRow>
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        style="@style/textSmaller"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Rathinger Strasse"
-        android:textColor="@color/white" />
+        android:singleLine="true"
+        android:text="Rathinger Strasse Düsseldorf"
+        />
 
 </merge>

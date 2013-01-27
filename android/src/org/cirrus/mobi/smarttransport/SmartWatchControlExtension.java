@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
@@ -63,6 +63,7 @@ public class SmartWatchControlExtension extends ControlExtension {
 		// Create background bitmap for animation.
 		mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
 		//LinearLayout root = new LinearLayout(mContext); root.setLayoutParams(new LayoutParams(width, height));
+		mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
 		LinearLayout sampleLayout = (LinearLayout)LinearLayout.inflate(mContext, R.layout.smartwatch_stations, null);
 		Log.v("YYYYYYYYYYY", "W:"+width+ "h: "+height);
 		sampleLayout.measure(width, height); 

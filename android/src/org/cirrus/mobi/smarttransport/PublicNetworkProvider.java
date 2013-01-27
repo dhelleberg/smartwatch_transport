@@ -54,7 +54,7 @@ public class PublicNetworkProvider {
 	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
 	{
 		public static final String TAG = "SMT/FNBST";
-		private static final int MAX_STATIONS = 1;
+		private static final int MAX_STATIONS = 3;
 
 		@Override
 		protected NearbyStationsResult doInBackground(Location... params) {
