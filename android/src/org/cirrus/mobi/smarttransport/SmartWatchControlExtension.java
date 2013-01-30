@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 
 import de.schildbach.pte.BahnProvider;
@@ -59,6 +60,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private PublicNetworkProvider publicNetworkProvider;
 	private NearbyStationsResult mNearbyStationsResult;
 	private int mStationIndex;
+	private QueryDeparturesResult mQueryDeparturesResult;
 
 	public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
 		super(context, hostAppPackageName);
@@ -122,6 +124,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	@Override
 	public void onResume() {    
 		super.onResume();
+		redraw();
+	}
+
+	private void redraw() {
 		switch (state) {
 		case STATE_SEARCHING:
 			showSearchImage();
@@ -129,8 +135,51 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		case STATE_DISPLAY_DATA:
 			showData();
 		}
-				
+		
 	}
+
+
+	@Override
+	public void onSwipe(int direction) {	
+		super.onSwipe(direction);
+		switch (state) {
+		case STATE_DISPLAY_DATA:
+			handleSwipe(direction);
+			break;
+
+		default:
+			break;
+		}
+	}
+	
+	private void handleSwipe(int direction) {
+		switch (direction) {
+		case Control.Intents.SWIPE_DIRECTION_LEFT:
+			if(mNearbyStationsResult != null)
+			{
+				mStationIndex--;
+				if(mStationIndex < 0)
+					mStationIndex = mNearbyStationsResult.stations.size()-1;
+				redraw();
+			}
+			break;
+		case Control.Intents.SWIPE_DIRECTION_RIGHT:
+			if(mNearbyStationsResult != null)
+			{
+				mStationIndex++;
+				if(mStationIndex > mNearbyStationsResult.stations.size()-1)
+					mStationIndex = 0;
+				redraw();
+			}
+			
+			break;
+			
+		default:
+			break;
+		}
+		
+	}
+
 
 	private void showSearchImage() {
 		// Create background bitmap for animation.
@@ -157,6 +206,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		if(BuildConfig.DEBUG)
 			Log.d(TAG, "Using: w:"+width+" h: "+height);
 		//fill Data
+		//station name
 		if(mNearbyStationsResult != null)
 		{
 			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
@@ -193,13 +243,16 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	public void nearbyStationsReceived(NearbyStationsResult result) {
 		this.mNearbyStationsResult = result;
 		state = STATE_DISPLAY_DATA;
-		showData();
+		redraw();
+		
+		publicNetworkProvider.getDepatures(result.stations);
 	}
 
 
 	@Override
 	public void DepaturesReceived(QueryDeparturesResult result) {
-		// TODO Auto-generated method stub
+		this.mQueryDeparturesResult = result;
+		redraw();
 		
 	}
 
