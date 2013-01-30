@@ -30,7 +30,22 @@
  */
 
 package org.cirrus.mobi.smarttransport;
-
+/**
+ *	 This file is part of SmartTransport
+ *
+ *   SmartTransport is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   SmartTransport is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import com.sonyericsson.extras.liveware.aef.registration.Registration;
 import com.sonyericsson.extras.liveware.extension.util.ExtensionUtils;
 import com.sonyericsson.extras.liveware.extension.util.registration.RegistrationInformation;
@@ -41,7 +56,7 @@ import android.content.Context;
 /**
  * Provides information needed during extension registration
  */
-public class SampleRegistrationInformation extends RegistrationInformation {
+public class SmartTransportRegistrationInformation extends RegistrationInformation {
 
     final Context mContext;
 
@@ -50,7 +65,7 @@ public class SampleRegistrationInformation extends RegistrationInformation {
      *
      * @param context The context
      */
-    protected SampleRegistrationInformation(Context context) {
+    protected SmartTransportRegistrationInformation(Context context) {
         if (context == null) {
             throw new IllegalArgumentException("context == null");
         }
@@ -98,7 +113,7 @@ public class SampleRegistrationInformation extends RegistrationInformation {
                 mContext.getString(R.string.app_name));
         values.put(Registration.ExtensionColumns.NAME, mContext.getString(R.string.app_name));
         values.put(Registration.ExtensionColumns.EXTENSION_KEY,
-                SampleExtensionService.EXTENSION_KEY);
+                SmartTransportExtensionService.EXTENSION_KEY);
         values.put(Registration.ExtensionColumns.HOST_APP_ICON_URI, iconHostapp);
         values.put(Registration.ExtensionColumns.EXTENSION_ICON_URI, iconExtension);
         values.put(Registration.ExtensionColumns.EXTENSION_ICON_URI_BLACK_WHITE, iconExtensionBw);

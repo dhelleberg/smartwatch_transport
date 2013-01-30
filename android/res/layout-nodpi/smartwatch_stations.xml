@@ -7,7 +7,7 @@
 
     <LinearLayout
         android:id="@+id/station_header"
-        android:layout_width="wrap_content"
+        android:layout_width="128px"
         android:layout_height="wrap_content" >
 
         <ImageView
@@ -24,7 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="3px"
-            android:text="St.Vinzenz Krankenhaus"
+            android:text="St.Vinzenzkdwdfkoepfopkwfopkefokwfopkfpko"
+            android:singleLine="false"
             android:textColor="@color/white"
             android:textStyle="bold" />
     </LinearLayout>

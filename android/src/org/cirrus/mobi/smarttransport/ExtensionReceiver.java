@@ -29,7 +29,22 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.cirrus.mobi.smarttransport;
-
+/**
+ *	 This file is part of SmartTransport
+ *
+ *   SmartTransport is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   SmartTransport is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +61,7 @@ public class ExtensionReceiver extends BroadcastReceiver {
 	@Override
     public void onReceive(final Context context, final Intent intent) {
         Log.d(TAG, "onReceive: " + intent.getAction());
-        intent.setClass(context, SampleExtensionService.class);
+        intent.setClass(context, SmartTransportExtensionService.class);
         context.startService(intent);
     }
 }

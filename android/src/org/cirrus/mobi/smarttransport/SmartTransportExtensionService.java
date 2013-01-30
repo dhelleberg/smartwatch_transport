@@ -31,6 +31,23 @@
 
 package org.cirrus.mobi.smarttransport;
 
+/**
+ *	 This file is part of SmartTransport
+ *
+ *   SmartTransport is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   SmartTransport is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import com.sonyericsson.extras.liveware.extension.util.ExtensionService;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 import com.sonyericsson.extras.liveware.extension.util.registration.DeviceInfo;
@@ -42,16 +59,16 @@ import android.os.Handler;
 import android.util.Log;
 
 /**
- * The Sample Extension Service handles registration and keeps track of all
+ * The Extension Service handles registration and keeps track of all
  * controls on all accessories.
  */
-public class SampleExtensionService extends ExtensionService {
+public class SmartTransportExtensionService extends ExtensionService {
 
-    public static final String EXTENSION_KEY = "com.sonyericsson.extras.liveware.extension.samplecontrol.key";
+    public static final String EXTENSION_KEY = "com.sonyericsson.extras.liveware.extension.smarttransportcontrol.key";
 
-    public static final String LOG_TAG = "SampleControlExtension";
+    public static final String LOG_TAG = "SmartTransportExtensionService";
 
-    public SampleExtensionService() {
+    public SmartTransportExtensionService() {
         super(EXTENSION_KEY);
     }
 
@@ -63,12 +80,13 @@ public class SampleExtensionService extends ExtensionService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(SampleExtensionService.LOG_TAG, "SampleControlService: onCreate");
+        if(BuildConfig.DEBUG)
+        	Log.d(SmartTransportExtensionService.LOG_TAG, "SmartTransportExtensionService: onCreate");
     }
 
     @Override
     protected RegistrationInformation getRegistrationInformation() {
-        return new SampleRegistrationInformation(this);
+        return new SmartTransportRegistrationInformation(this);
     }
 
     /*
