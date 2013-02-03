@@ -33,7 +33,7 @@ public class PublicNetworkProvider {
 	
 	interface ResultCallbacks {
 		public void nearbyStationsReceived(NearbyStationsResult result);
-		public void DepaturesReceived(QueryDeparturesResult result);
+		public void depaturesReceived(QueryDeparturesResult result);
 	}
 
 	private ResultCallbacks callbackInterface;
@@ -59,6 +59,13 @@ public class PublicNetworkProvider {
 		if(this.callbackInterface != null)
 			this.callbackInterface.nearbyStationsReceived(result);
 	}
+	
+	private void recievedDepatures(QueryDeparturesResult result) {
+		if(this.callbackInterface != null)
+			this.callbackInterface.depaturesReceived(result);
+		
+	}
+
 	
 	public void getDepatures(List<de.schildbach.pte.dto.Location> stations)
 	{
@@ -108,12 +115,12 @@ public class PublicNetworkProvider {
 	}
 
 
-	class FetchDepaturesTask extends AsyncTask<List<de.schildbach.pte.dto.Location>, QueryDeparturesResult, Void>
+	class FetchDepaturesTask extends AsyncTask<List<de.schildbach.pte.dto.Location>, Void, QueryDeparturesResult>
 	{
 		public static final String TAG = "SMT/FDT";
 
 		@Override
-		protected Void doInBackground(
+		protected QueryDeparturesResult doInBackground(
 				List<de.schildbach.pte.dto.Location>... params) {
 			for (de.schildbach.pte.dto.Location station : params[0]) {
 				try {
@@ -131,10 +138,9 @@ public class PublicNetworkProvider {
 							for (Departure departure : depatures) {
 								Log.v(TAG, "Depature: "+departure);
 							}
-						}
-						
-						
+						}												
 					}
+					return qdr;
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -143,7 +149,11 @@ public class PublicNetworkProvider {
 			}
 			return null;
 		}
-	
+		@Override
+		protected void onPostExecute(QueryDeparturesResult result) {		
+			super.onPostExecute(result);
+			recievedDepatures(result);
+		}
 	}
 
 

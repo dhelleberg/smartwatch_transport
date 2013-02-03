@@ -7,16 +7,17 @@
         android:layout_height="wrap_content" >
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/depLine"
             style="@style/textSmaller"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/red"
             android:text="706"
+            
              />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/depTime"
             style="@style/textSmaller"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,7 +26,7 @@
     </TableRow>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/depTarget"
         style="@style/textSmaller"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

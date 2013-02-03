@@ -1,6 +1,10 @@
 package org.cirrus.mobi.smarttransport;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
+
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,17 +17,23 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 
 import de.schildbach.pte.BahnProvider;
+import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
+import de.schildbach.pte.dto.StationDepartures;
 /**
  *	 This file is part of SmartTransport
  *
@@ -61,6 +71,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private NearbyStationsResult mNearbyStationsResult;
 	private int mStationIndex;
 	private QueryDeparturesResult mQueryDeparturesResult;
+	private LayoutInflater mInflater;
 
 	public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
 		super(context, hostAppPackageName);
@@ -110,6 +121,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
 
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		
+		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
 	}
 	
 	@Override
@@ -207,13 +221,41 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			Log.d(TAG, "Using: w:"+width+" h: "+height);
 		//fill Data
 		//station name
+		int departureRows = -1;
 		if(mNearbyStationsResult != null)
 		{
 			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
 			TextView stationName = (TextView) stationsLayout.findViewById(R.id.Station);
 			stationName.setText(shortStationName(station));
+			int lines = stationName.getLineCount();
+			departureRows = 4 - lines;
 		}
-
+		//depatures
+		if(mQueryDeparturesResult != null)
+		{
+			//how many rows can we insert
+			TableLayout tl = (TableLayout) stationsLayout.findViewById(R.id.departuesTable);
+			List<Departure> departures = mQueryDeparturesResult.stationDepartures.get(mStationIndex).departures;			
+			for(int i = 0; i < departureRows; i++)
+			{
+				View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
+				
+				View row = ((ViewGroup)table).getChildAt(i*2);
+				View textView = ((ViewGroup)table).getChildAt((i*2)+1);
+				
+				Departure currDep = departures.get(i);
+				TextView depLine = (TextView) row.findViewById(R.id.depLine);
+				depLine.setText(currDep.line.label);
+				
+				TextView depTime = (TextView) row.findViewById(R.id.depTime);
+				depTime.setText(currDep.plannedTime+"");//TODO: delays
+				
+				TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
+				depDest.setText(currDep.destination.name);
+				
+				//tl.addView(row);
+			}
+		}
 		stationsLayout.measure(width, height); 
 		stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
 				stationsLayout.getMeasuredHeight());
@@ -250,7 +292,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 
 	@Override
-	public void DepaturesReceived(QueryDeparturesResult result) {
+	public void depaturesReceived(QueryDeparturesResult result) {
 		this.mQueryDeparturesResult = result;
 		redraw();
 		

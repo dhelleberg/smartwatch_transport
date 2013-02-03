@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingLeft="3px"
-            android:text="St.Vinzenzkdwdfkoepfopkwfopkefokwfopkfpko"
+            android:text="St.Vinzenzk"
             android:singleLine="false"
             android:textColor="@color/white"
             android:textStyle="bold" />
@@ -35,11 +35,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/station_header"
+        android:id="@+id/departuesTable"
         android:stretchColumns="1" >
-		<!-- for debug: comment this in -->
+		<!-- for debug: comment this in
 		<include layout="@layout/table_row_departure"/>
 		<include layout="@layout/table_row_departure"/>
-		<include layout="@layout/table_row_departure"/>		
+		<include layout="@layout/table_row_departure"/>		 -->
     </TableLayout>
 
 </LinearLayout>
