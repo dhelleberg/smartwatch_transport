@@ -112,7 +112,7 @@ public class StartUpActivity extends Activity implements ResultCallbacks {
 
 	@Override
 	public void nearbyStationsReceived(NearbyStationsResult result) {
-		publicNetworkProvider.getDepatures(result.stations);
+//		publicNetworkProvider.getDepatures(result.stations);
 		
 	}
 	@Override

@@ -30,7 +30,7 @@ import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
 
 public class PublicNetworkProvider {
-	
+
 	interface ResultCallbacks {
 		public void nearbyStationsReceived(NearbyStationsResult result);
 		public void depaturesReceived(QueryDeparturesResult result);
@@ -39,13 +39,14 @@ public class PublicNetworkProvider {
 	private ResultCallbacks callbackInterface;
 	private NetworkProvider networkProvider;
 	private FetchNearByStationsTask fnbst;
-	
+	//private FetchDepaturesTask fetchDepaturesTask = null;
+
 	public PublicNetworkProvider(ResultCallbacks callbackInterface, NetworkProvider networkProvider)
 	{
 		this.callbackInterface = callbackInterface;
 		this.networkProvider = networkProvider;
 	}
-	
+
 	public boolean getNearbyStations(Location location) {
 		if(fnbst != null) //we already search
 			return false;
@@ -59,21 +60,22 @@ public class PublicNetworkProvider {
 		if(this.callbackInterface != null)
 			this.callbackInterface.nearbyStationsReceived(result);
 	}
-	
+
 	private void recievedDepatures(QueryDeparturesResult result) {
 		if(this.callbackInterface != null)
 			this.callbackInterface.depaturesReceived(result);
-		
+
 	}
 
-	
-	public void getDepatures(List<de.schildbach.pte.dto.Location> stations)
+
+	public void getDepatures(de.schildbach.pte.dto.Location station)
 	{
-		FetchDepaturesTask fetchDepaturesTask = new FetchDepaturesTask();
-		fetchDepaturesTask.execute(stations);
+		FetchDepaturesTask fetchDepaturesTask;
+		fetchDepaturesTask = new FetchDepaturesTask();
+		fetchDepaturesTask.execute(station);
 	}
 
-	
+
 	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
 	{
 		public static final String TAG = "SMT/FNBST";
@@ -81,13 +83,13 @@ public class PublicNetworkProvider {
 
 		@Override
 		protected NearbyStationsResult doInBackground(Location... params) {
-	
+
 			if(BuildConfig.DEBUG)
 				Log.v(TAG, "fetching stations....");
 			de.schildbach.pte.dto.Location pteLoc = new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(params[0].getLatitude()*1E6), (int)(params[0].getLongitude()*1E6));
 			try {
 				NearbyStationsResult nsr = networkProvider.queryNearbyStations(pteLoc, 0, MAX_STATIONS);
-				
+
 				if(nsr.status == nsr.status.OK)
 				{
 					if(BuildConfig.DEBUG)
@@ -115,38 +117,38 @@ public class PublicNetworkProvider {
 	}
 
 
-	class FetchDepaturesTask extends AsyncTask<List<de.schildbach.pte.dto.Location>, Void, QueryDeparturesResult>
+	class FetchDepaturesTask extends AsyncTask<de.schildbach.pte.dto.Location, Void, QueryDeparturesResult>
 	{
 		public static final String TAG = "SMT/FDT";
 
 		@Override
 		protected QueryDeparturesResult doInBackground(
-				List<de.schildbach.pte.dto.Location>... params) {
-			for (de.schildbach.pte.dto.Location station : params[0]) {
-				try {
-					QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, true);
-					if(BuildConfig.DEBUG)
+				de.schildbach.pte.dto.Location... params) {
+			de.schildbach.pte.dto.Location station = params[0];
+			try {
+				QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, true);
+				if(BuildConfig.DEBUG)
+				{
+					if(qdr.status == de.schildbach.pte.dto.QueryDeparturesResult.Status.OK)
 					{
-						if(qdr.status == de.schildbach.pte.dto.QueryDeparturesResult.Status.OK)
-						{
-							Log.v(TAG, "QDR: Okay Headers: "+qdr.header+" dep: "+qdr.stationDepartures);
-						}
-						List<StationDepartures> statDep = qdr.stationDepartures;
-						for (StationDepartures stationDepartures : statDep) {
-							Log.v(TAG, "stationDep: "+stationDepartures);
-							List<Departure> depatures = stationDepartures.departures;
-							for (Departure departure : depatures) {
-								Log.v(TAG, "Depature: "+departure);
-							}
-						}												
+						Log.v(TAG, "QDR: Okay Headers: "+qdr.header+" dep: "+qdr.stationDepartures);
 					}
-					return qdr;
-					
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					List<StationDepartures> statDep = qdr.stationDepartures;
+					for (StationDepartures stationDepartures : statDep) {
+						Log.v(TAG, "stationDep: "+stationDepartures);
+						List<Departure> depatures = stationDepartures.departures;
+						for (Departure departure : depatures) {
+							Log.v(TAG, "Depature: "+departure);
+						}
+					}												
 				}
+				return qdr;
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+
 			return null;
 		}
 		@Override

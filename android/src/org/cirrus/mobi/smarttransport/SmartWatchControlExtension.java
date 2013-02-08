@@ -1,10 +1,9 @@
 package org.cirrus.mobi.smarttransport;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
-
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -52,6 +51,7 @@ import de.schildbach.pte.dto.StationDepartures;
  */
 public class SmartWatchControlExtension extends ControlExtension implements ResultCallbacks {
 
+	private static final int MAX_DEPATURE_ROWS = 3;
 	private Handler mHandler;
 	private Context mContext;
 	private int width;
@@ -70,8 +70,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private PublicNetworkProvider publicNetworkProvider;
 	private NearbyStationsResult mNearbyStationsResult;
 	private int mStationIndex;
-	private QueryDeparturesResult mQueryDeparturesResult;
+	private List<QueryDeparturesResult> mQueryDeparturesResults;
 	private LayoutInflater mInflater;
+	private int mScrollIndex;
+	
 
 	public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
 		super(context, hostAppPackageName);
@@ -82,7 +84,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		mContext = context;
 		width = getSupportedControlWidth(context);
 		height = getSupportedControlHeight(context);
-
+		mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
 	}
 
 
@@ -184,8 +186,18 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 				if(mStationIndex > mNearbyStationsResult.stations.size()-1)
 					mStationIndex = 0;
 				redraw();
-			}
+			}			
+			break;
 			
+		case Control.Intents.SWIPE_DIRECTION_DOWN:
+				mScrollIndex--;
+				if(mScrollIndex < 0 )
+					mScrollIndex = 0;
+			break;
+	
+		case Control.Intents.SWIPE_DIRECTION_UP:
+				mScrollIndex++;
+
 			break;
 			
 		default:
@@ -219,42 +231,60 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		stationsLayout.setLayoutParams(new LayoutParams(width, height));
 		if(BuildConfig.DEBUG)
 			Log.d(TAG, "Using: w:"+width+" h: "+height);
+		
 		//fill Data
 		//station name
 		int departureRows = -1;
 		if(mNearbyStationsResult != null)
 		{
+			if(BuildConfig.DEBUG)
+				Log.d(TAG, "mStation index: "+mStationIndex+ " stations size: "+mNearbyStationsResult.stations.size());
+
 			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
 			TextView stationName = (TextView) stationsLayout.findViewById(R.id.Station);
 			stationName.setText(shortStationName(station));
-			int lines = stationName.getLineCount();
-			departureRows = 4 - lines;
+			
+			stationsLayout.measure(width, height); 
+			stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
+					stationsLayout.getMeasuredHeight());
+
+			int lines = stationName.getLineCount();			
+			departureRows = MAX_DEPATURE_ROWS - lines;
+			if(BuildConfig.DEBUG)
+				Log.d(TAG, "calculated rows: "+ departureRows+ " line count header: "+ lines);
 		}
 		//depatures
-		if(mQueryDeparturesResult != null)
+		if(mQueryDeparturesResults.size() > 0)
 		{
+			if(BuildConfig.DEBUG)
+				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+mQueryDeparturesResults.size());
+
 			//how many rows can we insert
 			TableLayout tl = (TableLayout) stationsLayout.findViewById(R.id.departuesTable);
-			List<Departure> departures = mQueryDeparturesResult.stationDepartures.get(mStationIndex).departures;			
-			for(int i = 0; i < departureRows; i++)
-			{
-				View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
-				
-				View row = ((ViewGroup)table).getChildAt(i*2);
-				View textView = ((ViewGroup)table).getChildAt((i*2)+1);
-				
-				Departure currDep = departures.get(i);
-				TextView depLine = (TextView) row.findViewById(R.id.depLine);
-				depLine.setText(currDep.line.label);
-				
-				TextView depTime = (TextView) row.findViewById(R.id.depTime);
-				depTime.setText(currDep.plannedTime+"");//TODO: delays
-				
-				TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
-				depDest.setText(currDep.destination.name);
-				
-				//tl.addView(row);
+			List<StationDepartures> dep = mQueryDeparturesResults.get(mStationIndex).stationDepartures;
+			for (StationDepartures stationDepartures : dep) {
+				List<Departure> depatures = stationDepartures.departures;
+				for(int i = 0; i < depatures.size(); i++)
+				{
+					Departure depature = depatures.get(i);
+					View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
+					
+					View row = ((ViewGroup)table).getChildAt(i*2);
+					View textView = ((ViewGroup)table).getChildAt((i*2)+1);
+										
+					TextView depLine = (TextView) row.findViewById(R.id.depLine);
+					depLine.setText(depature.line.label);
+					
+					TextView depTime = (TextView) row.findViewById(R.id.depTime);
+					depTime.setText(depature.plannedTime+"");//TODO: delays
+					
+					TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
+					depDest.setText(depature.destination.name);
+					if(i >= departureRows)
+						break;				
+				}
 			}
+		
 		}
 		stationsLayout.measure(width, height); 
 		stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
@@ -283,17 +313,25 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	@Override
 	public void nearbyStationsReceived(NearbyStationsResult result) {
+		this.mQueryDeparturesResults.clear();
 		this.mNearbyStationsResult = result;
 		state = STATE_DISPLAY_DATA;
+		if(BuildConfig.DEBUG)
+			Log.d(TAG, "Found: "+result.stations.size()+" stations");
 		redraw();
+		// for eacht station, request depatures
+		for (de.schildbach.pte.dto.Location station: result.stations ) {
+			publicNetworkProvider.getDepatures(station);	
+		}
 		
-		publicNetworkProvider.getDepatures(result.stations);
 	}
 
 
 	@Override
 	public void depaturesReceived(QueryDeparturesResult result) {
-		this.mQueryDeparturesResult = result;
+		if(this.mQueryDeparturesResults == null)
+			this.mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
+		this.mQueryDeparturesResults.add(result);
 		redraw();
 		
 	}
