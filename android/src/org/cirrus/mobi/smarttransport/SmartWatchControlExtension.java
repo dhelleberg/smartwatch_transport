@@ -173,6 +173,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		case Control.Intents.SWIPE_DIRECTION_LEFT:
 			if(mNearbyStationsResult != null)
 			{
+				mScrollIndex = 0;
 				mStationIndex--;
 				if(mStationIndex < 0)
 					mStationIndex = mNearbyStationsResult.stations.size()-1;
@@ -182,6 +183,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		case Control.Intents.SWIPE_DIRECTION_RIGHT:
 			if(mNearbyStationsResult != null)
 			{
+				mScrollIndex = 0;
 				mStationIndex++;
 				if(mStationIndex > mNearbyStationsResult.stations.size()-1)
 					mStationIndex = 0;
@@ -193,11 +195,12 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 				mScrollIndex--;
 				if(mScrollIndex < 0 )
 					mScrollIndex = 0;
+				redraw();
 			break;
 	
 		case Control.Intents.SWIPE_DIRECTION_UP:
 				mScrollIndex++;
-
+				redraw();
 			break;
 			
 		default:
@@ -249,24 +252,26 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 					stationsLayout.getMeasuredHeight());
 
 			int lines = stationName.getLineCount();			
-			departureRows = MAX_DEPATURE_ROWS - lines;
+			departureRows = MAX_DEPATURE_ROWS - lines+1;
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "calculated rows: "+ departureRows+ " line count header: "+ lines);
 		}
 		//depatures
 		if(mQueryDeparturesResults.size() > 0)
 		{
+			int offset = mScrollIndex * departureRows;
 			if(BuildConfig.DEBUG)
-				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+mQueryDeparturesResults.size());
+				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+mQueryDeparturesResults.size()+ "offset: "+offset);
 
 			//how many rows can we insert
 			TableLayout tl = (TableLayout) stationsLayout.findViewById(R.id.departuesTable);
 			List<StationDepartures> dep = mQueryDeparturesResults.get(mStationIndex).stationDepartures;
+			
 			for (StationDepartures stationDepartures : dep) {
 				List<Departure> depatures = stationDepartures.departures;
 				for(int i = 0; i < depatures.size(); i++)
 				{
-					Departure depature = depatures.get(i);
+					Departure depature = depatures.get(i+offset);
 					View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
 					
 					View row = ((ViewGroup)table).getChildAt(i*2);
@@ -280,7 +285,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 					
 					TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
 					depDest.setText(depature.destination.name);
-					if(i >= departureRows)
+					if(i == departureRows-1)
 						break;				
 				}
 			}
