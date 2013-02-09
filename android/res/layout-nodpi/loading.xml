@@ -4,21 +4,21 @@
     android:layout_height="128px" >
 
     <ImageView
-        android:id="@+id/locationimage"
+        android:id="@+id/loadingimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/stat_sys_gps_on" />
+        android:src="@drawable/ic_action_globe" />
 
     <TextView
-        android:id="@+id/locationText"
+        android:id="@+id/loadingText"
         style="@style/textHeader"
         android:layout_width="wrap_content"
         android:layout_marginTop="5px"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationimage"
+        android:layout_below="@+id/loadingimage"
         android:layout_centerHorizontal="true"
-        android:text="@string/text_locating" />
+        android:text="@string/text_loading" />
 
 </RelativeLayout>

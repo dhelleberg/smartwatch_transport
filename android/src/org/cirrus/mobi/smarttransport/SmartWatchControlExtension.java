@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -62,9 +63,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	private static final int STATE_INITIAL = 1;
 	private static final int STATE_SEARCHING = 2;
+	private static final int STATE_LOADING = 4;
 	private static final int STATE_DISPLAY_DATA = 3;
 	protected static final String TAG = "SMT/SWCE";
-	
+
 	private int state = STATE_INITIAL;
 	private BahnProvider networkProvider;
 	private LocationManager locationManager;
@@ -74,7 +76,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private List<QueryDeparturesResult> mQueryDeparturesResults;
 	private LayoutInflater mInflater;
 	private int mScrollIndex;
-	
+
 
 	public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
 		super(context, hostAppPackageName);
@@ -108,15 +110,15 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	public static int getSupportedControlHeight(Context context) {
 		return context.getResources().getDimensionPixelSize(R.dimen.smart_watch_control_height);
 	}
-	
+
 	@Override
 	public void onStart() {	
 		super.onStart();
 		//intial call, kick search
 		state = STATE_SEARCHING;
-		
+
 		mStationIndex = 0;
-		
+
 		//TODO: get this from config
 		networkProvider = new BahnProvider();
 		// Acquire a reference to the system Location Manager
@@ -124,11 +126,11 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
 
 		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		
+
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 	}
-	
+
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -151,8 +153,12 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			break;
 		case STATE_DISPLAY_DATA:
 			showData();
+			break;
+		case STATE_LOADING:
+			showLoadingImage();
+			break;
 		}
-		
+
 	}
 
 
@@ -168,13 +174,13 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			break;
 		}
 	}
-	
+
 	private void handleSwipe(int direction) {
 		switch (direction) {
 		case Control.Intents.SWIPE_DIRECTION_LEFT:
 			if(mNearbyStationsResult != null)
 			{
-				mScrollIndex = 0;
+				mScrollIndex = 0; //reset scroll index in case we switch stations
 				mStationIndex--;
 				if(mStationIndex < 0)
 					mStationIndex = mNearbyStationsResult.stations.size()-1;
@@ -184,30 +190,30 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		case Control.Intents.SWIPE_DIRECTION_RIGHT:
 			if(mNearbyStationsResult != null)
 			{
-				mScrollIndex = 0;
+				mScrollIndex = 0; //reset scroll index in case we switch stations
 				mStationIndex++;
 				if(mStationIndex > mNearbyStationsResult.stations.size()-1)
 					mStationIndex = 0;
 				redraw();
 			}			
 			break;
-			
+
 		case Control.Intents.SWIPE_DIRECTION_DOWN:
-				mScrollIndex--;
-				if(mScrollIndex < 0 )
-					mScrollIndex = 0;
-				redraw();
+			mScrollIndex--;
+			if(mScrollIndex < 0 )
+				mScrollIndex = 0;
+			redraw();
 			break;
-	
+
 		case Control.Intents.SWIPE_DIRECTION_UP:
-				mScrollIndex++;
-				redraw();
+			mScrollIndex++;
+			redraw();
 			break;
-			
+
 		default:
 			break;
 		}
-		
+
 	}
 
 
@@ -216,12 +222,38 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
 		mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
 		RelativeLayout locatingLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.locating, null);
+		locatingLayout.setLayoutParams(new LayoutParams(width, height));
+
+		//layout
+		locatingLayout.measure(width, height); 
+		locatingLayout.layout(0, 0, locatingLayout.getMeasuredWidth(),
+				locatingLayout.getMeasuredHeight());		
 		// Draw on canvas
 		Canvas canvas = new Canvas(mBackground);
 		locatingLayout.draw(canvas);
 		// Send bitmap to accessory
 		showBitmap(mBackground);
-		
+
+	}
+
+
+	private void showLoadingImage() {
+		// Create background bitmap for animation.
+		mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+		mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+		RelativeLayout loadingLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.loading, null);
+		loadingLayout.setLayoutParams(new LayoutParams(width, height));
+
+		//layout
+		loadingLayout.measure(width, height); 
+		loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
+				loadingLayout.getMeasuredHeight());		
+		// Draw on canvas
+		Canvas canvas = new Canvas(mBackground);
+		loadingLayout.draw(canvas);
+		// Send bitmap to accessory
+		showBitmap(mBackground);
+
 	}
 
 
@@ -235,7 +267,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		stationsLayout.setLayoutParams(new LayoutParams(width, height));
 		if(BuildConfig.DEBUG)
 			Log.d(TAG, "Using: w:"+width+" h: "+height);
-		
+
 		//fill Data
 		//station name
 		int departureRows = -1;
@@ -247,7 +279,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
 			TextView stationName = (TextView) stationsLayout.findViewById(R.id.Station);
 			stationName.setText(shortStationName(station));
-			
+
 			stationsLayout.measure(width, height); 
 			stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
 					stationsLayout.getMeasuredHeight());
@@ -264,39 +296,51 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+mQueryDeparturesResults.size()+ "offset: "+offset);
 
-			//how many rows can we insert
 			TableLayout tl = (TableLayout) stationsLayout.findViewById(R.id.departuesTable);
-			List<StationDepartures> dep = mQueryDeparturesResults.get(mStationIndex).stationDepartures;
-			
-			for (StationDepartures stationDepartures : dep) {
-				List<Departure> depatures = stationDepartures.departures;
-				for(int i = 0; i < depatures.size(); i++)
-				{
-					Departure depature = depatures.get(i+offset);
-					View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
-					
-					View row = ((ViewGroup)table).getChildAt(i*2);
-					View textView = ((ViewGroup)table).getChildAt((i*2)+1);
-										
-					TextView depLine = (TextView) row.findViewById(R.id.depLine);
-					depLine.setText(getLineText(depature.line));
-					//set color if style exist
-					if(depature.line.style != null)
+			//check if we have the depatures already...
+			if(mQueryDeparturesResults.size() >= mStationIndex+1)
+			{
+				
+				List<StationDepartures> dep = mQueryDeparturesResults.get(mStationIndex).stationDepartures;
+
+				for (StationDepartures stationDepartures : dep) {
+					List<Departure> depatures = stationDepartures.departures;
+					for(int i = 0; i < depatures.size(); i++)
 					{
-						depLine.setBackgroundColor(depature.line.style.backgroundColor);
-						depLine.setTextColor(depature.line.style.foregroundColor);
+						Departure depature = depatures.get(i+offset);
+						View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
+
+						View row = ((ViewGroup)table).getChildAt(i*2);
+						View textView = ((ViewGroup)table).getChildAt((i*2)+1);
+
+						TextView depLine = (TextView) row.findViewById(R.id.depLine);
+						depLine.setText(getLineText(depature.line));
+						//set color if style exist
+						if(depature.line.style != null)
+						{
+							depLine.setBackgroundColor(depature.line.style.backgroundColor);
+							depLine.setTextColor(depature.line.style.foregroundColor);
+						}
+
+						TextView depTime = (TextView) row.findViewById(R.id.depTime);
+						depTime.setText(getDepartureText(depature));//TODO: delays
+
+						TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
+						depDest.setText(depature.destination.name);
+						if(i == departureRows-1)
+							break;				
 					}
-					
-					TextView depTime = (TextView) row.findViewById(R.id.depTime);
-					depTime.setText(getDepartureText(depature));//TODO: delays
-					
-					TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
-					depDest.setText(depature.destination.name);
-					if(i == departureRows-1)
-						break;				
 				}
 			}
-		
+			else
+			{
+				//we are still loading depatures, show loading image & Text
+				ImageView loadingImage = (ImageView) stationsLayout.findViewById(R.id.loadingimage);
+				TextView loadingText = (TextView) stationsLayout.findViewById(R.id.loadingText);
+				loadingImage.setVisibility(View.VISIBLE);
+				loadingText.setVisibility(View.VISIBLE);
+			}
+
 		}
 		stationsLayout.measure(width, height); 
 		stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
@@ -311,7 +355,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 
 	private CharSequence getDepartureText(Departure depature) {
-		
+
 		long now = System.currentTimeMillis();
 		long planned = (((depature.plannedTime.getTime() - now)/1000)/60);
 		String depatureTimePlanned = planned+"";
@@ -323,9 +367,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			if(delay > 0)
 				depatureTimePredict = "+"+delay;
 		}
-		
+
 		String depatureTimeText = String.format(mContext.getString(R.string.text_depature_times), depatureTimePlanned, depatureTimePredict);
-		
+
 		return depatureTimeText;
 	}
 
@@ -361,7 +405,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		for (de.schildbach.pte.dto.Location station: result.stations ) {
 			publicNetworkProvider.getDepatures(station);	
 		}
-		
+
 	}
 
 
@@ -371,7 +415,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			this.mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
 		this.mQueryDeparturesResults.add(result);
 		redraw();
-		
+
 	}
 
 	// Define a listener that responds to location updates
@@ -383,6 +427,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			// Called when a new location is found by the network location provider.
 			clocation = location;
 			Log.v(TAG, "got location to: "+location);
+			state = STATE_LOADING;
+			redraw();
 			publicNetworkProvider.getNearbyStations(location);
 			locationManager.removeUpdates(locationListener);
 		};
