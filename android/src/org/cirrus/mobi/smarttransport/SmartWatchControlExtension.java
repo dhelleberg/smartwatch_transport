@@ -313,10 +313,16 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private CharSequence getDepartureText(Departure depature) {
 		
 		long now = System.currentTimeMillis();
-		String depatureTimePlanned = (((depature.plannedTime.getTime() - now)/1000)/60)+"";
+		long planned = (((depature.plannedTime.getTime() - now)/1000)/60);
+		String depatureTimePlanned = planned+"";
 		String depatureTimePredict = "-";
 		if(depature.predictedTime != null)
-			depatureTimePredict = (((depature.predictedTime.getTime() - now)/1000)/60)+"";
+		{
+			long predict = (((depature.predictedTime.getTime() - now)/1000)/60);
+			long delay = predict - planned;
+			if(delay > 0)
+				depatureTimePredict = "+"+delay;
+		}
 		
 		String depatureTimeText = String.format(mContext.getString(R.string.text_depature_times), depatureTimePlanned, depatureTimePredict);
 		
@@ -325,7 +331,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 
 	private CharSequence getLineText(Line line) {
-		String label = line.label;
+		String label = line.label.substring(1);//cut off the type like "B" or "T"
 		return label;
 	}
 
