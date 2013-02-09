@@ -30,6 +30,7 @@ import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 
 import de.schildbach.pte.BahnProvider;
 import de.schildbach.pte.dto.Departure;
+import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
@@ -278,10 +279,16 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 					View textView = ((ViewGroup)table).getChildAt((i*2)+1);
 										
 					TextView depLine = (TextView) row.findViewById(R.id.depLine);
-					depLine.setText(depature.line.label);
+					depLine.setText(getLineText(depature.line));
+					//set color if style exist
+					if(depature.line.style != null)
+					{
+						depLine.setBackgroundColor(depature.line.style.backgroundColor);
+						depLine.setTextColor(depature.line.style.foregroundColor);
+					}
 					
 					TextView depTime = (TextView) row.findViewById(R.id.depTime);
-					depTime.setText(depature.plannedTime+"");//TODO: delays
+					depTime.setText(getDepartureText(depature));//TODO: delays
 					
 					TextView depDest = (TextView) textView.findViewById(R.id.depTarget);
 					depDest.setText(depature.destination.name);
@@ -300,6 +307,26 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		stationsLayout.draw(canvas);
 		// Send bitmap to accessory
 		showBitmap(mBackground);
+	}
+
+
+	private CharSequence getDepartureText(Departure depature) {
+		
+		long now = System.currentTimeMillis();
+		String depatureTimePlanned = (((depature.plannedTime.getTime() - now)/1000)/60)+"";
+		String depatureTimePredict = "-";
+		if(depature.predictedTime != null)
+			depatureTimePredict = (((depature.predictedTime.getTime() - now)/1000)/60)+"";
+		
+		String depatureTimeText = String.format(mContext.getString(R.string.text_depature_times), depatureTimePlanned, depatureTimePredict);
+		
+		return depatureTimeText;
+	}
+
+
+	private CharSequence getLineText(Line line) {
+		String label = line.label;
+		return label;
 	}
 
 

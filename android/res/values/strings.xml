@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TODO</string>
+    <string name="text_depature_times">%1$s min (%2$s)</string>
 </resources>
