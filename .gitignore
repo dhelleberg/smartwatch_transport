@@ -6,6 +6,7 @@
 target/
 **/bin/
 **/gen/
+**/res/**/acra.xml
 local.properties
 .metadata
 public-transport-enabler/enabler/src/de/schildbach/pte/SadProvider.java
