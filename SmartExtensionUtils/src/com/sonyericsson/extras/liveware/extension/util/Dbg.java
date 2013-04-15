@@ -35,7 +35,7 @@ import android.util.Log;
 
 public final class Dbg {
 
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     private static String LOG_TAG = "ExtensionUtils";
 

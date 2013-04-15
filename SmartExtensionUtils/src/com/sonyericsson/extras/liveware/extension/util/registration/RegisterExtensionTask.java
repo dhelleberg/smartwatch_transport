@@ -568,7 +568,7 @@ public class RegisterExtensionTask extends AsyncTask<Void, Void, Boolean> {
                     .insert(Registration.ApiRegistration.URI, values);
             res = uri != null;
         } else {
-            long _id = ExtensionUtils.getRegistrationId(mContext, packageName);
+            long _id = ExtensionUtils.getRegistrationId(mContext, packageName, extensionId);
             int rows = mContext.getContentResolver().update(
                     ContentUris.withAppendedId(Registration.ApiRegistration.URI, _id),
                     values, null, null);

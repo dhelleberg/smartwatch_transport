@@ -120,7 +120,7 @@ public class StartUpActivity extends Activity implements ResultCallbacks {
 		
 		
 	}
-
+	
 
 
 }

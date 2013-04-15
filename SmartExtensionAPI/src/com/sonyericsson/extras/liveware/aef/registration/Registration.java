@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+Copyright (C) 2012-2013 Sony Mobile Communications AB
 
 All rights reserved.
 
@@ -56,7 +57,7 @@ import android.provider.BaseColumns;
  * <p>
  * Before an extension can use an accessory, the extension must use the registration API content provider
  * to insert a record in the extension table. The URI is defined in the Extension interface {@link Extension#URI} and
- * the table schema is defined in the ExtensionColumns interface {@link ExtensionColumns}.
+ * the table scheme is defined in the ExtensionColumns interface {@link ExtensionColumns}.
  * After inserting a record in the extensions table, the extension is ready to use the Notification API.
  * No further registration is needed in order to use the Notification API and start writing sources and events.
  * More advanced extensions that also want to use any of the Widget API, Control API or Sensor API must also register
@@ -72,7 +73,7 @@ import android.provider.BaseColumns;
  * <p>
  * This API is an Android content provider that provides information about the capabilities of the accessories. The information is
  * provided by the host applications and are used by the extensions to obtain necessary information in order to interact with the
- * accessories through the Control, Sensor and Widget API's. The content provider contains the tables shown in the picture below.
+ * accessories through the Control, Sensor and Widget APIs. The content provider contains the tables shown in the picture below.
  * <img src="../../../../../../../public_documentation/images/capabilities_database.png" alt="Operating context" border="1" />
  * For each accessory there is a corresponding record in the host_application table. A Particular host application is identified
  * by its package name. For each host application there is one or more device records in the device table.
@@ -96,8 +97,8 @@ import android.provider.BaseColumns;
  * </p>
  *  * <a name="Security"></a>
  * <h3>Security</h3>
- * Each extension that which to interact with the Registration and Capability API must
- * specify a specific plug-in permission in their manifest file.{@link Registration#EXTENSION_PERMISSION}.
+ * Each extension that which to interact with the Registration &amp; Capabilities API should
+ * specify a specific plug-in permission in their manifest file {@link Registration#EXTENSION_PERMISSION}.
  * The API implements a security mechanism that ensure that each extension only can access their own
  * registration and notification data. Sharing information between extensions can be obtained for extensions
  * that use the <i>sharedUserId</i> mechanism, however this approach is not recommended.
@@ -108,7 +109,7 @@ import android.provider.BaseColumns;
  * See the documentation of the Control API, Widget API, Sensor API and
  * Notification API for more information about intents.
  * To enable the extension to verify the sender of the
- * Intents is a trusted application with access to the API's and not a malicious
+ * Intents is a trusted application with access to the APIs and not a malicious
  * application that sends the same Intents on pretext of being a trusted application,
  * the {@link ExtensionColumns#EXTENSION_KEY} field allows plug-in developers to store
  * something that can be used as identification when the Intents are received.
@@ -135,14 +136,9 @@ public class Registration {
     }
 
     /**
-     * All extensions shall add in their AndroidManifest.xml a <uses-permission>
+     * All extensions should add in their AndroidManifest.xml a <uses-permission>
      * tag to use this permission. The purpose is to indicate to the end user
-     * the application containing the extension interacts with the registration API
-     * API. An application that intends to behave as an extension but does not
-     * declare it uses this permission will not be allowed to register itself
-     * as an extension, therefore, barred from interacting with the accessory API's
-     * A SecurityException will be thrown whenever such an application
-     * attempts to interact with the accessory API's.
+     * the application containing the extension interacts with the registration API.
      *
      * @since 1.0
      */
@@ -151,21 +147,21 @@ public class Registration {
     /**
      * Permission used by host applications;
      * Extensions shall use this permission to enforce security when sending intents to
-     * a host application using sendBroadcast(Intent, String).
+     * a host application using sendBroadcast(Intent, String)
      *
      * @since 1.0
      */
     public static final String HOSTAPP_PERMISSION = "com.sonyericsson.extras.liveware.aef.HOSTAPP_PERMISSION";
 
     /**
-     * Authority for the Registration provider.
+     * Authority for the Registration provider
      *
      * @since 1.0
      */
     public static final String AUTHORITY = "com.sonyericsson.extras.liveware.aef.registration";
 
     /**
-     * Base URI for the registration provider.
+     * Base URI for the Registration provider
      *
      * @since 1.0
      */
@@ -179,7 +175,7 @@ public class Registration {
         /**
          * Intent sent to extensions to request
          * extension registrations.
-         * Extensions that are already registered do not need to register again.
+         * Extensions that are already registered do not need to register again
          * @since 1.0
          */
         static final String EXTENSION_REGISTER_REQUEST_INTENT = "com.sonyericsson.extras.liveware.aef.registration.EXTENSION_REGISTER_REQUEST";
@@ -187,7 +183,7 @@ public class Registration {
         /**
          * Intent sent from the host applications to extensions to
          * indicate that an accessory has been connected or disconnected
-         * The host application must register the status in the {@link #DeviceColumns.ACCESSORY_CONNECTED}
+         * The host application must register the status in the {@link DeviceColumns#ACCESSORY_CONNECTED}
          *  column of the device table before sending this intent
          * <p>
          * Intent-extra data:
@@ -203,7 +199,7 @@ public class Registration {
 
         /**
          * The name of the Intent-extra used to identify the Host Application.
-         * The Host Application will send its package name.
+         * The Host Application will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -213,7 +209,7 @@ public class Registration {
 
         /**
          * The name of the Intent-extra used to identify the
-         * Accessory connection status
+         * accessory connection status
          * <P>
          * The value must one the predefined constants
          * {@link AccessoryConnectionStatus}.
@@ -236,7 +232,7 @@ public class Registration {
          * <P>
          * The value can be true (default) or false.
          * If false, the accessory does not support showing the history of notifications
-         * and a notification extension might want to hide e.g. "Clear history" from its settings.
+         * and a notification extension might want to hide e.g. "Clear history" from its settings
          * <P>
          * TYPE: BOOLEAN
          * </P>
@@ -254,11 +250,11 @@ public class Registration {
          *
          * This extra indicates if the accessory supports triggering actions
          * linked to notification events. For more information about actions see.
-         * {@link com.sonyericsson.extras.liveware.Notification.SourceColums#ACTION_1}
+         * {@link com.sonyericsson.extras.liveware.aef.notification.Notification.SourceColumns#ACTION_1}
          * <P>
          * The value can be true (default) or false.
          * If false, the accessory does not support triggering actions from notification events
-         * and a notification extension might want to hide action related settings.
+         * and a notification extension might want to hide action related settings
          * <P>
          * TYPE: BOOLEAN
          * </P>
@@ -286,7 +282,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Extension-table.
+     * Definitions used for interacting with the Extension-table
      *
      */
     public interface Extension {
@@ -307,13 +303,13 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the Extension table.
+     * Column-definitions for the Extension table
      */
     public interface ExtensionColumns extends BaseColumns {
 
         /**
          * Displayable name of the extension that may be presented, e.g. in
-         * settings.
+         * settings
          *
          * <P>
          * TYPE: TEXT
@@ -327,7 +323,7 @@ public class Registration {
         static final String NAME = "name";
 
         /**
-         * Class name of the Android Activity that contains the settings of the extension.
+         * Class name of the Android Activity that contains the settings of the extension
          *
          * <P>
          * TYPE: TEXT
@@ -341,7 +337,7 @@ public class Registration {
         static final String CONFIGURATION_ACTIVITY = "configurationActivity";
 
         /**
-         * Short text to describe the current configuration state of the extension.
+         * Short text to describe the current configuration state of the extension
          *
          * <P>
          * TYPE: TEXT
@@ -356,7 +352,7 @@ public class Registration {
 
         /**
          * URI of the Android launcher icon representing the extension.
-         * This icon is used by the host application when listing extensions.
+         * This icon is used by the host application when listing extensions
          *
          * <P>
          * TYPE: TEXT
@@ -372,7 +368,7 @@ public class Registration {
         /**
          * URI of the icon representing the extension.
          * This icon is used on the accessory UI.
-         * The size is 36x36 pixels.
+         * The size is 36x36 pixels
          *
          * <P>
          * TYPE: TEXT
@@ -388,7 +384,7 @@ public class Registration {
         /**
          * URI of the monochrome icon representing the extension.
          * This icon is used on the accessory UI.
-         * The size is 18x18 pixels.
+         * The size is 18x18 pixels
          *
          * <P>
          * TYPE: TEXT
@@ -407,7 +403,7 @@ public class Registration {
          * the host application. This enables the extension to verify that the
          * sender has valid access to the registration content provider.
          * See section <a href="Registration.html#Security">Security</a>
-         * for more information.
+         * for more information
          *
          * <P>
          * TYPE: TEXT
@@ -423,7 +419,7 @@ public class Registration {
         /**
          * API version. If the extension uses the notification API, this field
          * should tell what version of the notification API that is used.
-         * Value 0 means that the API is not used.
+         * Value 0 means that the API is not used
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -439,7 +435,7 @@ public class Registration {
         /**
          * The package name of an extension.
          * If an extension supports shared user id, the package name
-         * must be specified.
+         * must be specified
          * <P>
          * TYPE: TEXT
          * </P>
@@ -453,7 +449,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the ApiRegistration-table.
+     * Definitions used for interacting with the ApiRegistration-table
      *
      */
     public interface ApiRegistration {
@@ -474,13 +470,13 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the Extension table.
+     * Column-definitions for the ApiRegistration-table
      */
     public interface ApiRegistrationColumns extends BaseColumns {
 
         /**
          * The ID of the extension corresponding to
-         * this registration.
+         * this registration
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -511,7 +507,7 @@ public class Registration {
         /**
          * API version. If the the widget API is used, this field
          * should tell what version of the widget API that is used.
-         * Value 0 means that the API is not used.
+         * Value 0 means that the API is not used
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -527,7 +523,7 @@ public class Registration {
         /**
          * API version. If the the control API is used, this field
          * should tell what version of the control API that is used.
-         * Value 0 means that the API is not used.
+         * Value 0 means that the API is not used
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -543,7 +539,7 @@ public class Registration {
         /**
          * API version. If the the sensor API is used, this field
          * should tell what version of the sensor API that is used.
-         * Value 0 means that the API is not used.
+         * Value 0 means that the API is not used
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -558,7 +554,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Capabilities-view.
+     * Definitions used for interacting with the Capabilities-view
      *
      */
     public interface Capabilities {
@@ -580,7 +576,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Host application-table.
+     * Definitions used for interacting with the Host application-table
      *
      */
     public interface HostApp {
@@ -601,19 +597,19 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the Host application table.
+     * Column-definitions for the Host application table
      */
     public interface HostAppColumns extends BaseColumns {
 
         /**
-         * The package name of a host application.
+         * The package name of a host application
          *
          * @since 1.0
          */
         static final String PACKAGE_NAME = "packageName";
 
         /**
-         * The version of a host application.
+         * The version of a host application
          *
          * @since 1.0
          */
@@ -622,7 +618,7 @@ public class Registration {
         /**
          * API version. If the host application supports the Widget API, this field
          * should tell what version of the Widget API that is supported.
-         * Value 0 means that the API is not supported.
+         * Value 0 means that the API is not supported
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -636,7 +632,7 @@ public class Registration {
         static final String WIDGET_API_VERSION = "widgetApiVersion";
 
         /**
-         * The maximum widget refresh rate that is supported.
+         * The maximum supported widget refresh rate
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -652,7 +648,7 @@ public class Registration {
         /**
          * API version. If the host application supports the Control API, this field
          * should tell what version of the Control API that is supported.
-         * Value 0 means that the API is not supported.
+         * Value 0 means that the API is not supported
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -668,7 +664,7 @@ public class Registration {
         /**
          * API version. If the host application supports the Sensor API, this field
          * should tell what version of the Sensor API that is supported.
-         * Value 0 means that the API is not supported.
+         * Value 0 means that the API is not supported
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -684,7 +680,7 @@ public class Registration {
         /**
          * API version. If the host application supports the Notification API, this field
          * should tell what version of the Notification API that is supported.
-         * Value 0 means that the API is not supported.
+         * Value 0 means that the API is not supported
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -700,7 +696,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Device-table.
+     * Definitions used for interacting with the Device-table
      *
      */
     public interface Device {
@@ -721,13 +717,13 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the Device table.
+     * Column-definitions for the Device table
      */
     public interface DeviceColumns extends BaseColumns {
 
         /**
          * The ID of the host application corresponding to
-         * this device.
+         * this device
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -811,7 +807,7 @@ public class Registration {
         static final String VENDOR = "vendor";
 
         /**
-         * The uid of the device
+         * The UID of the device
          *
          * <P>
          * TYPE: TEXT
@@ -881,7 +877,7 @@ public class Registration {
         static final String VIBRATOR = "vibrator";
 
         /**
-         * Indicates if the device is connect to the
+         * Indicates if the device is connected to the
          * host application
          *
          * <P>
@@ -897,7 +893,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Display-table.
+     * Definitions used for interacting with the Display-table
      *
      */
     public interface Display {
@@ -919,13 +915,13 @@ public class Registration {
 
 
     /**
-     * Column-definitions for the Display table.
+     * Column-definitions for the Display table
      */
     public interface DisplayColumns extends BaseColumns {
 
         /**
          * The ID of the device corresponding to
-         * this display.
+         * this display
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -1038,7 +1034,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Sensor-table.
+     * Definitions used for interacting with the Sensor-table
      *
      */
     public interface Sensor {
@@ -1060,13 +1056,13 @@ public class Registration {
 
 
     /**
-     * Column-definitions for the Sensor table.
+     * Column-definitions for the Sensor table
      */
     public interface SensorColumns extends BaseColumns {
 
         /**
          * The ID of the device corresponding to
-         * this sensor.
+         * this sensor
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -1081,7 +1077,7 @@ public class Registration {
 
         /**
          * The ID of the SensorType corresponding to
-         * this sensor.
+         * this sensor
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -1151,8 +1147,8 @@ public class Registration {
         static final String NAME = "name";
 
         /**
-         * The id of the sensor as defined by the Host Application
-         * this id is used by the SensorAPI and is not necessarily the same
+         * The ID of the sensor as defined by the Host Application
+         * this ID is used by the SensorAPI and is not necessarily the same
          * value as the ID column
          *
          * <P>
@@ -1184,7 +1180,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Led-table.
+     * Definitions used for interacting with the Led-table
      *
      */
     public interface Led {
@@ -1205,13 +1201,13 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the Sensor table.
+     * Column-definitions for the Led-table
      */
     public interface LedColumns extends BaseColumns {
 
         /**
          * The ID of the device corresponding to
-         * this LED.
+         * this LED
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -1240,7 +1236,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Input-table.
+     * Definitions used for interacting with the Input-table
      *
      */
     public interface Input {
@@ -1261,13 +1257,13 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the Sensor table.
+     * Column-definitions for the Sensor table
      */
     public interface InputColumns extends BaseColumns {
 
         /**
          * The ID of the device corresponding to
-         * an Input.
+         * an Input
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -1310,7 +1306,7 @@ public class Registration {
     }
 
     /**
-     * Definitions used for interacting with the Sensor-type-table.
+     * Definitions used for interacting with the Sensor-type-table
      *
      */
     public interface SensorType {
@@ -1331,19 +1327,18 @@ public class Registration {
     }
 
     /**
-     * Column-definitions for the SensorType table.
+     * Column-definitions for the SensorType table
      */
     public interface SensorTypeColumns extends BaseColumns {
 
         /**
          * The Type.
          * <p>
-         * The following sensor types are supported.
+         * The following sensor types are supported:
          * </p>
          * <ul>
          * <li>{@link com.sonyericsson.extras.liveware.aef.sensor.Sensor#SENSOR_TYPE_ACCELEROMETER}</li>
          * <li>{@link com.sonyericsson.extras.liveware.aef.sensor.Sensor#SENSOR_TYPE_LIGHT}</li>
-         * <li>{@link com.sonyericsson.extras.liveware.aef.sensor.Sensor#SENSOR_TYPE_BATTERY}</li>
          * </ul>
          *
          * <P>
@@ -1359,7 +1354,7 @@ public class Registration {
 
         /**
          * This column value indicates whether the sensor
-         * sends information of delicate nature.
+         * sends information of delicate nature
          *
          * <P>
          * TYPE: BOOLEAN
@@ -1374,7 +1369,7 @@ public class Registration {
     }
 
         /**
-         * Definitions used for interacting with the Keypad-table.
+         * Definitions used for interacting with the Keypad-table
          *
          */
         public interface KeyPad {
@@ -1395,7 +1390,7 @@ public class Registration {
         }
 
         /**
-         * Column-definitions for the Keypad table.
+         * Column-definitions for the Keypad table
          */
         public interface KeyPadColumns extends BaseColumns {
 

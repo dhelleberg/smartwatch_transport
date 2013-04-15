@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+Copyright (C) 2012-2013 Sony Mobile Communications AB
 
 All rights reserved.
 
@@ -35,9 +36,9 @@ package com.sonyericsson.extras.liveware.aef.control;
 /**
  * <h1>Control API is a part of the Smart Extension API's</h1>
  * <p>
- * Some of our advanced accessories will support the Control API.
- * The Control API enables the Extension to take total control of the Accessory.
- * It gets control over the display, LEDs, vibrator, input events.
+ * Some of our Smart accessories will support the Control API.
+ * The Control API enables the Extension to take total control of the accessory.
+ * It takes control over the display, LEDs, vibrator, input events.
  * Because of this, only one Extension can run in this mode at a time.
  * </p>
  * <p>Topics covered here:
@@ -62,7 +63,7 @@ package com.sonyericsson.extras.liveware.aef.control;
  * </p>
  * <p>
  * In order to find out what Host Applications are available and what capabilities they
- * support, the Extension should use the capability API.
+ * support, the Extension should use the Capability API.
  * </p>
  * <a name="Lifecycle"></a>
  * <h3>Extension lifecycle</h3>
@@ -95,11 +96,11 @@ package com.sonyericsson.extras.liveware.aef.control;
  * </p>
  * <p>
  * An Extension can also be paused, either if a high priority Extension needs to run for a
- * while or it the Host Application is in charge of the display state and the display is
+ * while or if the Host Application is in charge of the display state and the display is
  * turned off. In this case the Host Application sends a {@link Intents#CONTROL_PAUSE_INTENT}
  * to the Extension. This means that there is no point for the Extension to update the display
  * since it is either turned off or someone else has control over it. If the Extension would
- * break this rule and try to update the display anyway, the Host Application will ignore the
+ * break this rule and try to update the display anyway, the Host Application will ignore these
  * calls.
  * </p>
  * <p>
@@ -138,7 +139,7 @@ package com.sonyericsson.extras.liveware.aef.control;
  * It is important that you program your Extension so that it consumes as little power as possible,
  * both on the phone side and on the accessory. The accessory has a much smaller battery then the
  * phone so use this functionality with caution. When possible, let the Host Application take control
- * of the display state. That way you don’t have to bother about the power consumption on the accessory.
+ * of the display state. That way you don't have to bother about the power consumption on the accessory.
  * You can do this by setting the display state to "Auto".
  * </p>
  * <p>
@@ -153,28 +154,28 @@ package com.sonyericsson.extras.liveware.aef.control;
  * </p>
  * <p>
  * Note that when in "Auto" mode, the Extension will receive a {@link Intents#CONTROL_PAUSE_INTENT} when
- * display is off and a {@link Intents#CONTROL_RESUME_INTENT} when the display goes on again.
+ * display is off and a {@link Intents#CONTROL_RESUME_INTENT} when the display goes back on.
  * </p>
  * <a name="LEDControl"></a>
  * <h3>Controlling the LEDs</h3>
  * <p>
- * The accessory might have one or more LEDs that are used to notify the user about some event. The
- * Extension can find information about the LEDs for a certain accessory via the registration &
- * capability API.
+ * The accessory might have one or more LEDs that are used to notify the user about events. The
+ * Extension can find information about the LEDs for a certain accessory via the Registration &amp;
+ * Capability API.
  * </p>
  * <p>
  * If the accessory has LEDs, the Extension can control them via the Control API. The LEDs can be
  * controlled via the {@link Intents#CONTROL_LED_INTENT}.
  * Note that the Host Application might overtake the control of the LED at any time if it wants to
- * show some important notification to the user, e.g. when the accessory battery level is low.
- * The Extension is happily unaware of this so it might still try to control the LEDs but the Host
+ * show some important notifications to the user, e.g. when the accessory battery level is low.
+ * The Extension is unaware of this so it might still try to control the LEDs but the Host
  * Application will ignore the calls.
  * </p>
  * <a name="VibratorControl"></a>
  * <h3>Controlling the vibrator</h3>
  * <p>
  * Our accessories might or might not have a vibrator. The Extension can find this out by checking
- * the capabilities of the Host Application via the registration & capability API. If the accessory
+ * the capabilities of the Host Application via the Registration &amp; Capability API. If the accessory
  * has a vibrator it is controllable via the Control API, {@link Intents#CONTROL_VIBRATE_INTENT}.
  * </p>
  * <a name="KeyEvents"></a>
@@ -187,14 +188,14 @@ package com.sonyericsson.extras.liveware.aef.control;
  * <p>
  * The Intent carries a few parameters, such as the time stamp of the event, the type of event
  * (press, release and repeat) and also the key code. The accessory might have one or more keypads
- * defined. Extensions can look this up in the registration & capabilities API. Each key will have a
+ * defined. Extensions can look this up in the Registration &amp; Capabilities API. Each key will have a
  * unique key code for identification. Key codes can be found in the product SDK.
  * </p>
  * <a name="TouchEvents"></a>
  * <h3>Touch events</h3>
  * <p>
  * Certain accessories might have a touch display. Extensions can find this information using the
- * registration & capabilities API. The {@link Intents#CONTROL_TOUCH_EVENT_INTENT} is sent to the
+ * Registration &amp; Capabilities API. The {@link Intents#CONTROL_TOUCH_EVENT_INTENT} is sent to the
  * Extension when a user taps the accessory display.
  * </p>
  * <a name="DataSending"></a>
@@ -203,15 +204,15 @@ package com.sonyericsson.extras.liveware.aef.control;
  * Since the Extension is controlling the accessory it also controls what is visible on the display.
  * The content visible to the user comes from the Extension. Basically the Extension sends images to
  * be displayed on the accessory display. To find out the dimensions of the display and the color depth
- * it supports the Extension can use the registration & capabilities API. The
+ * it supports the Extension can use the Registration &amp; Capabilities API. The
  * {@link Intents#CONTROL_DISPLAY_DATA_INTENT} is sent from the Extension when it wants to update the accessory
  * display. Extensions can also clear the accessory display at any point if they wants to by sending
  * the {@link Intents#CONTROL_CLEAR_DISPLAY_INTENT}.
  * </p>
  * <p>
  * The Extension can send images as raw data (byte array) or it can just send the URI of the image to
- * be displayed. Note that we are using Bluetooth as bearer which means that we can’t send that many
- * frames per second (FPS). Refresh rate of the display can be found in the registration & capabilities API.
+ * be displayed. Note that we are using Bluetooth as bearer which means that we can't send that many
+ * frames per second (FPS). Refresh rate of the display can be found in the Registration &amp; Capabilities API.
  * </p>
  */
 
@@ -362,7 +363,7 @@ public class Control {
         /**
          * Intent sent by the Extension when it wants to control one of the LEDs available on the accessory.
          * Every Host Application will expose information about its LEDs in the
-         * Registration & Capabilities API.
+         * Registration &amp; Capabilities API.
          * <p>
          * This intent should be sent with enforced security by supplying the host application permission
          * to sendBroadcast(Intent, String). {@link com.sonyericsson.extras.liveware.aef.registration.Registration#HOSTAPP_PERMISSION}
@@ -405,7 +406,7 @@ public class Control {
         /**
          * Intent sent by the Extension when it wants to control the vibrator available on the accessory.
          * Every Host Application will expose information about the vibrator if it has one in the
-         * Registration & Capabilities API.
+         * Registration &amp; Capabilities API.
          * <p>
          * This intent should be sent with enforced security by supplying the host application permission
          * to sendBroadcast(Intent, String). {@link com.sonyericsson.extras.liveware.aef.registration.Registration#HOSTAPP_PERMISSION}
@@ -442,8 +443,8 @@ public class Control {
         static final String CONTROL_STOP_VIBRATE_INTENT = "com.sonyericsson.extras.aef.control.STOP_VIBRATE";
 
         /**
-         * Intent sent by the Extension whenever it wants to update the Accessory display.
-         * The display size is Accessory dependent and can be found using the Registration & Capabilities API.
+         * Intent sent by the Extension whenever it wants to update the accessory display.
+         * The display size is accessory dependent and can be found using the Registration &amp; Capabilities API.
          * <p>
          * This intent should be sent with enforced security by supplying the host application permission
          * to sendBroadcast(Intent, String). {@link com.sonyericsson.extras.liveware.aef.registration.Registration#HOSTAPP_PERMISSION}
@@ -464,7 +465,7 @@ public class Control {
         static final String CONTROL_DISPLAY_DATA_INTENT = "com.sonyericsson.extras.aef.control.DISPLAY_DATA";
 
         /**
-         * Intent sent by the Extension whenever it wants to clear the Accessory display.
+         * Intent sent by the Extension whenever it wants to clear the accessory display.
          * <p>
          * This intent should be sent with enforced security by supplying the host application permission
          * to sendBroadcast(Intent, String). {@link com.sonyericsson.extras.liveware.aef.registration.Registration#HOSTAPP_PERMISSION}
@@ -535,7 +536,7 @@ public class Control {
 
         /**
          * The name of the Intent-extra used to identify the Host Application.
-         * The Host Application will send its package name.
+         * The Host Application will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -545,7 +546,7 @@ public class Control {
 
         /**
          * The name of the Intent-extra used to identify the Extension.
-         * The Extension will send its package name.
+         * The Extension will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -572,7 +573,7 @@ public class Control {
         static final String EXTRA_SCREEN_STATE = "screen_state";
 
         /**
-         * The name of the Intent-extra carrying the Id of the LED to be controlled.
+         * The name of the Intent-extra carrying the ID of the LED to be controlled
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -581,7 +582,7 @@ public class Control {
         static final String EXTRA_LED_ID = "led_id";
 
         /**
-         * The name of the Intent-extra carrying the color you want the LED to blink with.
+         * The name of the Intent-extra carrying the color you want the LED to blink with
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -590,7 +591,7 @@ public class Control {
         static final String EXTRA_LED_COLOR = "led_color";
 
         /**
-         * The name of the Intent-extra carrying the "on" duration in milliseconds.
+         * The name of the Intent-extra carrying the "on" duration in milliseconds
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -599,7 +600,7 @@ public class Control {
         static final String EXTRA_ON_DURATION = "on_duration";
 
         /**
-         * The name of the Intent-extra carrying the "off" duration in milliseconds.
+         * The name of the Intent-extra carrying the "off" duration in milliseconds
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -610,7 +611,7 @@ public class Control {
         /**
          * The name of the Intent-extra carrying the number of repeats of the on/off pattern.
          * Note, the value {@link #REPEAT_UNTIL_STOP_INTENT} means that the on/off pattern is repeated until
-         * the {@link #CONTROL_STOP_VIBRATE_INTENT} or {@link #CONTROL_STOP_LED_INTENT} intent is received.
+         * the {@link #CONTROL_STOP_VIBRATE_INTENT} or {@link #CONTROL_STOP_LED_INTENT} intent is received
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -620,8 +621,8 @@ public class Control {
 
         /**
          * The name of the Intent-extra used to identify the URI of the image to be displayed on the
-         * Accessory display. If the image is in raw data (e.g. an array of bytes) use
-         * {@link #EXTRA_DATA} instead.
+         * accessory display. If the image is in raw data (e.g. an array of bytes) use
+         * {@link #EXTRA_DATA} instead
          * <P>
          * TYPE: TEXT
          * </P>
@@ -630,8 +631,8 @@ public class Control {
         static final String EXTRA_DATA_URI = "data_uri";
 
         /**
-         * The name of the Intent-extra used to identify the data to be displayed on the Accessory
-         * display. This Intent-extra should be used if the image is in raw data (e.g. an array of bytes).
+         * The name of the Intent-extra used to identify the data to be displayed on the accessory
+         * display. This Intent-extra should be used if the image is in raw data (e.g. an array of bytes)
          * <P>
          * TYPE: BYTE ARRAY
          * </P>
@@ -640,8 +641,8 @@ public class Control {
         static final String EXTRA_DATA = "data";
 
         /**
-         * The name of the Intent-extra used to identify the pixel offset from the left side of the Accessory
-         * display.
+         * The name of the Intent-extra used to identify the pixel offset from the left side of the accessory
+         * display
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -650,8 +651,8 @@ public class Control {
         static final String EXTRA_X_OFFSET = "x_offset";
 
         /**
-         * The name of the Intent-extra used to identify the pixel offset from the top of the Accessory
-         * display.
+         * The name of the Intent-extra used to identify the pixel offset from the top of the accessory
+         * display
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -660,7 +661,7 @@ public class Control {
         static final String EXTRA_Y_OFFSET = "y_offset";
 
         /**
-         * The name of the Intent-extra used to identify the type of key event.
+         * The name of the Intent-extra used to identify the type of key event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -677,7 +678,7 @@ public class Control {
         static final String EXTRA_KEY_ACTION = "event_type";
 
         /**
-         * The name of the Intent-extra used to carry the time stamp of the key or touch event.
+         * The name of the Intent-extra used to carry the time stamp of the key or touch event
          * <P>
          * TYPE: INTEGER (long)
          * </P>
@@ -686,9 +687,9 @@ public class Control {
         static final String EXTRA_TIMESTAMP = "timestamp";
 
         /**
-         * The name of the Intent-extra used to identify the key code.
+         * The name of the Intent-extra used to identify the keycode.
          * Information about what type of keypad a accessory has can be found using the
-         * Registration & Capabilities API.
+         * Registration &amp; Capabilities API
          * <P>
          * ALLOWED VALUES:
          * Any key code defined in the {@link KeyCodes} interface.
@@ -701,7 +702,7 @@ public class Control {
         static final String EXTRA_KEY_CODE = "key_code";
 
         /**
-         * The name of the Intent-extra used to indicate the touch action.
+         * The name of the Intent-extra used to indicate the touch action
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -718,7 +719,7 @@ public class Control {
         static final String EXTRA_TOUCH_ACTION = "action";
 
         /**
-         * The name of the Intent-extra used to indicate the direction.
+         * The name of the Intent-extra used to indicate the direction
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -736,7 +737,7 @@ public class Control {
         static final String EXTRA_SWIPE_DIRECTION = "direction";
 
         /**
-         * The name of the Intent-extra used to carry the X coordinate of the touch event.
+         * The name of the Intent-extra used to carry the X coordinate of the touch event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -745,7 +746,7 @@ public class Control {
         static final String EXTRA_X_POS = "x_pos";
 
         /**
-         * The name of the Intent-extra used to carry the Y coordinate of the touch event.
+         * The name of the Intent-extra used to carry the Y coordinate of the touch event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -754,7 +755,7 @@ public class Control {
         static final String EXTRA_Y_POS = "y_pos";
 
         /**
-         * The name of the Intent-extra used to carry the error code.
+         * The name of the Intent-extra used to carry the error code
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -775,7 +776,7 @@ public class Control {
          * This Intent-data is present in all Intents sent by accessory host application,
          * except where {@link android.app.Activity#startActivity(android.content.Intent)}
          * is used. See section <a href="Registration.html#Security">Security</a>
-         * for more information.
+         * for more information
          *
          * @since 1.0
          */
@@ -783,119 +784,119 @@ public class Control {
 
 
         /**
-         * The touch action is a press event.
+         * The touch action is a press event
          *
          * @since 1.0
          */
         static final int TOUCH_ACTION_PRESS = 0;
 
         /**
-         * The touch action is a long press event.
+         * The touch action is a long press event
          *
          * @since 1.0
          */
         static final int TOUCH_ACTION_LONGPRESS = 1;
 
         /**
-         * The touch action is a release event.
+         * The touch action is a release event
          *
          * @since 1.0
          */
         static final int TOUCH_ACTION_RELEASE = 2;
 
         /**
-         * The direction of the swipe event is up.
+         * The direction of the swipe event is up
          *
          * @since 1.0
          */
         static final int SWIPE_DIRECTION_UP = 0;
 
         /**
-         * The direction of the swipe event is down.
+         * The direction of the swipe event is down
          *
          * @since 1.0
          */
         static final int SWIPE_DIRECTION_DOWN = 1;
 
         /**
-         * The direction of the swipe event is left.
+         * The direction of the swipe event is left
          *
          * @since 1.0
          */
         static final int SWIPE_DIRECTION_LEFT = 2;
 
         /**
-         * The direction of the swipe event is right.
+         * The direction of the swipe event is right
          *
          * @since 1.0
          */
         static final int SWIPE_DIRECTION_RIGHT = 3;
 
         /**
-         * The screen off state.
+         * The screen off state
          *
          * @since 1.0
          */
         static final int SCREEN_STATE_OFF = 0;
 
         /**
-         * The screen dim state.
+         * The screen dim state
          *
          * @since 1.0
          */
         static final int SCREEN_STATE_DIM = 1;
 
         /**
-         * The screen on state.
+         * The screen on state
          *
          * @since 1.0
          */
         static final int SCREEN_STATE_ON = 2;
 
         /**
-         * The screen state is automatically handled by the host application.
+         * The screen state is automatically handled by the host application
          *
          * @since 1.0
          */
         static final int SCREEN_STATE_AUTO = 3;
 
         /**
-         * The key event is a key press event.
+         * The key event is a key press event
          *
          * @since 1.0
          */
         static final int KEY_ACTION_PRESS = 0;
 
         /**
-         * The key event is a key release event.
+         * The key event is a key release event
          *
          * @since 1.0
          */
         static final int KEY_ACTION_RELEASE = 1;
 
         /**
-         * The key event is a key repeat event.
+         * The key event is a key repeat event
          *
          * @since 1.0
          */
         static final int KEY_ACTION_REPEAT = 2;
 
         /**
-         * The control action is turned on.
+         * The control action is turned on
          *
          * @since 1.0
          */
         static final int CONTROL_ACTION_ON = 0;
 
         /**
-         * The control action is turned off.
+         * The control action is turned off
          *
          * @since 1.0
          */
         static final int CONTROL_ACTION_OFF = 1;
 
         /**
-         * Vibration or LED is repeated until explicitly stopped.
+         * Vibration or LED is repeated until explicitly stopped
          *
          * @since 1.0
          */
@@ -904,42 +905,42 @@ public class Control {
 
     /**
      * Interface used to define constants for
-     * key codes
+     * keycodes
      */
     public interface KeyCodes {
 
         /**
-         * Key code representing a play button
+         * Keycode representing a play button
          */
         static final int KEYCODE_PLAY = 1;
 
         /**
-         * Key code representing a next button
+         * Keycode representing a next button
          */
         static final int KEYCODE_NEXT = 2;
 
         /**
-         * Key code representing a previous button
+         * Keycode representing a previous button
          */
         static final int KEYCODE_PREVIOUS = 3;
 
         /**
-         * Key code representing an action button
+         * Keycode representing an action button
          */
         static final int KEYCODE_ACTION = 4;
 
         /**
-         * Key code representing a volume down button
+         * Keycode representing a volume down button
          */
         static final int KEYCODE_VOLUME_DOWN = 5;
 
         /**
-         * Key code representing a volume up button
+         * Keycode representing a volume up button
          */
         static final int KEYCODE_VOLUME_UP = 6;
 
         /**
-         * Key code representing a back button
+         * Keycode representing a back button
          */
         static final int KEYCODE_BACK = 7;
     }

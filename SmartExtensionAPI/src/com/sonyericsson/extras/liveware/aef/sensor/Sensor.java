@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+Copyright (C) 2012-2013 Sony Mobile Communications AB
 
 All rights reserved.
 
@@ -32,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.sonyericsson.extras.liveware.aef.sensor;
 
 /**
- * <h1>Sensor API is a part of the Smart Extension API's</h1>
+ * <h1>Sensor API is a part of the Smart Extension APIs</h1>
  * <h3>Overview</h3>
  * The Sensor API is used to send accessory sensor data from a host application to
  * an accessory extension. The API can be used by any registered extension.
@@ -49,11 +50,11 @@ package com.sonyericsson.extras.liveware.aef.sensor;
  * through an InputStream.
  * The data has the following format:
  * <ol>
- * <li>Byte  0 -  3   Total length of the data package.</li>
- * <li>Byte  4 -  7   Accuracy. For more information see {@link SensorAccuracy}.</li>
- * <li>Byte  8 - 15   Timestamp. The time in nanosecond at which the event happened.</li>
- * <li>Byte 16 - 19   Length of sensor values in bytes.</li>
- * <li>Byte 20 - nn   Sensor values. This should be interpreted as an array of float values, each float value is 4 bytes long.</li>
+ * <li>Byte  0 -  3   Total length of the data package</li>
+ * <li>Byte  4 -  7   Accuracy. For more information see {@link SensorAccuracy}</li>
+ * <li>Byte  8 - 15   Timestamp. The time in nanosecond at which the event happened</li>
+ * <li>Byte 16 - 19   Length of sensor values in bytes</li>
+ * <li>Byte 20 - nn   Sensor values. This should be interpreted as an array of float values, each float value is 4 bytes long</li>
  * </ol>
  *The length and contents of the values array depends on which sensor type is being monitored.
  *
@@ -70,7 +71,7 @@ public class Sensor {
     }
 
     /**
-     * Intents sent between Sensor Extensions and Accessory Host Applications.
+     * Intents sent between Sensor Extensions and Accessory Host Applications
      */
     public interface Intents {
 
@@ -91,7 +92,7 @@ public class Sensor {
          * <li>{@link #EXTRA_AEA_PACKAGE_NAME}</li>
          * <li>{@link #EXTRA_SENSOR_ID}</li>
          * <li>{@link #EXTRA_SENSOR_LOCAL_SERVER_SOCKET_NAME}</li>
-         * <li>{@link #EXTRA_SENSOR_REQUETED_RATE}</li>
+         * <li>{@link #EXTRA_SENSOR_REQUESTED_RATE}</li>
          * <li>{@link #EXTRA_SENSOR_INTERRUPT_MODE}</li>
          * </ul>
          * </p>
@@ -135,7 +136,7 @@ public class Sensor {
 
         /**
          * The name of the Intent-extra used to identify the Extension.
-         * The extension will send its package name.
+         * The extension will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -145,7 +146,7 @@ public class Sensor {
 
         /**
          * The name of the Intent-extra used to identify the Sensor.
-         * The Extension will send the id of the sensor. The id must
+         * The Extension will send the ID of the sensor. The ID must
          * be identical to the value of the SENSOR_ID column from the Sensor
          * table of a sensor that is attached to the current host application
          * <P>
@@ -158,7 +159,7 @@ public class Sensor {
         /**
          * The name of the Intent-extra used to identify the name of the Android
          * Local Server Socket that is now waiting for a connection from
-         * the host application.
+         * the host application
          * <P>
          * TYPE: TEXT
          * </P>
@@ -170,7 +171,7 @@ public class Sensor {
          * The name of the Intent-extra used to set the
          * preferred delivery rate of the sensor data.
          * The value must one the predefined constants
-         * {@link SensorRates}.
+         * {@link SensorRates}
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -183,7 +184,7 @@ public class Sensor {
          * The name of the Intent-extra used to set the
          * sensor interrupt mode.
          * The value must one the predefined constants
-         * {@link SensorInterruptMode}.
+         * {@link SensorInterruptMode}
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -197,7 +198,7 @@ public class Sensor {
          * error code of an error message from the
          * host application.
          * The value must be one of the predefined constants
-         * {@link SensorApiErrorCodes}.
+         * {@link SensorApiErrorCodes}
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -205,6 +206,16 @@ public class Sensor {
          * @since 1.0
          */
         static final String EXTRA_ERROR_CODE = "error_code";
+
+        /**
+         * The name of the Intent-extra used to identify the Host Application.
+         * The Host Application will send its package name.
+         * <P>
+         * TYPE: TEXT
+         * </P>
+         * @since 1.0
+         */
+        static final String EXTRA_AHA_PACKAGE_NAME = "aha_package_name";
     }
 
     /**
@@ -246,7 +257,7 @@ public class Sensor {
 
         /**
          * The values returned by this sensor cannot be trusted,
-         * calibration is needed or the environment doesn't allow readings
+         * calibration is needed or the environment will not allow readings
          */
         static final int SENSOR_STATUS_UNRELIABLE = 0;
 
@@ -263,7 +274,7 @@ public class Sensor {
         static final int SENSOR_STATUS_ACCURACY_MEDIUM = 2;
 
         /**
-         * This sensor is reporting data with maximum accuracy.
+         * This sensor is reporting data with maximum accuracy
          */
         static final int SENSOR_STATUS_ACCURACY_HIGH = 3;
     }
@@ -277,7 +288,7 @@ public class Sensor {
 
         /**
          * The interrupt mode is disabled,
-         * e.g. the sensor is sending data continually.
+         * e.g. the sensor is sending data continuously
          */
         static final int SENSOR_INTERRUPT_DISABLED = 0;
 
@@ -290,20 +301,20 @@ public class Sensor {
 
     /**
      * Interface used to define constants for
-     * sensor error codes sent from the host application.
+     * sensor error codes sent from the host application
      */
     public interface SensorApiErrorCodes {
 
         /**
          * Error code indicating that the action
          * requested by the extension is not allowed
-         * in the current state.
+         * in the current state
          */
         static final int SENSOR_ERROR_CODE_NOT_ALLOWED = 0;
     }
 
     /**
-     * Constant defining the sensor type Accelerometer
+     * Constant defining the sensor type Accelerometer.
      * Sensor data is sent as an array of 3 float values representing
      * the acceleration on the x-axis, y-axis and z-axis respectively.
      * All values are in SI units (m/s^2)
@@ -313,11 +324,11 @@ public class Sensor {
     public static final String SENSOR_TYPE_ACCELEROMETER = "Accelerometer";
 
     /**
-     * Constant defining the sensor type Light
+     * Constant defining the sensor type Light.
      * Sensor data is sent as one float value representing
      * the light level in SI lux units.
      * For more information about the light sensor type,
-     * see {@link android.hardware.Sensor#TYPE_LIGHT
+     * see {@link android.hardware.Sensor#TYPE_LIGHT}
      */
     public static final String SENSOR_TYPE_LIGHT = "Light";
 }

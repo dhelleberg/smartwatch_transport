@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+Copyright (C) 2012-2013 Sony Mobile Communications AB
 
 All rights reserved.
 
@@ -63,7 +64,7 @@ import android.provider.BaseColumns;
  * extensions access via the Android ContentResolver API. The ContentProvider
  * implementation is backed by a database implementation. In order for an extension
  * to interact with Notification API, the extension must have used the Registration API
- * and inserted information in the extension table. See Registration and Capability API
+ * and inserted information in the extension table. See Registration &amp; Capabilities API
  * for more information on how to insert a record in the extension table.
  * When needed, Android Intents are sent to the extensions to perform a task.
  * </p>
@@ -371,13 +372,13 @@ public class Notification {
     protected static final Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
 
     /**
-     * Broadcast Intents sent to extensions by the host applicatione
+     * Broadcast Intents sent to extensions by the host application.
      */
     public interface Intents {
 
         /**
          * Intent sent by the host application to the relevant extension
-         * to display all details related to the event.
+         * to display all details related to the event
          * <p>
          * Intent-extra data:
          * </p>
@@ -393,7 +394,7 @@ public class Notification {
         static final String VIEW_EVENT_INTENT = "com.sonyericsson.extras.liveware.aef.notification.VIEW_EVENT_DETAIL";
 
         /**
-         * Intent sent by the host application when an update of available data is needed.
+         * Intent sent by the host application when an update of available data is needed
          * <p>
          * Intent-extra data:
          * </p>
@@ -405,7 +406,7 @@ public class Notification {
         static final String REFRESH_REQUEST_INTENT = "com.sonyericsson.extras.liveware.aef.notification.REFRESH_REQUEST";
 
         /**
-         * The name of the Intent-extra used to identify the event.
+         * The name of the Intent-extra used to identify the event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -415,7 +416,7 @@ public class Notification {
 
         /**
          * The name of the Intent-extra used to identify which Source an
-         * Event is associated with.
+         * Event is associated with
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -424,7 +425,7 @@ public class Notification {
         static final String EXTRA_SOURCE_ID = "source_id";
 
         /**
-         * The action requested by the user
+         * The action requested by the user.
          * This is a string indicating a user action
          * corresponding to one of the three actions that are
          * defined in the source table
@@ -434,9 +435,9 @@ public class Notification {
          * <P>
          * ALLOWED VALUES:
          * <ul>
-         * <li>{@link EXTENSION_ACTION_1}</li>
-         * <li>{@link EXTENSION_ACTION_2}</li>
-         * <li>{@link EXTENSION_ACTION_3}</li>
+         * <li>{@link #EXTENSION_ACTION_1}</li>
+         * <li>{@link #EXTENSION_ACTION_2}</li>
+         * <li>{@link #EXTENSION_ACTION_3}</li>
          * </P>
          *
          * @since 1.0
@@ -449,7 +450,7 @@ public class Notification {
          * all Intents sent by accessory host application, except where
          * {@link android.app.Activity#startActivity(android.content.Intent)}
          * is used. See section <a href="Registration.html#Security">Security</a>
-         * for more information.
+         * for more information
          * <P>
          * TYPE: TEXT
          * </P>
@@ -459,7 +460,7 @@ public class Notification {
 
         /**
          * The name of the Intent-extra used to identify the Host Application.
-         * The Host Application will send its package name.
+         * The Host Application will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -546,7 +547,7 @@ public class Notification {
          * PRESENCE: REQUIRED
          * </P>
          *
-         * @Since 1.0
+         * @since 1.0
          */
         static final String NAME = "name";
 
@@ -599,7 +600,7 @@ public class Notification {
         static final String ICON_URI_BLACK_WHITE = "iconUriBlackWhite";
 
         /**
-         * Indicates if the source is enabled.
+         * Indicates if the source is enabled
          *
          * <P>
          * TYPE: BOOLEAN
@@ -617,7 +618,7 @@ public class Notification {
          * The action is defined by the extension and supported
          * for this source.
          * Actions are sent to the extension from host applications
-         * using the {@link Intents#VIEW_EVENT_INTENT} intent.
+         * using the {@link Intents#VIEW_EVENT_INTENT} intent
          *
          * <P>
          * TYPE: TEXT
@@ -635,7 +636,7 @@ public class Notification {
          * The action is defined by the extension and supported
          * for this source.
          * Actions are sent to the extension from host applications
-         * using the {@link Intents#VIEW_EVENT_INTENT} intent.
+         * using the {@link Intents#VIEW_EVENT_INTENT} intent
          *
          * <P>
          * TYPE: TEXT
@@ -653,7 +654,7 @@ public class Notification {
          * The action is defined by the extension and supported
          * for this source..
          * Actions are sent to the extension from host applications
-         * using the {@link Intents#VIEW_EVENT_INTENT} intent.
+         * using the {@link Intents#VIEW_EVENT_INTENT} intent
          *
          * <P>
          * TYPE: TEXT
@@ -669,7 +670,7 @@ public class Notification {
         /**
          * The time (in milliseconds since January 1, 1970 00:00:00 UTC UNIX
          * EPOCH) when an event linked to this source was created.
-         * Shall be stored as GMT+0 time.
+         * Shall be stored as GMT+0 time
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -686,7 +687,7 @@ public class Notification {
          * Text to speech specific text.
          * The text in this column is used in combination
          * with the events of the source to create speech events.
-         * The text in this column is read out before the events.
+         * The text in this column is read out before the events
          *
          * <P>
          * TYPE: TEXT
@@ -701,7 +702,7 @@ public class Notification {
 
         /**
          * Extension specific identifier of the source
-         * It is up to the extension to define this identifier.
+         * It is up to the extension to define this identifier
          *
          * <P>
          * TYPE: TEXT
@@ -717,7 +718,7 @@ public class Notification {
         /**
          * The package name of a plug-in.
          * If an extension supports shared user id, the package name
-         * must be specified.
+         * must be specified
          * <P>
          * TYPE: TEXT
          * </P>
@@ -773,7 +774,7 @@ public class Notification {
 
         /**
          * The ID of the host source corresponding to
-         * this event.
+         * this event
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -788,7 +789,7 @@ public class Notification {
 
         /**
          * Short text describing the title for event linked with this data row.
-         * This can be the phone number, username, email address etc.
+         * This can be the phone number, username, email address etc
          *
          * <P>
          * TYPE: TEXT
@@ -802,7 +803,7 @@ public class Notification {
         static final String TITLE = "title";
 
         /**
-         * Content URI to an image linked with the event at this data row.
+         * Content URI to an image linked with the event at this data row
          *
          * <P>
          * TYPE: TEXT
@@ -819,7 +820,7 @@ public class Notification {
         /**
          * The time (in milliseconds since January 1, 1970 00:00:00 UTC UNIX
          * EPOCH) when the content linked with this data row was published on
-         * the source. Shall be stored as GMT+0 time.
+         * the source. Shall be stored as GMT+0 time
          *
          * <P>
          * TYPE: INTEGER (long)
@@ -837,7 +838,7 @@ public class Notification {
          * to the user ("me") or concerns the user ("me"), e.g. received SMS,
          * Facebook private message to the logged-in user, Facebook private
          * message from the logged-in user, @reply Tweets from the logged-in
-         * user, user ("me") is tagged in a photo etc.
+         * user, user ("me") is tagged in a photo etc
          *
          * <P>
          * TYPE: INTEGER (int)
@@ -853,7 +854,7 @@ public class Notification {
          * PRESENCE: REQUIRED
          * </P>
          *
-         * @Since 1.0
+         * @since 1.0
          */
         static final String PERSONAL = "personal";
 
@@ -917,7 +918,7 @@ public class Notification {
 
         /**
          * Displayable name of the user linked with this data row, e.g. full
-         * name.
+         * name
          *
          * <P>
          * TYPE: TEXT
@@ -931,7 +932,7 @@ public class Notification {
         static final String DISPLAY_NAME = "display_name";
 
         /**
-         * URI to the profile image of the user linked with this data row.
+         * URI to the profile image of the user linked with this data row
          *
          * <P>
          * TYPE: TEXT
@@ -946,7 +947,7 @@ public class Notification {
 
         /**
          * A reference to the contacts content provider.
-         * The reference is a URI to a {@link android.provider.ContactsContract.RawContacts}.
+         * The reference is a URI to a {@link android.provider.ContactsContract.RawContacts}
          *
          * <P>
          * TYPE: TEXT
@@ -963,7 +964,7 @@ public class Notification {
          * Generic data column for use by the plug-in to store information that
          * may be used to identify the friend that is at this data row, in its
          * domain. See section <a href="EventStream.html#ContactLinking">
-         * Contact Linking</a> for more information.
+         * Contact Linking</a> for more information
          *
          * <P>
          * TYPE: TEXT

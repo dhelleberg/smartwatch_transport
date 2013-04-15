@@ -1,5 +1,6 @@
 /*
 Copyright (c) 2011, Sony Ericsson Mobile Communications AB
+Copyright (C) 2012-2013 Sony Mobile Communications AB
 
 All rights reserved.
 
@@ -65,8 +66,8 @@ import com.sonyericsson.extras.liveware.aef.registration.Registration.ExtensionC
  * <h3>How do Extensions find out correct Widget image size</h3>
  * <p>
  * Before an Extension sends the Widget image to the Host Application it has to figure out
- * what size the image should be. This might vary between Accessories as some have a larger
- * display. This information can be found using the Capabilities & Registration API.
+ * what size the image should be. This might vary between accessories as some have a larger
+ * display. This information can be found using the Registration &amp; Capabilities API.
  * Every Host Application will write down its parameters into the Capabilities database.
  * </p>
  * <a name="Refresh"></a>
@@ -107,8 +108,7 @@ public class Widget {
          * Intent sent by the Accessory Host Application whenever it wants the Widget to start update it's Widget image.
          * Usually this Intent will be sent out when the accessory just starts and is about to show the Widget menu.
          * The Widget image should be updated as soon as possible and after the initial update the Widget image should
-         * be updated occasionally until WIDGET_STOP_REFRESH_IMAGE_INTENT is received.
-         * until
+         * be updated occasionally until WIDGET_STOP_REFRESH_IMAGE_INTENT is received
          * <p>
          * Intent-extra data:
          * </p>
@@ -197,7 +197,7 @@ public class Widget {
 
         /**
          * The name of the Intent-extra used to identify the Host Application.
-         * The Host Application will send its package name.
+         * The Host Application will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -207,7 +207,7 @@ public class Widget {
 
         /**
          * The name of the Intent-extra used to identify the Extension.
-         * The Extension will send its package name.
+         * The Extension will send its package name
          * <P>
          * TYPE: TEXT
          * </P>
@@ -219,7 +219,7 @@ public class Widget {
          * The name of the Intent-extra used to identify the URI of the Widget image.
          * If the image is in raw data (e.g. an array of bytes) use {@link #EXTRA_WIDGET_IMAGE_DATA} instead.
          * The image is displayed in the Widget row on the Accessory display.
-         * The image can be updated by the Extension at a later stage.
+         * The image can be updated by the Extension at a later stage
          * <P>
          * TYPE: TEXT
          * </P>
@@ -231,7 +231,7 @@ public class Widget {
          * The name of the Intent-extra used to identify the Widget image.
          * This Intent-extra should be used if the image is in raw data (e.g. an array of bytes).
          * The image is displayed in the Widget row on the Accessory display.
-         * The image can be updated by the Extension at a later stage.
+         * The image can be updated by the Extension at a later stage
          * <P>
          * TYPE: BYTE ARRAY
          * </P>
@@ -240,7 +240,7 @@ public class Widget {
         static final String EXTRA_WIDGET_IMAGE_DATA = "widget_image_data";
 
         /**
-         * The name of the Intent-extra used to identify the touch event.
+         * The name of the Intent-extra used to identify the touch event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -256,7 +256,7 @@ public class Widget {
         static final String EXTRA_EVENT_TYPE = "widget_event_type";
 
         /**
-         * The name of the Intent-extra used to carry the X coordinate of the touch event.
+         * The name of the Intent-extra used to carry the X coordinate of the touch event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -265,7 +265,7 @@ public class Widget {
         static final String EXTRA_EVENT_X_POS = "widget_event_x_pos";
 
         /**
-         * The name of the Intent-extra used to carry the Y coordinate of the touch event.
+         * The name of the Intent-extra used to carry the Y coordinate of the touch event
          * <P>
          * TYPE: INTEGER (int)
          * </P>
@@ -279,21 +279,21 @@ public class Widget {
          * all Intents sent by accessory host application, except where
          * {@link android.app.Activity#startActivity(android.content.Intent)}
          * is used. See section <a href="Registration.html#Security">Security</a>
-         * for more information.
+         * for more information
          *
          * @since 1.0
          */
         static final String EXTRA_EXTENSION_KEY = "extension_key";
 
         /**
-         * The event type is a short tap.
+         * The event type is a short tap
          *
          * @since 1.0
          */
         static final int EVENT_TYPE_SHORT_TAP = 0;
 
         /**
-         * The event type is a long tap.
+         * The event type is a long tap
          *
          * @since 1.0
          */

@@ -288,12 +288,13 @@ public class ExtensionUtils {
      *
      * @return Id, {@link #INVALID_ID} if extension is not registered
      */
-    public static long getRegistrationId(Context context, String hostAppPackageName) {
+    public static long getRegistrationId(Context context, String hostAppPackageName, long extensionId) {
         Cursor cursor = null;
         long id = INVALID_ID;
-        String selection = Registration.ApiRegistrationColumns.HOST_APPLICATION_PACKAGE + " = ?";
+        String selection = Registration.ApiRegistrationColumns.HOST_APPLICATION_PACKAGE
+                + " = ? AND " + Registration.ApiRegistrationColumns.EXTENSION_ID + " = ?";
         String[] selectionArgs = new String[] {
-            hostAppPackageName
+                hostAppPackageName, Long.toString(extensionId)
         };
         try {
             cursor = context.getContentResolver().query(Registration.ApiRegistration.URI, null,
