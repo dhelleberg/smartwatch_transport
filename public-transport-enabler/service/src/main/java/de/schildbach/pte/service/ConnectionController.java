@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2012-2013 the original author or authors.
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
@@ -31,6 +31,7 @@ import de.schildbach.pte.NetworkProvider.WalkSpeed;
 import de.schildbach.pte.RtProvider;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 
 /**
@@ -52,7 +53,7 @@ public class ConnectionController
 	{
 		final Location fromLocation = new Location(fromType, fromId, null, from);
 		final Location toLocation = new Location(toType, toId, null, to);
-		final String products = "IRSUTBFC";
-		return provider.queryConnections(fromLocation, null, toLocation, new Date(), true, 4, products, WalkSpeed.NORMAL, Accessibility.NEUTRAL, null);
+		return provider.queryConnections(fromLocation, null, toLocation, new Date(), true, 4, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL,
+				null);
 	}
 }

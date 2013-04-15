@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import de.schildbach.pte.NetworkProvider.WalkSpeed;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 
@@ -68,11 +69,23 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	}
 
 	@Test
-	public void autocompleteIncomplete() throws Exception
+	public void autocompleteUmlaut() throws Exception
 	{
-		final List<Location> autocompletes = provider.autocompleteStations("Be");
+		final List<Location> autocompletes = provider.autocompleteStations("Güntzelstr. (U)");
 
 		print(autocompletes);
+
+		Assert.assertEquals("Güntzelstr. (U), Berlin", autocompletes.get(0).name);
+	}
+
+	@Test
+	public void autocompleteIncomplete() throws Exception
+	{
+		final List<Location> autocompletes = provider.autocompleteStations("Landungsbr");
+
+		print(autocompletes);
+
+		Assert.assertEquals("Hamburg Landungsbrücken", autocompletes.get(0).name);
 	}
 
 	@Test
@@ -87,7 +100,7 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	public void shortConnection() throws Exception
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 8011160, null, "Berlin Hbf"), null, new Location(
-				LocationType.STATION, 8010205, null, "Leipzig Hbf"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				LocationType.STATION, 8010205, null, "Leipzig Hbf"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);
@@ -104,7 +117,7 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 732655, 52535576, 13422171, null,
 				"Marienburger Str., Berlin"), null, new Location(LocationType.STATION, 623234, 48000221, 11342490, null,
-				"Tutzinger-Hof-Platz, Starnberg"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				"Tutzinger-Hof-Platz, Starnberg"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 
 		if (!result.context.canQueryLater())
@@ -118,7 +131,7 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	public void noConnections() throws Exception
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 513729, null, "Schillerplatz, Kaiserslautern"),
-				null, new Location(LocationType.STATION, 403631, null, "Trippstadt Grundschule"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL,
+				null, new Location(LocationType.STATION, 403631, null, "Trippstadt Grundschule"), new Date(), true, Product.ALL, WalkSpeed.NORMAL,
 				Accessibility.NEUTRAL);
 		System.out.println(result);
 	}
@@ -128,7 +141,7 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, 52517139, 13388749, null,
 				"Berlin - Mitte, Unter den Linden 24"), null, new Location(LocationType.ADDRESS, 0, 47994243, 11338543, null,
-				"Starnberg, Possenhofener Straße 13"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				"Starnberg, Possenhofener Straße 13"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 
 		if (!result.context.canQueryLater())
@@ -142,7 +155,7 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	public void connectionsTooClose() throws Exception
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 8010205, null, "Leipzig Hbf"), null, new Location(
-				LocationType.STATION, 8010205, null, "Leipzig Hbf"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				LocationType.STATION, 8010205, null, "Leipzig Hbf"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 
 		Assert.assertEquals(QueryConnectionsResult.Status.TOO_CLOSE, result.status);
@@ -152,7 +165,7 @@ public class BahnProviderLiveTest extends AbstractProviderLiveTest
 	public void connectionsInvalidDate() throws Exception
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 8011160, null, "Berlin Hbf"), null, new Location(
-				LocationType.STATION, 8010205, null, "Leipzig Hbf"), new Date(0), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				LocationType.STATION, 8010205, null, "Leipzig Hbf"), new Date(0), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 
 		Assert.assertEquals(QueryConnectionsResult.Status.INVALID_DATE, result.status);

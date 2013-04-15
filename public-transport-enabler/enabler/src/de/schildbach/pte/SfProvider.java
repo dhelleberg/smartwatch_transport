@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public class SfProvider extends AbstractEfaProvider
 
 	public SfProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 
 		setUseRouteIndexAsConnectionId(false);
 	}
@@ -68,7 +68,8 @@ public class SfProvider extends AbstractEfaProvider
 	}
 
 	@Override
-	protected String parseLine(final String mot, final String name, final String longName, final String noTrainName)
+	protected String parseLine(final String mot, final String symbol, final String name, final String longName, final String trainType,
+			final String trainNum, final String trainName)
 	{
 		if ("NORTHBOUND".equals(name))
 			return "?" + name;
@@ -79,7 +80,7 @@ public class SfProvider extends AbstractEfaProvider
 		else if ("WESTBOUND".equals(name))
 			return "?" + name;
 		else
-			return super.parseLine(mot, name, longName, noTrainName);
+			return super.parseLine(mot, symbol, name, longName, trainType, trainNum, trainName);
 	}
 
 	private static final Map<String, Style> LINES = new HashMap<String, Style>();

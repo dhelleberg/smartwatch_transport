@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,14 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.util.ParserUtils;
 
@@ -54,30 +57,30 @@ public class SncbProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // Hochgeschwindigkeitszug
 			productBits.setCharAt(2, '1'); // IC/IR/P/ICT
 		}
-		else if (product == 'R' || product == 'S')
+		else if (product == Product.REGIONAL_TRAIN || product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(6, '1'); // Zug
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(8, '1'); // Metro
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(10, '1'); // Stadtbahn
 		}
-		else if (product == 'B' || product == 'P')
+		else if (product == Product.BUS || product == Product.ON_DEMAND)
 		{
 			productBits.setCharAt(9, '1'); // Bus
 		}
-		else if (product == 'F' || product == 'C')
+		else if (product == Product.FERRY || product == Product.CABLECAR)
 		{
 		}
 		else
@@ -136,9 +139,15 @@ public class SncbProvider extends AbstractHafasProvider
 
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
 
 		return jsonGetStops(uri);
+	}
+
+	@Override
+	public Collection<Product> defaultProducts()
+	{
+		return Product.ALL;
 	}
 
 	@Override

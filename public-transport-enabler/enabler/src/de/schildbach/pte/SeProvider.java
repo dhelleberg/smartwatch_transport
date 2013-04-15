@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +28,7 @@ import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.util.ParserUtils;
 
@@ -86,42 +89,42 @@ public class SeProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // Flyg
 			productBits.setCharAt(1, '1'); // Snabbtåg
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(2, '1'); // Tåg
 			productBits.setCharAt(4, '1'); // Lokaltåg
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(5, '1'); // Tunnelbana
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(6, '1'); // Spårvagn
 		}
-		else if (product == 'B')
+		else if (product == Product.BUS)
 		{
 			productBits.setCharAt(3, '1'); // Expressbuss
 			productBits.setCharAt(7, '1'); // Buss
 		}
-		else if (product == 'P')
+		else if (product == Product.ON_DEMAND)
 		{
 		}
-		else if (product == 'F')
+		else if (product == Product.FERRY)
 		{
 			productBits.setCharAt(8, '1'); // Båt
 		}
-		else if (product == 'C')
+		else if (product == Product.CABLECAR)
 		{
 		}
 		else
@@ -194,9 +197,15 @@ public class SeProvider extends AbstractHafasProvider
 
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
 
 		return jsonGetStops(uri);
+	}
+
+	@Override
+	public Collection<Product> defaultProducts()
+	{
+		return Product.ALL;
 	}
 
 	private static final Pattern P_NORMALIZE_LINE_BUS = Pattern.compile("Buss\\s*(.*)");
@@ -207,12 +216,12 @@ public class SeProvider extends AbstractHafasProvider
 	{
 		final Matcher mBus = P_NORMALIZE_LINE_BUS.matcher(line);
 		if (mBus.matches())
-			return newLine('B', mBus.group(1));
+			return newLine('B', mBus.group(1), null);
 
 		final Matcher mSubway = P_NORMALIZE_LINE_SUBWAY.matcher(line);
 		if (mSubway.matches())
-			return newLine('U', "T" + mSubway.group(1));
+			return newLine('U', "T" + mSubway.group(1), null);
 
-		return newLine('?', line);
+		return newLine('?', line, null);
 	}
 }

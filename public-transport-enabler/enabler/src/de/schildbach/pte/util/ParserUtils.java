@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
+import de.schildbach.pte.exception.BlockedException;
 import de.schildbach.pte.exception.UnexpectedRedirectException;
 
 /**
@@ -46,14 +47,14 @@ import de.schildbach.pte.exception.UnexpectedRedirectException;
  */
 public final class ParserUtils
 {
-	private static final String SCRAPE_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20100101 Firefox/13.0";
+	private static final String SCRAPE_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0";
 	private static final String SCRAPE_ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 	private static final int SCRAPE_INITIAL_CAPACITY = 4096;
 	private static final int SCRAPE_CONNECT_TIMEOUT = 5000;
 	private static final int SCRAPE_READ_TIMEOUT = 15000;
 	private static final Charset SCRAPE_DEFAULT_ENCODING = Charset.forName("ISO-8859-1");
 	private static final int SCRAPE_PAGE_EMPTY_THRESHOLD = 2;
-	private static final Pattern P_REFRESH = Pattern.compile("<META\\s+http-equiv=\"refresh\"\\s+content=\"\\d+;\\s*URL=([^\"]+)\"\\s*/>",
+	private static final Pattern P_REFRESH = Pattern.compile("<META\\s+http-equiv=\"refresh\"\\s+content=\"\\d+;\\s*URL=([^\"]+)\"",
 			Pattern.CASE_INSENSITIVE);
 
 	private static String stateCookie;
@@ -191,6 +192,11 @@ public final class ParserUtils
 							throw new IOException(message + ": " + url);
 					}
 				}
+				else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN || responseCode == HttpURLConnection.HTTP_BAD_REQUEST
+						|| responseCode == HttpURLConnection.HTTP_NOT_ACCEPTABLE)
+				{
+					throw new BlockedException(url);
+				}
 				else
 				{
 					final String message = "got response: " + responseCode + " " + connection.getResponseMessage();
@@ -244,6 +250,7 @@ public final class ParserUtils
 			connection.setConnectTimeout(SCRAPE_CONNECT_TIMEOUT);
 			connection.setReadTimeout(SCRAPE_READ_TIMEOUT);
 			connection.addRequestProperty("User-Agent", SCRAPE_USER_AGENT);
+			connection.addRequestProperty("Accept", SCRAPE_ACCEPT);
 			connection.addRequestProperty("Accept-Encoding", "gzip");
 			// workaround to disable Vodafone compression
 			connection.addRequestProperty("Cache-Control", "no-cache");
@@ -335,6 +342,11 @@ public final class ParserUtils
 					// uncompressed
 					return is;
 				}
+			}
+			else if (responseCode == HttpURLConnection.HTTP_FORBIDDEN || responseCode == HttpURLConnection.HTTP_BAD_REQUEST
+					|| responseCode == HttpURLConnection.HTTP_NOT_ACCEPTABLE)
+			{
+				throw new BlockedException(url);
 			}
 			else
 			{
@@ -574,6 +586,15 @@ public final class ParserUtils
 		}
 
 		return selected;
+	}
+
+	public static String firstNotEmpty(final String... strings)
+	{
+		for (final String str : strings)
+			if (str != null && str.length() > 0)
+				return str;
+
+		return null;
 	}
 
 	public static final String P_PLATFORM = "[\\wÄÖÜäöüßáàâéèêíìîóòôúùû\\. -/&#;]+?";

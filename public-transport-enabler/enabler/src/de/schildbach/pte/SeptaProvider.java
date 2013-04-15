@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +33,7 @@ import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.QueryDeparturesResult.Status;
 import de.schildbach.pte.dto.ResultHeader;
@@ -74,28 +76,28 @@ public class SeptaProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 		}
-		else if (product == 'R' || product == 'S')
+		else if (product == Product.REGIONAL_TRAIN || product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(3, '1'); // Regional Rail
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(0, '1'); // Subway
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(1, '1'); // Trolley
 		}
-		else if (product == 'B')
+		else if (product == Product.BUS)
 		{
 			productBits.setCharAt(2, '1'); // Bus
 		}
-		else if (product == 'P' || product == 'F' || product == 'C')
+		else if (product == Product.ON_DEMAND || product == Product.FERRY || product == Product.CABLECAR)
 		{
 		}
 		else
@@ -142,11 +144,11 @@ public class SeptaProvider extends AbstractHafasProvider
 		uri.append(API_BASE).append("stboard.exe/en");
 		uri.append("?input=").append(stationId);
 		uri.append("&boardType=dep");
-		uri.append("&time=").append(
-				ParserUtils.urlEncode(String.format("%02d:%02d %s", now.get(Calendar.HOUR), now.get(Calendar.MINUTE),
-						now.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm")));
-		uri.append("&date=").append(
-				String.format("%02d%02d%04d", now.get(Calendar.MONTH) + 1, now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.YEAR)));
+		uri.append("&time=");
+		uri.append(ParserUtils.urlEncode(String.format(Locale.ENGLISH, "%02d:%02d %s", now.get(Calendar.HOUR), now.get(Calendar.MINUTE),
+				now.get(Calendar.AM_PM) == Calendar.AM ? "am" : "pm")));
+		uri.append("&date=");
+		uri.append(String.format(Locale.ENGLISH, "%02d%02d%04d", now.get(Calendar.MONTH) + 1, now.get(Calendar.DAY_OF_MONTH), now.get(Calendar.YEAR)));
 		uri.append("&productsFilter=").append(allProductsString());
 		if (maxDepartures != 0)
 			uri.append("&maxJourneys=").append(maxDepartures);
@@ -292,7 +294,7 @@ public class SeptaProvider extends AbstractHafasProvider
 
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
 
 		return jsonGetStops(uri);
 	}

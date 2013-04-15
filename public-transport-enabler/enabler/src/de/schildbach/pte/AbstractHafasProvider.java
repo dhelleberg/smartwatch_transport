@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -55,6 +56,7 @@ import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Point;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsContext;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
@@ -178,7 +180,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		return 0;
 	}
 
-	protected abstract void setProductBits(StringBuilder productBits, char product);
+	protected abstract void setProductBits(StringBuilder productBits, Product product);
 
 	private static final Pattern P_SPLIT_ADDRESS = Pattern.compile("(\\d{4,5}\\s+[^,]+),\\s+(.*)");
 
@@ -719,9 +721,9 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 						// could check for type consistency here
 						final String lineName = prodLine.label.substring(1);
 						if (prodLine.attrs != null)
-							line = newLine(classChar, lineName, prodLine.attrs.toArray(new Line.Attr[0]));
+							line = newLine(classChar, lineName, null, prodLine.attrs.toArray(new Line.Attr[0]));
 						else
-							line = newLine(classChar, lineName);
+							line = newLine(classChar, lineName, null);
 
 					}
 					else
@@ -789,8 +791,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	}
 
 	public QueryConnectionsResult queryConnections(final Location from, final Location via, final Location to, final Date date, final boolean dep,
-			final int numConnections, final String products, final WalkSpeed walkSpeed, final Accessibility accessibility, final Set<Option> options)
-			throws IOException
+			final int numConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final Set<Option> options) throws IOException
 	{
 		return queryConnectionsXml(from, via, to, date, dep, numConnections, products, walkSpeed, accessibility, options);
 	}
@@ -802,7 +804,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	}
 
 	protected final void appendConnectionsQueryUri(final StringBuilder uri, final Location from, final Location via, final Location to,
-			final Date date, final boolean dep, final String products, final Accessibility accessibility, final Set<Option> options)
+			final Date date, final boolean dep, final Collection<Product> products, final Accessibility accessibility, final Set<Option> options)
 	{
 		uri.append("?start=Suchen");
 
@@ -839,16 +841,18 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 
 		final Calendar c = new GregorianCalendar(timeZone());
 		c.setTime(date);
-		uri.append("&REQ0JourneyDate=").append(
-				String.format("%02d.%02d.%02d", c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR) - 2000));
-		uri.append("&REQ0JourneyTime=").append(String.format("%02d:%02d", c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)));
+		uri.append("&REQ0JourneyDate=");
+		uri.append(String.format(Locale.ENGLISH, "%02d.%02d.%02d", c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.MONTH) + 1,
+				c.get(Calendar.YEAR) - 2000));
+		uri.append("&REQ0JourneyTime=");
+		uri.append(String.format(Locale.ENGLISH, "%02d:%02d", c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)));
 
 		final StringBuilder productsStr = new StringBuilder(numProductBits);
 		if (products != null)
 		{
 			for (int i = 0; i < numProductBits; i++)
 				productsStr.append('0');
-			for (final char p : products.toCharArray())
+			for (final Product p : products)
 				setProductBits(productsStr, p);
 		}
 		else
@@ -870,8 +874,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	}
 
 	protected final QueryConnectionsResult queryConnectionsXml(Location from, Location via, Location to, final Date date, final boolean dep,
-			final int numConnections, final String products, final WalkSpeed walkSpeed, final Accessibility accessibility, final Set<Option> options)
-			throws IOException
+			final int numConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final Set<Option> options) throws IOException
 	{
 		final ResultHeader header = new ResultHeader(SERVER_PRODUCT);
 
@@ -913,7 +917,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		{
 			for (int i = 0; i < numProductBits; i++)
 				productsStr.append('0');
-			for (final char p : products.toCharArray())
+			for (final Product p : products)
 				setProductBits(productsStr, p);
 		}
 		else
@@ -931,14 +935,18 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		if (via != null)
 		{
 			request.append("<Via>").append(locationXml(via));
-			request.append("<Prod prod=\"").append(productsStr).append("\" bike=\"").append(bikeChar)
-					.append("\" couchette=\"0\" direct=\"0\" sleeper=\"0\"/>");
+			if (via.type != LocationType.ADDRESS)
+				request.append("<Prod prod=\"").append(productsStr).append("\" bike=\"").append(bikeChar)
+						.append("\" couchette=\"0\" direct=\"0\" sleeper=\"0\"/>");
 			request.append("</Via>");
 		}
 		request.append("<Dest>").append(locationXml(to)).append("</Dest>");
-		request.append("<ReqT a=\"").append(dep ? 0 : 1).append("\" date=\"")
-				.append(String.format("%04d.%02d.%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH)))
-				.append("\" time=\"").append(String.format("%02d:%02d", c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)) + "\"/>");
+		request.append("<ReqT a=\"")
+				.append(dep ? 0 : 1)
+				.append("\" date=\"")
+				.append(String.format(Locale.ENGLISH, "%04d.%02d.%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH)))
+				.append("\" time=\"")
+				.append(String.format(Locale.ENGLISH, "%02d:%02d", c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)) + "\"/>");
 		request.append("<RFlags");
 		// number of connections backwards
 		request.append(" b=\"").append(0).append("\"");
@@ -970,7 +978,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 			final Location via, final Location to) throws IOException
 	{
 		// System.out.println(request);
-		// ParserUtils.printXml(ParserUtils.scrape(apiUri, true, wrap(request), null, null));
+		// ParserUtils.printXml(ParserUtils.scrape(apiUri, wrap(request, null), null, null));
 
 		Reader reader = null;
 
@@ -1056,7 +1064,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 				XmlPullUtil.enter(pp, "BasicStop");
 				while (pp.getName().equals("StAttrList"))
 					XmlPullUtil.next(pp);
-				final Location departure = parseLocation(pp);
+				final Location departureLocation = parseLocation(pp);
 				XmlPullUtil.enter(pp, "Dep");
 				XmlPullUtil.exit(pp, "Dep");
 				final int[] capacity;
@@ -1093,7 +1101,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 				XmlPullUtil.enter(pp, "BasicStop");
 				while (pp.getName().equals("StAttrList"))
 					XmlPullUtil.next(pp);
-				final Location arrival = parseLocation(pp);
+				final Location arrivalLocation = parseLocation(pp);
 				XmlPullUtil.exit(pp, "BasicStop");
 				XmlPullUtil.exit(pp, "Arrival");
 
@@ -1117,7 +1125,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 					XmlPullUtil.enter(pp, "BasicStop");
 					while (pp.getName().equals("StAttrList"))
 						XmlPullUtil.next(pp);
-					final Location sectionDeparture = parseLocation(pp);
+					final Location sectionDepartureLocation = parseLocation(pp);
 					XmlPullUtil.enter(pp, "Dep");
 					XmlPullUtil.require(pp, "Time");
 					time.setTimeInMillis(currentDate.getTimeInMillis());
@@ -1191,7 +1199,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 								while (XmlPullUtil.test(pp, "StAttrList"))
 									XmlPullUtil.next(pp);
 								final Location location = parseLocation(pp);
-								if (location.id != sectionDeparture.id)
+								if (location.id != sectionDepartureLocation.id)
 								{
 									Date stopArrivalTime = null;
 									Date stopDepartureTime = null;
@@ -1277,7 +1285,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 					XmlPullUtil.enter(pp, "BasicStop");
 					while (pp.getName().equals("StAttrList"))
 						XmlPullUtil.next(pp);
-					final Location sectionArrival = parseLocation(pp);
+					final Location sectionArrivalLocation = parseLocation(pp);
 					XmlPullUtil.enter(pp, "Arr");
 					XmlPullUtil.require(pp, "Time");
 					time.setTimeInMillis(currentDate.getTimeInMillis());
@@ -1292,26 +1300,28 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 					// remove last intermediate
 					final int size = intermediateStops != null ? intermediateStops.size() : 0;
 					if (size >= 1)
-						if (intermediateStops.get(size - 1).location.id == sectionArrival.id)
+						if (intermediateStops.get(size - 1).location.id == sectionArrivalLocation.id)
 							intermediateStops.remove(size - 1);
 
 					XmlPullUtil.exit(pp, "ConSection");
 
 					if (min == 0 || line != null)
 					{
-						parts.add(new Connection.Trip(line, destination, departureTime, null, departurePos, null, sectionDeparture, arrivalTime,
-								null, arrivalPos, null, sectionArrival, intermediateStops, path, null));
+						final Stop departure = new Stop(sectionDepartureLocation, true, departureTime, null, departurePos, null);
+						final Stop arrival = new Stop(sectionArrivalLocation, false, arrivalTime, null, arrivalPos, null);
+
+						parts.add(new Connection.Trip(line, destination, departure, arrival, intermediateStops, path, null));
 					}
 					else
 					{
 						if (parts.size() > 0 && parts.get(parts.size() - 1) instanceof Connection.Footway)
 						{
 							final Connection.Footway lastFootway = (Connection.Footway) parts.remove(parts.size() - 1);
-							parts.add(new Connection.Footway(lastFootway.min + min, 0, false, lastFootway.departure, sectionArrival, null));
+							parts.add(new Connection.Footway(lastFootway.min + min, 0, false, lastFootway.departure, sectionArrivalLocation, null));
 						}
 						else
 						{
-							parts.add(new Connection.Footway(min, 0, false, sectionDeparture, sectionArrival, null));
+							parts.add(new Connection.Footway(min, 0, false, sectionDepartureLocation, sectionArrivalLocation, null));
 						}
 					}
 				}
@@ -1320,7 +1330,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 
 				XmlPullUtil.exit(pp, "Connection");
 
-				connections.add(new Connection(id, departure, arrival, parts, null, capacity, numTransfers));
+				connections.add(new Connection(id, departureLocation, arrivalLocation, parts, null, capacity, numTransfers));
 			}
 
 			XmlPullUtil.exit(pp);
@@ -1479,7 +1489,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	}
 
 	protected final QueryConnectionsResult queryConnectionsBinary(Location from, Location via, Location to, final Date date, final boolean dep,
-			final int maxNumConnections, final String products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final int maxNumConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
 			final Set<Option> options) throws IOException
 	{
 		final ResultHeader header = new ResultHeader(SERVER_PRODUCT);
@@ -1740,10 +1750,10 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 						is.skipBytes(0x4a + partsOffset + iPart * 20);
 
 						final long plannedDepartureTime = time(is, resDate, connectionDayOffset);
-						final Location departure = stations.read(is);
+						final Location departureLocation = stations.read(is);
 
 						final long plannedArrivalTime = time(is, resDate, connectionDayOffset);
-						final Location arrival = stations.read(is);
+						final Location arrivalLocation = stations.read(is);
 
 						final int type = is.readShortReverse();
 
@@ -1755,12 +1765,23 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 						final int partAttrIndex = is.readShortReverse();
 
 						final List<Line.Attr> lineAttrs = new ArrayList<Line.Attr>();
+						String lineComment = null;
+						boolean lineOnDemand = false;
 						for (final String comment : comments.read(is))
 						{
 							if (comment.startsWith("bf "))
+							{
 								lineAttrs.add(Line.Attr.WHEEL_CHAIR_ACCESS);
+							}
 							else if (comment.startsWith("FA ") || comment.startsWith("FB ") || comment.startsWith("FR "))
+							{
 								lineAttrs.add(Line.Attr.BICYCLE_CARRIAGE);
+							}
+							else if (comment.startsWith("$R "))
+							{
+								lineOnDemand = true;
+								lineComment = comment.substring(5);
+							}
 						}
 
 						is.reset();
@@ -1862,29 +1883,34 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 							{
 								final Connection.Footway lastFootway = (Connection.Footway) parts.remove(parts.size() - 1);
 								part = new Connection.Footway(lastFootway.min + min, 0, lastFootway.transfer || transfer, lastFootway.departure,
-										arrival, null);
+										arrivalLocation, null);
 							}
 							else
 							{
-								part = new Connection.Footway(min, 0, transfer, departure, arrival, null);
+								part = new Connection.Footway(min, 0, transfer, departureLocation, arrivalLocation, null);
 							}
 						}
 						else if (type == 2)
 						{
 							final char lineProduct;
-							if (lineClass != 0)
+							if (lineOnDemand)
+								lineProduct = Product.ON_DEMAND.code;
+							else if (lineClass != 0)
 								lineProduct = intToProduct(lineClass);
 							else
 								lineProduct = normalizeType(lineCategory);
 
-							final Line line = newLine(lineProduct, normalizeLineName(lineName), lineAttrs.toArray(new Line.Attr[0]));
+							final Line line = newLine(lineProduct, normalizeLineName(lineName), lineComment, lineAttrs.toArray(new Line.Attr[0]));
 							final Location direction = directionStr != null ? new Location(LocationType.ANY, 0, null, directionStr) : null;
 
-							part = new Connection.Trip(line, direction, plannedDepartureTime != 0 ? new Date(plannedDepartureTime) : null,
-									predictedDepartureTime != 0 ? new Date(predictedDepartureTime) : null, plannedDeparturePosition,
-									predictedDeparturePosition, departure, plannedArrivalTime != 0 ? new Date(plannedArrivalTime) : null,
+							final Stop departure = new Stop(departureLocation, true, plannedDepartureTime != 0 ? new Date(plannedDepartureTime)
+									: null, predictedDepartureTime != 0 ? new Date(predictedDepartureTime) : null, plannedDeparturePosition,
+									predictedDeparturePosition);
+							final Stop arrival = new Stop(arrivalLocation, false, plannedArrivalTime != 0 ? new Date(plannedArrivalTime) : null,
 									predictedArrivalTime != 0 ? new Date(predictedArrivalTime) : null, plannedArrivalPosition,
-									predictedArrivalPosition, arrival, intermediateStops, null, null);
+									predictedArrivalPosition);
+
+							part = new Connection.Trip(line, direction, departure, arrival, intermediateStops, null, null);
 						}
 						else
 						{
@@ -1918,6 +1944,12 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 			else if (errorCode == 891)
 				// H891: Unfortunately there was no route found. Missing timetable data could be the reason.
 				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.NO_CONNECTIONS);
+			else if (errorCode == 892)
+				// H892: Your inquiry was too complex. Please try entering less intermediate stations.
+				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.NO_CONNECTIONS);
+			else if (errorCode == 899)
+				// H899: there was an unsuccessful or incomplete search due to a timetable change.
+				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.NO_CONNECTIONS);
 			else if (errorCode == 9220)
 				// H9220: Nearby to the given address stations could not be found.
 				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.UNRESOLVABLE_ADDRESS);
@@ -1926,6 +1958,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 				// or with the selected means of transport on the required date/time.
 				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.NO_CONNECTIONS);
 			else if (errorCode == 9360)
+				// H9360: Unfortunately your connection request can currently not be processed.
 				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.INVALID_DATE);
 			else if (errorCode == 9380)
 				return new QueryConnectionsResult(header, QueryConnectionsResult.Status.TOO_CLOSE); // H9380
@@ -2383,6 +2416,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 			return 'I';
 		if ("FYR".equals(ucType)) // Fyra, Amsterdam-Schiphol-Rotterdam
 			return 'I';
+		if ("FYRA".equals(ucType)) // Fyra, Amsterdam-Schiphol-Rotterdam
+			return 'I';
 		if ("SC".equals(ucType)) // SuperCity, Tschechien
 			return 'I';
 		if ("LE".equals(ucType)) // LEO Express, Prag
@@ -2581,6 +2616,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 			return 'R';
 		if ("BKB".equals(ucType)) // Buckower Kleinbahn
 			return 'R';
+		if ("GEX".equals(ucType)) // Glacier Express
+			return 'R';
 
 		// if ("E".equals(normalizedType)) // Eilzug, stimmt wahrscheinlich nicht
 		// return "R" + normalizedName;
@@ -2739,22 +2776,22 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	private static final Pattern P_NORMALIZE_LINE_BUS = Pattern.compile("(?:Bus|BUS)\\s*(.*)");
 	private static final Pattern P_NORMALIZE_LINE_TRAM = Pattern.compile("(?:Tram|Str|STR)\\s*(.*)");
 
-	protected Line parseLine(final String type, final String line, final boolean wheelchairAccess)
+	protected Line parseLine(final String type, final String normalizedName, final boolean wheelchairAccess)
 	{
-		if (line != null)
+		if (normalizedName != null)
 		{
-			final Matcher mBus = P_NORMALIZE_LINE_BUS.matcher(line);
+			final Matcher mBus = P_NORMALIZE_LINE_BUS.matcher(normalizedName);
 			if (mBus.matches())
-				return newLine('B', mBus.group(1));
+				return newLine('B', mBus.group(1), null);
 
-			final Matcher mTram = P_NORMALIZE_LINE_TRAM.matcher(line);
+			final Matcher mTram = P_NORMALIZE_LINE_TRAM.matcher(normalizedName);
 			if (mTram.matches())
-				return newLine('T', mTram.group(1));
+				return newLine('T', mTram.group(1), null);
 		}
 
 		final char normalizedType = normalizeType(type);
 		if (normalizedType == 0)
-			throw new IllegalStateException("cannot normalize type '" + type + "' line '" + line + "'");
+			throw new IllegalStateException("cannot normalize type '" + type + "' line '" + normalizedName + "'");
 
 		final Line.Attr[] attrs;
 		if (wheelchairAccess)
@@ -2762,16 +2799,16 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		else
 			attrs = new Line.Attr[0];
 
-		if (line != null)
+		if (normalizedName != null)
 		{
-			final Matcher m = P_NORMALIZE_LINE.matcher(line);
-			final String strippedLine = m.matches() ? m.group(1) + m.group(2) : line;
+			final Matcher m = P_NORMALIZE_LINE.matcher(normalizedName);
+			final String strippedLine = m.matches() ? m.group(1) + m.group(2) : normalizedName;
 
-			return newLine(normalizedType, strippedLine, attrs);
+			return newLine(normalizedType, strippedLine, null, attrs);
 		}
 		else
 		{
-			return newLine(normalizedType, null, attrs);
+			return newLine(normalizedType, null, null, attrs);
 		}
 	}
 
@@ -2792,11 +2829,11 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 			if (type.length() == 0)
 			{
 				if (number.length() == 0)
-					return newLine('?', null);
+					return newLine('?', null, null);
 				if (P_NORMALIZE_LINE_NUMBER.matcher(number).matches())
-					return newLine('?', number);
+					return newLine('?', number, null);
 				if (P_LINE_RUSSIA.matcher(number).matches())
-					return newLine('R', number);
+					return newLine('R', number, null);
 			}
 			else
 			{
@@ -2807,17 +2844,17 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 					{
 						final Matcher mBus = P_NORMALIZE_LINE_BUS.matcher(number);
 						if (mBus.matches())
-							return newLine('B', mBus.group(1));
+							return newLine('B', mBus.group(1), null);
 					}
 
 					if (normalizedType == 'T')
 					{
 						final Matcher mTram = P_NORMALIZE_LINE_TRAM.matcher(number);
 						if (mTram.matches())
-							return newLine('T', mTram.group(1));
+							return newLine('T', mTram.group(1), null);
 					}
 
-					return newLine(normalizedType, number.replaceAll("\\s+", ""));
+					return newLine(normalizedType, number.replaceAll("\\s+", ""), null);
 				}
 			}
 
@@ -2827,20 +2864,20 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		throw new IllegalStateException("cannot normalize line#type '" + lineAndType + "'");
 	}
 
-	protected Line newLine(final char product, final String normalizedName, final Line.Attr... attrs)
+	protected Line newLine(final char product, final String normalizedName, final String comment, final Line.Attr... attrs)
 	{
 		final String lineStr = product + (normalizedName != null ? normalizedName : "?");
 
 		if (attrs.length == 0)
 		{
-			return new Line(null, lineStr, lineStyle(lineStr));
+			return new Line(null, lineStr, lineStyle(lineStr), comment);
 		}
 		else
 		{
 			final Set<Line.Attr> attrSet = new HashSet<Line.Attr>();
 			for (final Line.Attr attr : attrs)
 				attrSet.add(attr);
-			return new Line(null, lineStr, lineStyle(lineStr), attrSet);
+			return new Line(null, lineStr, lineStyle(lineStr), attrSet, comment);
 		}
 	}
 

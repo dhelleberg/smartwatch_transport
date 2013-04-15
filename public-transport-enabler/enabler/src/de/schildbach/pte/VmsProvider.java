@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@ import de.schildbach.pte.dto.LocationType;
 public class VmsProvider extends AbstractEfaProvider
 {
 	public static final NetworkId NETWORK_ID = NetworkId.VMS;
-	private static final String API_BASE = "http://www.vms-aktuell.de/vms/";
+	private static final String API_BASE = "http://www.vms.de/vms2/";
 
 	public VmsProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 	}
 
 	public NetworkId id()

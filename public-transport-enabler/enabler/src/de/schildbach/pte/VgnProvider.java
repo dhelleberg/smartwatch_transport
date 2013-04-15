@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,12 @@
 
 package de.schildbach.pte;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
 import de.schildbach.pte.dto.Location;
+import de.schildbach.pte.dto.Product;
 
 /**
  * @author Andreas Schildbach
@@ -33,7 +35,7 @@ public class VgnProvider extends AbstractEfaProvider
 
 	public VgnProvider(final String apiBase)
 	{
-		super(apiBase, DEPARTURE_MONITOR_ENDPOINT, TRIP_ENDPOINT, null, null, null, false, false);
+		super(apiBase, DEPARTURE_MONITOR_ENDPOINT, TRIP_ENDPOINT, null, null);
 	}
 
 	public NetworkId id()
@@ -51,10 +53,11 @@ public class VgnProvider extends AbstractEfaProvider
 	}
 
 	@Override
-	protected String xsltTripRequest2Uri(final Location from, final Location via, final Location to, final Date date, final boolean dep,
-			final int numConnections, final String products, final WalkSpeed walkSpeed, final Accessibility accessibility, final Set<Option> options)
+	protected String xsltTripRequestParameters(final Location from, final Location via, final Location to, final Date date, final boolean dep,
+			final int numConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final Set<Option> options)
 	{
-		return super.xsltTripRequest2Uri(from, via, to, date, dep, numConnections, products, walkSpeed, accessibility, options)
+		return super.xsltTripRequestParameters(from, via, to, date, dep, numConnections, products, walkSpeed, accessibility, options)
 				+ "&itdLPxx_showTariffLevel=1";
 	}
 }

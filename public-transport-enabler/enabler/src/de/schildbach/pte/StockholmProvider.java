@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ package de.schildbach.pte;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.util.ParserUtils;
 
@@ -76,39 +78,39 @@ public class StockholmProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(2, '1'); // Lokalbanor
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // Pendeltåg
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(1, '1'); // Tunnelbana
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 		}
-		else if (product == 'B')
+		else if (product == Product.BUS)
 		{
 			productBits.setCharAt(3, '1'); // Bussar
 			productBits.setCharAt(4, '1'); // Flygbussar
 		}
-		else if (product == 'P')
+		else if (product == Product.ON_DEMAND)
 		{
 		}
-		else if (product == 'F')
+		else if (product == Product.FERRY)
 		{
 			productBits.setCharAt(6, '1'); // Båt
 		}
-		else if (product == 'C')
+		else if (product == Product.CABLECAR)
 		{
 		}
 		else
@@ -181,7 +183,7 @@ public class StockholmProvider extends AbstractHafasProvider
 
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
 
 		return jsonGetStops(uri);
 	}
@@ -199,7 +201,7 @@ public class StockholmProvider extends AbstractHafasProvider
 			{
 				final char normalizedType = normalizeType(type);
 				if (normalizedType != 0)
-					return newLine(normalizedType, number);
+					return newLine(normalizedType, number, null);
 			}
 
 			throw new IllegalStateException("cannot normalize type " + type + " number " + number + " line#type " + lineAndType);

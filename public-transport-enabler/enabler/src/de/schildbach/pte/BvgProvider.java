@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,12 @@ package de.schildbach.pte;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -36,6 +38,7 @@ import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Point;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsContext;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
@@ -105,41 +108,41 @@ public final class BvgProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(5, '1');
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(6, '1');
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(0, '1');
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(1, '1');
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(2, '1');
 		}
-		else if (product == 'B')
+		else if (product == Product.BUS)
 		{
 			productBits.setCharAt(3, '1');
 		}
-		else if (product == 'P')
+		else if (product == Product.ON_DEMAND)
 		{
 			productBits.setCharAt(7, '1');
 		}
-		else if (product == 'F')
+		else if (product == Product.FERRY)
 		{
 			productBits.setCharAt(4, '1');
 		}
-		else if (product == 'C')
+		else if (product == Product.CABLECAR)
 		{
 		}
 		else
@@ -148,7 +151,7 @@ public final class BvgProvider extends AbstractHafasProvider
 		}
 	}
 
-	private static final Pattern P_SPLIT_NAME_PAREN = Pattern.compile("(.*?) \\((.{4,}?)\\)(?: \\((U|S|S\\+U)\\))?");
+	private static final Pattern P_SPLIT_NAME_PAREN = Pattern.compile("(.*?) +\\((.{4,}?)\\)(?: +\\((U|S|S\\+U)\\))?");
 	private static final Pattern P_SPLIT_NAME_COMMA = Pattern.compile("([^,]*), ([^,]*)");
 
 	@Override
@@ -350,7 +353,7 @@ public final class BvgProvider extends AbstractHafasProvider
 					{
 						final String lineName = ParserUtils.resolveEntities(mMsgsFine.group(1));
 						final char linePproduct = normalizeType(categoryFromName(lineName));
-						final Line line = newLine(linePproduct, normalizeLineName(lineName));
+						final Line line = newLine(linePproduct, normalizeLineName(lineName), null);
 
 						final String message = ParserUtils.resolveEntities(mMsgsFine.group(3)).replace('\n', ' ');
 						messages.put(line.label, message);
@@ -387,7 +390,7 @@ public final class BvgProvider extends AbstractHafasProvider
 
 						final String lineName = ParserUtils.resolveEntities(mDepFine.group(3));
 						final char lineProduct = normalizeType(categoryFromName(lineName));
-						final Line line = newLine(lineProduct, normalizeLineName(lineName));
+						final Line line = newLine(lineProduct, normalizeLineName(lineName), null);
 
 						final String position = null;
 
@@ -459,7 +462,7 @@ public final class BvgProvider extends AbstractHafasProvider
 
 						final String lineName = ParserUtils.resolveEntities(mDepFine.group(2));
 						final char lineProduct = normalizeType(categoryFromName(lineName));
-						final Line line = newLine(lineProduct, normalizeLineName(lineName));
+						final Line line = newLine(lineProduct, normalizeLineName(lineName), null);
 
 						final String position = ParserUtils.resolveEntities(mDepFine.group(3));
 
@@ -505,7 +508,7 @@ public final class BvgProvider extends AbstractHafasProvider
 
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
 
 		return jsonGetStops(uri);
 	}
@@ -526,7 +529,7 @@ public final class BvgProvider extends AbstractHafasProvider
 
 	@Override
 	public QueryConnectionsResult queryConnections(final Location from, final Location via, final Location to, final Date date, final boolean dep,
-			final int maxNumConnections, final String products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final int maxNumConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
 			final Set<Option> options) throws IOException
 	{
 		return queryConnectionsBinary(from, via, to, date, dep, maxNumConnections, products, walkSpeed, accessibility, options);
@@ -552,26 +555,26 @@ public final class BvgProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected Line newLine(final char product, final String normalizedName, final Attr... attrs)
+	protected Line newLine(final char product, final String normalizedName, final String comment, final Attr... attrs)
 	{
 		if (product == 'S' && "S41".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.CIRCLE_CLOCKWISE));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.CIRCLE_CLOCKWISE));
 		if (product == 'S' && "S42".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.CIRCLE_ANTICLOCKWISE));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.CIRCLE_ANTICLOCKWISE));
 
 		if (product == 'B' && "S41".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.SERVICE_REPLACEMENT, Attr.CIRCLE_CLOCKWISE));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.SERVICE_REPLACEMENT, Attr.CIRCLE_CLOCKWISE));
 		if (product == 'B' && "S42".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.SERVICE_REPLACEMENT, Attr.CIRCLE_ANTICLOCKWISE));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.SERVICE_REPLACEMENT, Attr.CIRCLE_ANTICLOCKWISE));
 
 		if (product == 'B' && "TXL".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.LINE_AIRPORT));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.LINE_AIRPORT));
 		if (product == 'S' && "S9".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.LINE_AIRPORT));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.LINE_AIRPORT));
 		if (product == 'S' && "S45".equals(normalizedName))
-			return super.newLine(product, normalizedName, concatAttrs(attrs, Attr.LINE_AIRPORT));
+			return super.newLine(product, normalizedName, comment, concatAttrs(attrs, Attr.LINE_AIRPORT));
 
-		return super.newLine(product, normalizedName, attrs);
+		return super.newLine(product, normalizedName, comment, attrs);
 	}
 
 	private Attr[] concatAttrs(final Attr[] attrs1, final Attr... attrs2)
@@ -741,5 +744,21 @@ public final class BvgProvider extends AbstractHafasProvider
 	public Point[] getArea()
 	{
 		return Berlin.BOUNDARY;
+	}
+
+	public static int migrateStationIdReverse(final int stationId)
+	{
+		if (stationId < 100000000 || stationId >= 1000000000)
+			return stationId;
+
+		final int low = stationId % 100000;
+		final int middle = (stationId % 100000000) - low;
+
+		if (middle != 1000000)
+			return stationId;
+
+		final int high = stationId - (stationId % 100000000);
+
+		return high / 1000 + low;
 	}
 }

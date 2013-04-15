@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.Style;
 import de.schildbach.pte.dto.Style.Shape;
@@ -86,38 +87,38 @@ public class ZvvProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // ICE/EN/CNL/CIS/ES/MET/NZ/PEN/TGV/THA/X2
 			productBits.setCharAt(1, '1'); // EuroCity/InterCity/InterCityNight/SuperCity
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(2, '1'); // InterRegio
 			productBits.setCharAt(3, '1'); // Schnellzug/RegioExpress
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(5, '1'); // S-Bahn/StadtExpress/Eilzug/Regionalzug
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(9, '1'); // Tram
 		}
-		else if (product == 'B' || product == 'P')
+		else if (product == Product.BUS || product == Product.ON_DEMAND)
 		{
 			productBits.setCharAt(6, '1'); // Postauto/Bus
 		}
-		else if (product == 'F')
+		else if (product == Product.FERRY)
 		{
 			productBits.setCharAt(4, '1'); // Schiff/Fähre/Dampfschiff
 		}
-		else if (product == 'C')
+		else if (product == Product.CABLECAR)
 		{
 			productBits.setCharAt(7, '1'); // Luftseilbahn/Standseilbahn/Bergbahn
 		}
@@ -222,23 +223,23 @@ public class ZvvProvider extends AbstractHafasProvider
 			final String type = m.group(2);
 
 			if ("Bus".equals(type))
-				return newLine('B', stripPrefix(number, "Bus"));
+				return newLine('B', stripPrefix(number, "Bus"), null);
 			if ("Bus-NF".equals(type))
-				return newLine('B', stripPrefix(number, "Bus", "Bus-NF"), Line.Attr.WHEEL_CHAIR_ACCESS);
+				return newLine('B', stripPrefix(number, "Bus", "Bus-NF"), null, Line.Attr.WHEEL_CHAIR_ACCESS);
 			if ("Tro".equals(type) || "Trolley".equals(type))
-				return newLine('B', stripPrefix(number, "Tro"));
+				return newLine('B', stripPrefix(number, "Tro"), null);
 			if ("Tro-NF".equals(type))
-				return newLine('B', stripPrefix(number, "Tro", "Tro-NF"), Line.Attr.WHEEL_CHAIR_ACCESS);
+				return newLine('B', stripPrefix(number, "Tro", "Tro-NF"), null, Line.Attr.WHEEL_CHAIR_ACCESS);
 			if ("Trm".equals(type))
-				return newLine('T', stripPrefix(number, "Trm"));
+				return newLine('T', stripPrefix(number, "Trm"), null);
 			if ("Trm-NF".equals(type))
-				return newLine('T', stripPrefix(number, "Trm", "Trm-NF"), Line.Attr.WHEEL_CHAIR_ACCESS);
+				return newLine('T', stripPrefix(number, "Trm", "Trm-NF"), null, Line.Attr.WHEEL_CHAIR_ACCESS);
 
 			if (type.length() > 0)
 			{
 				final char normalizedType = normalizeType(type);
 				if (normalizedType != 0)
-					return newLine(normalizedType, number);
+					return newLine(normalizedType, number, null);
 			}
 
 			throw new IllegalStateException("cannot normalize type " + type + " number " + number + " line#type " + lineAndType);

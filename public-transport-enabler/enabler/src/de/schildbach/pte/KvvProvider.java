@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public class KvvProvider extends AbstractEfaProvider
 
 	public KvvProvider(final String apiBase)
 	{
-		super(apiBase, null);
+		super(apiBase);
 
 		setSuppressPositions(true);
 	}
@@ -62,13 +62,14 @@ public class KvvProvider extends AbstractEfaProvider
 	private static final Pattern P_LINE = Pattern.compile("(.*?)\\s+\\([\\w/]+\\)", Pattern.CASE_INSENSITIVE);
 
 	@Override
-	protected String parseLine(final String mot, final String name, final String longName, final String noTrainName)
+	protected String parseLine(final String mot, final String symbol, final String name, final String longName, final String trainType,
+			final String trainNum, final String trainName)
 	{
 		final Matcher m = P_LINE.matcher(name);
 		if (m.matches())
-			return super.parseLine(mot, m.group(1), longName, noTrainName);
+			return super.parseLine(mot, symbol, m.group(1), longName, trainType, trainNum, trainName);
 		else
-			return super.parseLine(mot, name, longName, noTrainName);
+			return super.parseLine(mot, symbol, name, longName, trainType, trainNum, trainName);
 		// TODO check for " (Ersatzverkehr)"
 	}
 

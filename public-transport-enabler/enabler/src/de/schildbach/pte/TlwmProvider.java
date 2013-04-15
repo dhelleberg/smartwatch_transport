@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 the original author or authors.
+ * Copyright 2012-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,10 @@
 
 package de.schildbach.pte;
 
+import java.util.Collection;
 import java.util.TimeZone;
+
+import de.schildbach.pte.dto.Product;
 
 /**
  * @author Andreas Schildbach
@@ -30,7 +33,7 @@ public class TlwmProvider extends AbstractEfaProvider
 
 	public TlwmProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 	}
 
 	public NetworkId id()
@@ -51,5 +54,11 @@ public class TlwmProvider extends AbstractEfaProvider
 				return true;
 
 		return false;
+	}
+
+	@Override
+	public Collection<Product> defaultProducts()
+	{
+		return Product.ALL;
 	}
 }

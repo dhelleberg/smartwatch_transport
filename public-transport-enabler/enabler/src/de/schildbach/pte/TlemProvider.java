@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,13 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.TimeZone;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
+import de.schildbach.pte.dto.Product;
 
 /**
  * @author Andreas Schildbach
@@ -31,10 +33,12 @@ public class TlemProvider extends AbstractEfaProvider
 {
 	public static final NetworkId NETWORK_ID = NetworkId.TLEM;
 	private final static String API_BASE = "http://www.travelineeastmidlands.co.uk/em/";
+	// http://www.travelinesoutheast.org.uk/se/
+	// http://www.travelineeastanglia.org.uk/ea/
 
 	public TlemProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 	}
 
 	public NetworkId id()
@@ -61,5 +65,11 @@ public class TlemProvider extends AbstractEfaProvider
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
 		return xmlStopfinderRequest(new Location(LocationType.ANY, 0, null, constraint.toString()));
+	}
+
+	@Override
+	public Collection<Product> defaultProducts()
+	{
+		return Product.ALL;
 	}
 }

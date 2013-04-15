@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ public final class Line implements Serializable, Comparable<Line>
 		this(id, label, style, attrs, null);
 	}
 
-	private Line(final String id, final String label, final Style style, final Set<Attr> attrs, final String message)
+	public Line(final String id, final String label, final Style style, final Set<Attr> attrs, final String message)
 	{
 		this.id = id;
 		this.label = label;

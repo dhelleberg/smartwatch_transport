@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,13 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.util.StringReplaceReader;
 
@@ -78,34 +80,34 @@ public class PlProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // Kolej dużych prędkości
 			productBits.setCharAt(1, '1'); // EC/IC/EIC/Ex
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(2, '1'); // TLK/IR/RE/D/Posp.
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(3, '1'); // Regio/Osobowe
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(6, '1'); // Metro
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(5, '1'); // Tramwaj
 		}
-		else if (product == 'B' || product == 'P')
+		else if (product == Product.BUS || product == Product.ON_DEMAND)
 		{
 			productBits.setCharAt(4, '1'); // Autobus
 		}
-		else if (product == 'F' || product == 'C')
+		else if (product == Product.FERRY || product == Product.CABLECAR)
 		{
 		}
 		else
@@ -195,6 +197,12 @@ public class PlProvider extends AbstractHafasProvider
 	}
 
 	@Override
+	public Collection<Product> defaultProducts()
+	{
+		return Product.ALL;
+	}
+
+	@Override
 	protected char normalizeType(final String type)
 	{
 		final String ucType = type.toUpperCase();
@@ -210,6 +218,8 @@ public class PlProvider extends AbstractHafasProvider
 		if ("E".equals(ucType))
 			return 'R';
 		if ("DB".equals(ucType))
+			return 'R';
+		if ("REG".equals(ucType))
 			return 'R';
 
 		if ("FRE".equals(ucType))

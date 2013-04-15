@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ import de.schildbach.pte.VgsProvider;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 
@@ -76,8 +77,9 @@ public class VgsProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void shortConnection() throws Exception
 	{
-		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 0, null, "Hauptwache"), null, new Location(
-				LocationType.STATION, 0, null, "Südbahnhof"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 10640, "Saarbrücken", "Hauptbahnhof"), null,
+				new Location(LocationType.STATION, 10700, "Saarbrücken", "Ostbahnhof"), new Date(), true, Product.ALL, WalkSpeed.NORMAL,
+				Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);

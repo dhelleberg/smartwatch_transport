@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ public class MvvProvider extends AbstractEfaProvider
 
 	public MvvProvider(final String apiBase)
 	{
-		super(apiBase, null, false);
+		super(apiBase);
 	}
 
 	public NetworkId id()
@@ -53,6 +53,28 @@ public class MvvProvider extends AbstractEfaProvider
 				return true;
 
 		return false;
+	}
+
+	@Override
+	protected String parseLine(final String mot, final String symbol, final String name, final String longName, final String trainType,
+			final String trainNum, final String trainName)
+	{
+		if ("0".equals(mot) && longName.equals("Hamburg-Köln-Express"))
+			return "I" + longName;
+
+		else if ("0".equals(mot) && longName.equals("Erfurter Bahn Express"))
+			return "R" + longName;
+		else if ("0".equals(mot) && longName.equals("VIAS GmbH"))
+			return "R" + longName;
+		else if ("0".equals(mot) && longName.equals("Vogtlandbahn"))
+			return "R" + longName;
+		else if ("0".equals(mot) && longName.equals("Süd-Thüringen-Bahn"))
+			return "R" + longName;
+		else if ("0".equals(mot) && longName.equals("erixx - Der Heidesprinter"))
+			return "R" + longName;
+
+		else
+			return super.parseLine(mot, symbol, name, longName, trainType, trainNum, trainName);
 	}
 
 	private static final Map<String, Style> LINES = new HashMap<String, Style>();

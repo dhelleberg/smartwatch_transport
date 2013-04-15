@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,22 @@
 
 package de.schildbach.pte;
 
-import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.TimeZone;
 
-import de.schildbach.pte.dto.Location;
-import de.schildbach.pte.dto.LocationType;
+import de.schildbach.pte.dto.Product;
 
 /**
  * @author Andreas Schildbach
  */
-public class TlseProvider extends AbstractEfaProvider
+public class TfiProvider extends AbstractEfaProvider
 {
-	public static final NetworkId NETWORK_ID = NetworkId.TLSE;
-	private final static String API_BASE = "http://www.travelinesoutheast.org.uk/se/";
+	public static final NetworkId NETWORK_ID = NetworkId.TFI;
+	private static final String API_BASE = "http://www.journeyplanner.transportforireland.ie/nta/"; // http://www.journeyplanner.transportforireland.ie/ultraLite/
 
-	public TlseProvider()
+	public TfiProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 	}
 
 	public NetworkId id()
@@ -58,8 +56,8 @@ public class TlseProvider extends AbstractEfaProvider
 	}
 
 	@Override
-	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
+	public Collection<Product> defaultProducts()
 	{
-		return xmlStopfinderRequest(new Location(LocationType.ANY, 0, null, constraint.toString()));
+		return Product.ALL;
 	}
 }

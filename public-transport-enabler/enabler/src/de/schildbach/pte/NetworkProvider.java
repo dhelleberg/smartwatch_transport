@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +26,7 @@ import java.util.Set;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Point;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsContext;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
@@ -107,6 +109,13 @@ public interface NetworkProvider
 	List<Location> autocompleteStations(CharSequence constraint) throws IOException;
 
 	/**
+	 * Typical products for a network
+	 * 
+	 * @return products
+	 */
+	Collection<Product> defaultProducts();
+
+	/**
 	 * Query connections, asking for any ambiguousnesses
 	 * 
 	 * @param from
@@ -132,8 +141,8 @@ public interface NetworkProvider
 	 * @return result object that can contain alternatives to clear up ambiguousnesses, or contains possible connections
 	 * @throws IOException
 	 */
-	QueryConnectionsResult queryConnections(Location from, Location via, Location to, Date date, boolean dep, int numConnections, String products,
-			WalkSpeed walkSpeed, Accessibility accessibility, Set<Option> options) throws IOException;
+	QueryConnectionsResult queryConnections(Location from, Location via, Location to, Date date, boolean dep, int numConnections,
+			Collection<Product> products, WalkSpeed walkSpeed, Accessibility accessibility, Set<Option> options) throws IOException;
 
 	/**
 	 * Query more connections (e.g. earlier or later)

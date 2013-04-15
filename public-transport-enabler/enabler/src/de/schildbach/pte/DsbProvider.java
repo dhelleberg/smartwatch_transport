@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,14 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.util.ParserUtils;
 
@@ -57,44 +60,44 @@ public class DsbProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // Intercity
 			productBits.setCharAt(1, '1'); // InterCityExpress
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(2, '1'); // Regionalzug
 			productBits.setCharAt(3, '1'); // sonstige Züge
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(4, '1'); // S-Bahn
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(10, '1'); // U-Bahn
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 		}
-		else if (product == 'B')
+		else if (product == Product.BUS)
 		{
 			productBits.setCharAt(5, '1'); // Bus
 			productBits.setCharAt(6, '1'); // ExpressBus
 			productBits.setCharAt(7, '1'); // Nachtbus
 		}
-		else if (product == 'P')
+		else if (product == Product.ON_DEMAND)
 		{
 			productBits.setCharAt(8, '1'); // Telebus/andere
 		}
-		else if (product == 'F')
+		else if (product == Product.FERRY)
 		{
 			productBits.setCharAt(9, '1'); // Schiff
 		}
-		else if (product == 'C')
+		else if (product == Product.CABLECAR)
 		{
 		}
 		else
@@ -109,7 +112,7 @@ public class DsbProvider extends AbstractHafasProvider
 	{
 		if (location.hasLocation())
 		{
-			final StringBuilder uri = new StringBuilder(String.format(NEARBY_STATIONS_BY_COORDINATE_URI, location.lon, location.lat));
+			final StringBuilder uri = new StringBuilder(String.format(Locale.ENGLISH, NEARBY_STATIONS_BY_COORDINATE_URI, location.lon, location.lat));
 			if (maxStations != 0)
 				uri.append("&maxNumber=").append(maxStations);
 			if (maxDistance != 0)
@@ -157,9 +160,15 @@ public class DsbProvider extends AbstractHafasProvider
 
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
 
 		return xmlLocationList(uri);
+	}
+
+	@Override
+	public Collection<Product> defaultProducts()
+	{
+		return Product.ALL;
 	}
 
 	@Override

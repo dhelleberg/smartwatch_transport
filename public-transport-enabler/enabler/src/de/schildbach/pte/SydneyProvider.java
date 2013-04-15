@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public class SydneyProvider extends AbstractEfaProvider
 
 	public SydneyProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 
 		setUseRouteIndexAsConnectionId(false);
 	}

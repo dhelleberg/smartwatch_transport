@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,9 @@ public class VrrProvider extends AbstractEfaProvider
 
 	public VrrProvider()
 	{
-		super(API_BASE, null, null, null, null, null, false, true);
+		super(API_BASE);
+
+		setNeedsSpEncId(true);
 	}
 
 	public NetworkId id()

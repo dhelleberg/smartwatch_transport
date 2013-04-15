@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public class TflProvider extends AbstractEfaProvider
 
 	public TflProvider()
 	{
-		super(API_BASE, null);
+		super(API_BASE);
 	}
 
 	public NetworkId id()
@@ -54,6 +54,77 @@ public class TflProvider extends AbstractEfaProvider
 				return true;
 
 		return false;
+	}
+
+	@Override
+	protected String parseLine(final String mot, final String symbol, final String name, final String longName, final String trainType,
+			final String trainNum, final String trainName)
+	{
+		if ("0".equals(mot))
+		{
+			if ("First Hull Trains".equals(trainName) || "=HT".equals(trainType))
+				return "IHT" + trainNum;
+
+			else if ("Southern".equals(trainName) || "=SN".equals(trainType))
+				return "RSN" + trainNum;
+			else if ("Southeastern".equals(trainName) || "=SE".equals(trainType))
+				return "RSE" + trainNum;
+			else if ("South West Trains".equals(trainName) || "=SW".equals(trainType))
+				return "RSW" + trainNum;
+			else if ("Greater Anglia".equals(trainName) || "=LE".equals(trainType))
+				return "RLE" + trainNum;
+			else if ("First Great Western".equals(trainName) || "=GW".equals(trainType))
+				return "RGW" + trainNum;
+			else if ("First Capital Connect".equals(trainName) || "=FC".equals(trainType))
+				return "RFC" + trainNum;
+			else if ("Northern Rail".equals(trainName) || "=NT".equals(trainType))
+				return "RNT" + trainNum;
+			else if ("Heathrow Connect".equals(trainName) || "=HC".equals(trainType))
+				return "RHC" + trainNum;
+			else if ("Heathrow Express".equals(trainName) || "=HX".equals(trainType))
+				return "RHX" + trainNum;
+			else if ("Gatwick Express".equals(trainName) || "=GX".equals(trainType))
+				return "RGX" + trainNum;
+			else if ("Merseyrail".equals(trainName) || "=ME".equals(trainType))
+				return "RME" + trainNum;
+			else if ("East Coast".equals(trainName) || "=GR".equals(trainType))
+				return "RGR" + trainNum;
+			else if ("Cross Country".equals(trainName) || "=XC".equals(trainType))
+				return "RXC" + trainNum;
+			else if ("East Midlands Trains".equals(trainName) || "=EM".equals(trainType))
+				return "REM" + trainNum;
+			else if ("Arriva Trains Wales".equals(trainName) || "=AW".equals(trainType))
+				return "RAW" + trainNum;
+			else if ("First TransPennine Express".equals(trainName) || "=TP".equals(trainType))
+				return "RTP" + trainNum;
+			else if ("ScotRail".equals(trainName) || "=SR".equals(trainType))
+				return "RSR" + trainNum;
+			else if ("London Midland".equals(trainName) || "=LM".equals(trainType))
+				return "RLM" + trainNum;
+			else if ("c2c".equals(trainName) || "=CC".equals(trainType))
+				return "RCC" + trainNum;
+			else if ("Grand Central".equals(trainName) || "=GC".equals(trainType))
+				return "RGC" + trainNum;
+			else if ("Virgin Trains".equals(trainName) || "=VT".equals(trainType))
+				return "RVT" + trainNum;
+			else if ("Island Line".equals(trainName) || "=IL".equals(trainType))
+				return "RIL" + trainNum;
+			else if ("Chiltern Railways".equals(trainName) || "=CH".equals(trainType))
+				return "RCH" + trainNum;
+
+			throw new IllegalStateException("cannot normalize mot='" + mot + "' symbol='" + symbol + "' name='" + name + "' long='" + longName
+					+ "' trainType='" + trainType + "' trainNum='" + trainNum + "' trainName='" + trainName + "'");
+		}
+		else if ("3".equals(mot))
+		{
+			if ("London Overground".equals(trainName) || "=LO".equals(trainType))
+				return "SLO" + (trainNum != null ? trainNum : "");
+
+			throw new IllegalStateException("cannot normalize mot='" + mot + "' symbol='" + symbol + "' name='" + name + "' long='" + longName
+					+ "' trainType='" + trainType + "' trainNum='" + trainNum + "' trainName='" + trainName + "'");
+		}
+
+		return super.parseLine(mot, symbol, name, longName, trainType, trainNum, trainName);
 	}
 
 	private static final Map<String, Style> LINES = new HashMap<String, Style>();

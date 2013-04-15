@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import de.schildbach.pte.VblProvider;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 
@@ -89,7 +90,7 @@ public class VblProviderLiveTest extends AbstractProviderLiveTest
 	{
 		final QueryConnectionsResult result = queryConnections(
 				new Location(LocationType.STATION, 119, 47050760, 8310252, "Luzern", "Luzern, Bahnhof"), null, new Location(LocationType.STATION,
-						118, 47048844, 8306433, "Luzern", "Kantonalbank"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+						118, 47048844, 8306433, "Luzern", "Kantonalbank"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		assertEquals(QueryConnectionsResult.Status.OK, result.status);
 		assertTrue(result.connections.size() > 0);

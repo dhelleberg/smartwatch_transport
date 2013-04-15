@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.QueryDeparturesResult.Status;
 import de.schildbach.pte.dto.ResultHeader;
@@ -43,8 +44,7 @@ import de.schildbach.pte.util.ParserUtils;
 public class ShProvider extends AbstractHafasProvider
 {
 	public static final NetworkId NETWORK_ID = NetworkId.SH;
-	private static final String API_BASE = "http://scout.hafas.de/bin/";
-	// http://nah.sh.hafas.de/bin/
+	private static final String API_BASE = "http://nah.sh.hafas.de/bin/";
 
 	private static final long PARSER_DAY_ROLLOVER_THRESHOLD_MS = 12 * 60 * 60 * 1000;
 
@@ -68,43 +68,43 @@ public class ShProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void setProductBits(final StringBuilder productBits, final char product)
+	protected void setProductBits(final StringBuilder productBits, final Product product)
 	{
-		if (product == 'I')
+		if (product == Product.HIGH_SPEED_TRAIN)
 		{
 			productBits.setCharAt(0, '1'); // Hochgeschwindigkeitszug
 			productBits.setCharAt(1, '1'); // IC/EC
 			productBits.setCharAt(2, '1'); // Fernverkehrszug
 		}
-		else if (product == 'R')
+		else if (product == Product.REGIONAL_TRAIN)
 		{
 			productBits.setCharAt(3, '1'); // Regionalverkehrszug
 		}
-		else if (product == 'S')
+		else if (product == Product.SUBURBAN_TRAIN)
 		{
 			productBits.setCharAt(4, '1'); // S-Bahn
 		}
-		else if (product == 'U')
+		else if (product == Product.SUBWAY)
 		{
 			productBits.setCharAt(7, '1'); // U-Bahn
 		}
-		else if (product == 'T')
+		else if (product == Product.TRAM)
 		{
 			productBits.setCharAt(8, '1'); // Stadtbahn
 		}
-		else if (product == 'B')
+		else if (product == Product.BUS)
 		{
 			productBits.setCharAt(5, '1'); // Bus
 		}
-		else if (product == 'P')
+		else if (product == Product.ON_DEMAND)
 		{
 			productBits.setCharAt(9, '1'); // Anruf-Sammel-Taxi
 		}
-		else if (product == 'F')
+		else if (product == Product.FERRY)
 		{
 			productBits.setCharAt(6, '1'); // Schiff
 		}
-		else if (product == 'C')
+		else if (product == Product.CABLECAR)
 		{
 		}
 		else

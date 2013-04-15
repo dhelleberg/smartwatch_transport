@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,27 +27,28 @@ import org.junit.Test;
 
 import de.schildbach.pte.NetworkProvider.Accessibility;
 import de.schildbach.pte.NetworkProvider.WalkSpeed;
-import de.schildbach.pte.TlseProvider;
+import de.schildbach.pte.TfiProvider;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 
 /**
  * @author Andreas Schildbach
  */
-public class TlseProviderLiveTest extends AbstractProviderLiveTest
+public class TfiProviderLiveTest extends AbstractProviderLiveTest
 {
-	public TlseProviderLiveTest()
+	public TfiProviderLiveTest()
 	{
-		super(new TlseProvider());
+		super(new TfiProvider());
 	}
 
 	@Test
 	public void nearbyStations() throws Exception
 	{
-		final NearbyStationsResult result = provider.queryNearbyStations(new Location(LocationType.STATION, 1001003), 0, 0);
+		final NearbyStationsResult result = provider.queryNearbyStations(new Location(LocationType.STATION, 51013670), 0, 0);
 
 		print(result);
 	}
@@ -55,7 +56,7 @@ public class TlseProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void nearbyStationsByCoordinate() throws Exception
 	{
-		final NearbyStationsResult result = provider.queryNearbyStations(new Location(LocationType.ADDRESS, 51507161, -0127144), 0, 0);
+		final NearbyStationsResult result = provider.queryNearbyStations(new Location(LocationType.ADDRESS, 53348656, -6262221), 0, 0);
 
 		print(result);
 	}
@@ -63,7 +64,7 @@ public class TlseProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void queryDepartures() throws Exception
 	{
-		final QueryDeparturesResult result = provider.queryDepartures(1001003, 0, false);
+		final QueryDeparturesResult result = provider.queryDepartures(51013670, 0, false);
 
 		print(result);
 	}
@@ -71,7 +72,7 @@ public class TlseProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void autocompleteIncomplete() throws Exception
 	{
-		final List<Location> autocompletes = provider.autocompleteStations("Kur");
+		final List<Location> autocompletes = provider.autocompleteStations("Lower O'Connell Street");
 
 		print(autocompletes);
 	}
@@ -79,9 +80,9 @@ public class TlseProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void shortConnection() throws Exception
 	{
-		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 1008730, null, "King & Queen Wharf"), null,
-				new Location(LocationType.STATION, 1006433, null, "Edinburgh Court"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL,
-				Accessibility.NEUTRAL);
+		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 51013670, "Dublin City South",
+				"O'Connell Bridge (on Lower O'Connell Street)"), null, new Location(LocationType.STATION, 52003679, "Dublin City South",
+				"Dublin (Baggot Street)"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		assertEquals(QueryConnectionsResult.Status.OK, result.status);
 		assertTrue(result.connections.size() > 0);

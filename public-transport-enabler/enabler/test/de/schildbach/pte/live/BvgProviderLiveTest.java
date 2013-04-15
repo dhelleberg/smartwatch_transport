@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 the original author or authors.
+ * Copyright 2010-2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import static junit.framework.Assert.assertEquals;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import de.schildbach.pte.BvgProvider;
@@ -30,6 +31,7 @@ import de.schildbach.pte.NetworkProvider.WalkSpeed;
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 
@@ -81,6 +83,26 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	}
 
 	@Test
+	public void autocompleteUmlaut() throws Exception
+	{
+		final List<Location> autocompletes = provider.autocompleteStations("Güntzelstr.");
+
+		print(autocompletes);
+
+		Assert.assertEquals("Güntzelstr. (U)", autocompletes.get(0).name);
+	}
+
+	@Test
+	public void autocompleteAddress() throws Exception
+	{
+		final List<Location> autocompletes = provider.autocompleteStations("Sophienstr. 24");
+
+		print(autocompletes);
+
+		Assert.assertEquals("Sophienstr. 24", autocompletes.get(0).name);
+	}
+
+	@Test
 	public void autocompleteIncomplete() throws Exception
 	{
 		final List<Location> autocompletes = provider.autocompleteStations("nol");
@@ -92,7 +114,7 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	public void shortConnection() throws Exception
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 9056102, "Berlin", "Nollendorfplatz"), null,
-				new Location(LocationType.STATION, 9013103, "Berlin", "Prinzenstraße"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL,
+				new Location(LocationType.STATION, 9013103, "Berlin", "Prinzenstraße"), new Date(), true, Product.ALL, WalkSpeed.NORMAL,
 				Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
@@ -110,7 +132,7 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.STATION, 9056102, "Berlin", "Nollendorfplatz"),
 				new Location(LocationType.STATION, 9044202, "Berlin", "Bundesplatz"), new Location(LocationType.STATION, 9013103, "Berlin",
-						"Prinzenstraße"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+						"Prinzenstraße"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);
@@ -120,7 +142,7 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	public void connectionBetweenCoordinates() throws Exception
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, 52501507, 13357026, null, null), null,
-				new Location(LocationType.ADDRESS, 0, 52513639, 13568648, null, null), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL,
+				new Location(LocationType.ADDRESS, 0, 52513639, 13568648, null, null), new Date(), true, Product.ALL, WalkSpeed.NORMAL,
 				Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
@@ -132,7 +154,7 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, 52536099, 13426309, null,
 				"Christburger Straße 1, 10405 Berlin, Deutschland"), null, new Location(LocationType.ADDRESS, 0, 52486400, 13350744, null,
-				"Eisenacher Straße 70, 10823 Berlin, Deutschland"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				"Eisenacher Straße 70, 10823 Berlin, Deutschland"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);
@@ -143,7 +165,7 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	{
 		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, 52501507, 13357026, null, null), new Location(
 				LocationType.ADDRESS, 0, 52479868, 13324247, null, null), new Location(LocationType.ADDRESS, 0, 52513639, 13568648, null, null),
-				new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+				new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);
@@ -152,9 +174,9 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void connectionBetweenAddresses() throws Exception
 	{
-		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, null,
-				"10715 Bln Charlb.-Wilm., Weimarische Str. 7"), null, new Location(LocationType.ADDRESS, 0, null, "10178 Bln Mitte, Sophienstr. 24"),
-				new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
+		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, 52479663, 13324278, "10715 Berlin-Wilmersdorf",
+				"Weimarische Str. 7"), null, new Location(LocationType.ADDRESS, 0, 52541536, 13421290, "10437 Berlin-Prenzlauer Berg",
+				"Göhrener Str. 5"), new Date(), true, Product.ALL, WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);
@@ -163,12 +185,24 @@ public class BvgProviderLiveTest extends AbstractProviderLiveTest
 	@Test
 	public void viaConnectionBetweenAddresses() throws Exception
 	{
-		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, null,
-				"10715 Bln Charlb.-Wilm., Weimarische Str. 7"), new Location(LocationType.ADDRESS, 0, null, "10115 Bln Mitte, Hannoversche Str. 20"),
-				new Location(LocationType.ADDRESS, 0, null, "10178 Bln Mitte, Sophienstr. 24"), new Date(), true, ALL_PRODUCTS, WalkSpeed.NORMAL,
-				Accessibility.NEUTRAL);
+		final QueryConnectionsResult result = queryConnections(new Location(LocationType.ADDRESS, 0, 52479663, 13324278, "10715 Berlin-Wilmersdorf",
+				"Weimarische Str. 7"), new Location(LocationType.ADDRESS, 0, 52527872, 13381657, "10115 Berlin-Mitte", "Hannoversche Str. 20"),
+				new Location(LocationType.ADDRESS, 0, 52526029, 13399878, "10178 Berlin-Mitte", "Sophienstr. 24"), new Date(), true, Product.ALL,
+				WalkSpeed.NORMAL, Accessibility.NEUTRAL);
 		System.out.println(result);
 		final QueryConnectionsResult laterResult = queryMoreConnections(result.context, true);
 		System.out.println(laterResult);
+	}
+
+	@Test
+	public void testStationIdReverse() throws Exception
+	{
+		Assert.assertEquals(BvgProvider.migrateStationIdReverse(101000316), 100316);
+		Assert.assertEquals(BvgProvider.migrateStationIdReverse(301000316), 300316);
+
+		// no conversions
+		Assert.assertEquals(BvgProvider.migrateStationIdReverse(102000316), 102000316);
+		Assert.assertEquals(BvgProvider.migrateStationIdReverse(1101000316), 1101000316);
+		Assert.assertEquals(BvgProvider.migrateStationIdReverse(11000316), 11000316);
 	}
 }
