@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:defaultValue="@string/pref_transportNetwork_default"
+        android:dialogTitle="@string/pref_publicnetwork_title"
+        android:entries="@array/pref_transportNetwork_Entries"
+        android:entryValues="@array/pref_transportNetwork_values"
+        android:key="pref_publicnetwork"
+        android:title="@string/pref_publicnetwork_title" />
+
+    <Preference android:title="@string/pref_donate" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://www.example.com" />
+    </Preference>
+
+</PreferenceScreen>

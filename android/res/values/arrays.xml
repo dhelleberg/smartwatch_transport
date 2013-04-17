@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="pref_transportNetwork_Entries">
+        <item>Europe - long distance</item>
+        <item>Germany - long distance &amp; regional</item>
+        <item>Munich</item>
+        <item>Berlin</item>
+        <item>Hamburg</item>
+    </array>
+    <array name="pref_transportNetwork_values">
+        <item>BahnProvider</item><!-- Europe -->
+        <item>BahnProvider</item><!-- Germany -->
+        <item>MvvProvider</item><!-- Minga -->
+        <item>BsvagProvider</item><!-- Berlin -->
+        <item>r</item><!-- Hamburg -->
+    </array>
+
+</resources>
