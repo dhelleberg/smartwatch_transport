@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TODO</string>
+    <string name="app_name">SmartTrans</string>
     <string name="text_depature_times">%1$s min (%2$s)</string>
     <string name="text_locating">locating...</string>
     <string name="text_loading">loading...</string>
     <string name="pref_publicnetwork_title">Transport Network</string>
     <string name="pref_transportNetwork_default">TODO</string>
     <string name="pref_donate">Donate</string>
+    <string name="configuration">Configure SmartTrans</string>
 </resources>

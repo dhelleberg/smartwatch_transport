@@ -19,16 +19,13 @@
         <activity
             android:name="org.cirrus.mobi.smarttransport.StartUpActivity"
             android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        
         <activity
             android:name="org.cirrus.mobi.smarttransport.SmartPreferenceActivity"
-            android:label="@string/app_name" >
+            android:label="@string/configuration" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
         </activity>
 
         <service android:name="org.cirrus.mobi.smarttransport.SmartTransportExtensionService" />

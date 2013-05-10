@@ -108,9 +108,9 @@ public class SmartTransportRegistrationInformation extends RegistrationInformati
         ContentValues values = new ContentValues();
 
         values.put(Registration.ExtensionColumns.CONFIGURATION_ACTIVITY,
-                StartUpActivity.class.getName());
+                SmartPreferenceActivity.class.getName());
         values.put(Registration.ExtensionColumns.CONFIGURATION_TEXT,
-                mContext.getString(R.string.app_name));
+                mContext.getString(R.string.configuration));
         values.put(Registration.ExtensionColumns.NAME, mContext.getString(R.string.app_name));
         values.put(Registration.ExtensionColumns.EXTENSION_KEY,
                 SmartTransportExtensionService.EXTENSION_KEY);
@@ -120,6 +120,7 @@ public class SmartTransportRegistrationInformation extends RegistrationInformati
         values.put(Registration.ExtensionColumns.NOTIFICATION_API_VERSION,
                 getRequiredNotificationApiVersion());
         values.put(Registration.ExtensionColumns.PACKAGE_NAME, mContext.getPackageName());
+       
 
         return values;
     }
