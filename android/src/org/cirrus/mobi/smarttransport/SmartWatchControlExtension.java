@@ -6,6 +6,7 @@ import java.util.List;
 import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.location.Location;
@@ -13,6 +14,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,6 +32,7 @@ import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 
 import de.schildbach.pte.BahnProvider;
+import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.NearbyStationsResult;
@@ -66,9 +69,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private static final int STATE_LOADING = 4;
 	private static final int STATE_DISPLAY_DATA = 3;
 	protected static final String TAG = "SMT/SWCE";
+	private static final String PACKAGE = "de.schildbach.pte.";
 
 	private int state = STATE_INITIAL;
-	private BahnProvider networkProvider;
+	private NetworkProvider networkProvider;
 	private LocationManager locationManager;
 	private PublicNetworkProvider publicNetworkProvider;
 	private NearbyStationsResult mNearbyStationsResult;
@@ -118,9 +122,21 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		state = STATE_SEARCHING;
 
 		mStationIndex = 0;
-
-		//TODO: get this from config
-		networkProvider = new BahnProvider();
+		
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+		
+		String providerClass = sharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
+		if(BuildConfig.DEBUG)
+			Log.v(TAG, "Loading class: "+providerClass);
+		
+		
+		
+		try {
+			networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).newInstance();
+		} catch (Exception e) {
+			
+			Log.e(TAG, "Could not load networkprovider. should not happen");			
+		} 
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 		publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);

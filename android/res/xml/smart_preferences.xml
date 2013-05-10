@@ -6,7 +6,7 @@
         android:dialogTitle="@string/pref_publicnetwork_title"
         android:entries="@array/pref_transportNetwork_Entries"
         android:entryValues="@array/pref_transportNetwork_values"
-        android:key="pref_publicnetwork"
+        android:key="@string/pref_publicnetwork"
         android:title="@string/pref_publicnetwork_title" />
 
     <Preference android:title="@string/pref_donate" >
@@ -14,5 +14,12 @@
             android:action="android.intent.action.VIEW"
             android:data="http://www.example.com" />
     </Preference>
+    
+    <Preference android:title="@string/pref_about" >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://www.example.com" />
+    </Preference>
+    
 
 </PreferenceScreen>
