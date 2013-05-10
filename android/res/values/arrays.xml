@@ -3,16 +3,24 @@
 
     <array name="pref_transportNetwork_Entries">
         <item>Europe - long distance</item>
-        <item>Germany - long distance &amp; regional</item>
-        <item>Germany - Munich</item>
+        <item>Germany - long distance &amp; regional (Bahn)</item>
+        <item>Germany - Bavaria</item>
         <item>Germany - Berlin</item>
-        <item>Germany - Hamburg</item>
+        <item>Germany - Berlin-Brandenburg</item>
+        <item>Germany - Munich</item>
+        <item>Germany - Nordhessischer Verkehrsverbung</item>
+        
+        <!-- <item>Germany - Hamburg</item> -->
     </array>
     <array name="pref_transportNetwork_values">
         <item>RtProvider</item><!-- Europe -->
         <item>BahnProvider</item><!-- Germany -->
-        <item>MvvProvider</item><!-- Minga -->
+        <item>BayernProvider</item> <!-- bayern -->
         <item>BsvagProvider</item><!-- Berlin -->
+        <item>VbbProvider</item><!-- Berlin -->
+        <item>MvvProvider</item><!-- Minga -->        
+        <item>RmvProvider</item><!-- nordhessen -->
+        
         <item>r</item><!-- Hamburg -->
     </array>
 
