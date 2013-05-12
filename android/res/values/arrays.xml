@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+<!-- VVN ? BsvagProvider ? BSAG? -->
     <array name="pref_transportNetwork_Entries">
-        <item>Europe - long distance</item>
+        <item>Europe - long distance</item><!-- 0 -->
         <item>Germany - long distance &amp; regional (Bahn)</item>
+        <item>Germany - Augsburg</item>
         <item>Germany - Bavaria</item>
         <item>Germany - Berlin</item>
         <item>Germany - Berlin-Brandenburg</item>
+        <item>Germany - Ingolstadt</item>
+        <item>Germany - VMV Mecklenburg Vorpommern</item>
         <item>Germany - Munich</item>
+        <item>Germany - Niedersachen / Bremen</item>
         <item>Germany - Nordhessischer Verkehrsverbung</item>
+        <item>Germany - Schleswig Holstein</item>
         
         <!-- <item>Germany - Hamburg</item> -->
     </array>
     <array name="pref_transportNetwork_values">
-        <item>RtProvider</item><!-- Europe -->
-        <item>BahnProvider</item><!-- Germany -->
-        <item>BayernProvider</item> <!-- bayern -->
-        <item>BsvagProvider</item><!-- Berlin -->
-        <item>VbbProvider</item><!-- Berlin -->
-        <item>MvvProvider</item><!-- Minga -->        
-        <item>RmvProvider</item><!-- nordhessen -->
+        <item>RtProvider</item>		<!-- 0 Europe -->
+        <item>BahnProvider</item>	<!-- Germany -->
+        <item>AvvProvider</item>	<!-- Augsburg -->
+        <item>BayernProvider</item> <!-- bayern -->        
+        <item>BsvagProvider</item>	<!-- Berlin -->
+        <item>VbbProvider</item>	<!-- Berlin Brandenburg -->
+        <item>InvgProvider</item>	<!-- Ingolstadt -->
+        <item>VmvProvider</item> 	<!-- Mecklenburg -->
+        <item>MvvProvider</item>	<!--  Minga -->
+        <item>GvhProvider</item>	<!-- Niedersachsen / Bremen -->
+        <item>RmvProvider</item>	<!-- nordhessen -->
+        <item>ShProvider</item>		<!-- Schleswig Holstein -->
+        
         
         <item>r</item><!-- Hamburg -->
     </array>
