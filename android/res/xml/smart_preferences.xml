@@ -7,19 +7,16 @@
         android:entries="@array/pref_transportNetwork_Entries"
         android:entryValues="@array/pref_transportNetwork_values"
         android:key="@string/pref_publicnetwork"
-        android:title="@string/pref_publicnetwork_title" />
+        android:title="@string/pref_publicnetwork_title"
+         />
 
     <Preference android:title="@string/pref_donate" >
         <intent
             android:action="android.intent.action.VIEW"
             android:data="http://www.example.com" />
     </Preference>
-    
-    <Preference android:title="@string/pref_about" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="http://www.example.com" />
-    </Preference>
-    
+    <Preference
+        android:key="@string/pref_feedback"
+        android:title="@string/pref_feedback" />
 
 </PreferenceScreen>
