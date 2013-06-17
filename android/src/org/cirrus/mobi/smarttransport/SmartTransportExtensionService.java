@@ -66,7 +66,7 @@ public class SmartTransportExtensionService extends ExtensionService {
 
     public static final String EXTENSION_KEY = "com.sonyericsson.extras.liveware.extension.smarttransportcontrol.key";
 
-    public static final String LOG_TAG = "SmartTransportExtensionService";
+    public static final String LOG_TAG = "SMT/SmartTransportExtensionService";
 
     public SmartTransportExtensionService() {
         super(EXTENSION_KEY);

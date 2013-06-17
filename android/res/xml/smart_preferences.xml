@@ -10,11 +10,10 @@
         android:title="@string/pref_publicnetwork_title"
          />
 
-    <Preference android:title="@string/pref_donate" >
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="http://www.example.com" />
-    </Preference>
+    <Preference
+        android:key="@string/pref_donate"
+        android:title="@string/pref_donate" />
+
     <Preference
         android:key="@string/pref_feedback"
         android:title="@string/pref_feedback" />

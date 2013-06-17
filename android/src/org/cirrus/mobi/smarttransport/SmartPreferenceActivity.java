@@ -1,5 +1,7 @@
 package org.cirrus.mobi.smarttransport;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,14 +10,15 @@ import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-
+import android.util.Log;
 
 
 public class SmartPreferenceActivity extends PreferenceActivity implements OnPreferenceClickListener {
 
 
+    private static final String TAG = "SMT/SmartPreferenceActivity";
 
-	@Override
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.smart_preferences);
@@ -42,7 +45,13 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
 		final Preference feedbackPreference = getPreferenceManager().findPreference(
 				getString(R.string.pref_feedback));
 		feedbackPreference.setOnPreferenceClickListener(this);
-	}
+
+        final Preference donatePreference = getPreferenceManager().findPreference(
+                getString(R.string.pref_donate));
+        donatePreference.setOnPreferenceClickListener(this);
+    }
+
+
 
 	private String getNetworkForProvider(final String providerClass) {
 		//lookup in arrays
@@ -60,6 +69,7 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
 		return network;
 	}
 
+
 	@Override
 	public boolean onPreferenceClick(Preference preference) {
 
@@ -72,6 +82,15 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
 
 			return true;
 		}
+        else if(preference.getKey().equals(getString(R.string.pref_donate)))
+        {
+            if(BuildConfig.DEBUG)
+                Log.v(TAG, "clicked on donate");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.dialog_notimplemented);
+            builder.show();
+            return true;
+        }
 		return false;
 	}	
 }
