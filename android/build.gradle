@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4.2'
+        classpath 'com.android.tools.build:gradle:0.4.+'
     }
 }
 apply plugin: 'android'
@@ -32,4 +32,23 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    signingConfigs {
+        release {
+            storeFile file('../smartrans.keystore')
+            keyAlias "smartrans"
+        }
+    }
+    buildTypes {
+        release {
+            debuggable false
+            jniDebugBuild false
+            signingConfig signingConfigs.release
+        }
+    }
+}
+if (project.hasProperty('keypass')) {
+    android.signingConfigs.release.keyPassword = keypass
+}
+if (project.hasProperty('storepass')) {
+    android.signingConfigs.release.storePassword = storepass
 }
