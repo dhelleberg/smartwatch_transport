@@ -18,8 +18,13 @@
 package de.schildbach.pte;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +33,11 @@ import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Product;
+import de.schildbach.pte.dto.QueryConnectionsContext;
+import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
+import de.schildbach.pte.dto.Style;
+import de.schildbach.pte.dto.Style.Shape;
 import de.schildbach.pte.util.ParserUtils;
 
 /**
@@ -65,13 +74,13 @@ public class StockholmProvider extends AbstractHafasProvider
 			return 'S';
 		if (value == 2) // Tunnelbana
 			return 'U';
-		if (value == 4) // Lokaltåg
+		if (value == 4) // Lokalbanor
 			return 'R';
-		if (value == 8) // Buss
+		if (value == 8) // Bussar
 			return 'B';
 		if (value == 16) // Flygbussar
 			return 'B';
-		if (value == 64) // Båt
+		if (value == 64) // Waxholmsbåtar
 			return 'F';
 
 		throw new IllegalArgumentException("cannot handle: " + value);
@@ -108,7 +117,7 @@ public class StockholmProvider extends AbstractHafasProvider
 		}
 		else if (product == Product.FERRY)
 		{
-			productBits.setCharAt(6, '1'); // Båt
+			productBits.setCharAt(6, '1'); // Waxholmsbåtar
 		}
 		else if (product == Product.CABLECAR)
 		{
@@ -119,7 +128,7 @@ public class StockholmProvider extends AbstractHafasProvider
 		}
 	}
 
-	private static final Pattern P_SPLIT_NAME_PAREN = Pattern.compile("(.*?) \\((.{4,}?)\\)");
+	private static final Pattern P_SPLIT_NAME_PAREN = Pattern.compile("(.*) \\((.{4,}?)\\)");
 
 	@Override
 	protected String[] splitPlaceAndName(final String name)
@@ -189,6 +198,31 @@ public class StockholmProvider extends AbstractHafasProvider
 	}
 
 	@Override
+	protected void appendCustomConnectionsQueryBinaryUri(final StringBuilder uri)
+	{
+		uri.append("&h2g-direct=11"
+				+ "&REQ0HafasSearchIndividual=1&REQ0HafasSearchPublic=1"
+				+ "&existIntermodalDep_enable=yes&existIntermodalDest_enable=yes&existTotal_enable=yes"
+				+ "&REQ0JourneyDep_Foot_enable=1&REQ0JourneyDep_Foot_maxDist=5000&REQ0JourneyDep_Foot_minDist=0&REQ0JourneyDep_Foot_speed=100&REQ0JourneyDep_Bike_enable=0&REQ0JourneyDep_ParkRide_enable=0"
+				+ "&REQ0JourneyDest_Foot_enable=1&REQ0JourneyDest_Foot_maxDist=5000&REQ0JourneyDest_Foot_minDist=0&REQ0JourneyDest_Foot_speed=100&REQ0JourneyDest_Bike_enable=0&REQ0JourneyDest_ParkRide_enable=0");
+	}
+
+	@Override
+	public QueryConnectionsResult queryConnections(final Location from, final Location via, final Location to, final Date date, final boolean dep,
+			final int maxNumConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final Set<Option> options) throws IOException
+	{
+		return queryConnectionsBinary(from, via, to, date, dep, maxNumConnections, products, walkSpeed, accessibility, options);
+	}
+
+	@Override
+	public QueryConnectionsResult queryMoreConnections(final QueryConnectionsContext contextObj, final boolean later, final int numConnections)
+			throws IOException
+	{
+		return queryMoreConnectionsBinary(contextObj, later, numConnections);
+	}
+
+	@Override
 	protected Line parseLineAndType(final String lineAndType)
 	{
 		final Matcher m = P_NORMALIZE_LINE.matcher(lineAndType);
@@ -244,7 +278,34 @@ public class StockholmProvider extends AbstractHafasProvider
 			return 'F';
 		if ("BÅT".equals(ucType))
 			return 'F';
+		if ("FÄRJA".equals(ucType))
+			return 'F';
 
 		return 0;
+	}
+
+	private static final Map<String, Style> LINES = new HashMap<String, Style>();
+
+	static
+	{
+		LINES.put("UMETRO10", new Style(Shape.ROUNDED, Style.parseColor("#25368b"), Style.WHITE));
+		LINES.put("UMETRO11", new Style(Shape.ROUNDED, Style.parseColor("#25368b"), Style.WHITE));
+
+		LINES.put("UMETRO13", new Style(Shape.ROUNDED, Style.parseColor("#f1491c"), Style.WHITE));
+		LINES.put("UMETRO14", new Style(Shape.ROUNDED, Style.parseColor("#f1491c"), Style.WHITE));
+
+		LINES.put("UMETRO17", new Style(Shape.ROUNDED, Style.parseColor("#6ec72d"), Style.WHITE));
+		LINES.put("UMETRO18", new Style(Shape.ROUNDED, Style.parseColor("#6ec72d"), Style.WHITE));
+		LINES.put("UMETRO19", new Style(Shape.ROUNDED, Style.parseColor("#6ec72d"), Style.WHITE));
+	}
+
+	@Override
+	public Style lineStyle(final String line)
+	{
+		final Style style = LINES.get(line);
+		if (style != null)
+			return style;
+
+		return super.lineStyle(line);
 	}
 }

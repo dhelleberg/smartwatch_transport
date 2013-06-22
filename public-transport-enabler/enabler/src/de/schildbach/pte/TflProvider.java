@@ -34,6 +34,8 @@ public class TflProvider extends AbstractEfaProvider
 	public TflProvider()
 	{
 		super(API_BASE);
+
+		setUseLineRestriction(false);
 	}
 
 	public NetworkId id()
@@ -111,6 +113,9 @@ public class TflProvider extends AbstractEfaProvider
 				return "RIL" + trainNum;
 			else if ("Chiltern Railways".equals(trainName) || "=CH".equals(trainType))
 				return "RCH" + trainNum;
+
+			else if ("London Overground".equals(trainName) || "=LO".equals(trainType))
+				return "SLO" + trainNum;
 
 			throw new IllegalStateException("cannot normalize mot='" + mot + "' symbol='" + symbol + "' name='" + name + "' long='" + longName
 					+ "' trainType='" + trainType + "' trainNum='" + trainNum + "' trainName='" + trainName + "'");

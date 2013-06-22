@@ -17,12 +17,6 @@
 
 package de.schildbach.pte;
 
-import java.io.IOException;
-import java.util.List;
-
-import de.schildbach.pte.dto.Location;
-import de.schildbach.pte.dto.LocationType;
-
 /**
  * @author Andreas Schildbach
  */
@@ -35,6 +29,7 @@ public class NvbwProvider extends AbstractEfaProvider
 	{
 		super(API_BASE);
 
+		setIncludeRegionId(false);
 		setUseRouteIndexAsConnectionId(false);
 	}
 
@@ -53,8 +48,17 @@ public class NvbwProvider extends AbstractEfaProvider
 	}
 
 	@Override
-	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
+	protected String parseLine(final String mot, final String symbol, final String name, final String longName, final String trainType,
+			final String trainNum, final String trainName)
 	{
-		return xmlStopfinderRequest(new Location(LocationType.STATION, 0, null, constraint.toString()));
+		if ("0".equals(mot))
+		{
+			if ("SWEG-Zug".equals(longName))
+				return "RSWEG";
+			if ("RR".equals(trainType))
+				return "RRR" + trainNum;
+		}
+
+		return super.parseLine(mot, symbol, name, longName, trainType, trainNum, trainName);
 	}
 }

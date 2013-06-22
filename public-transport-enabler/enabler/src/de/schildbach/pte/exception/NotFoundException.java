@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 the original author or authors.
+ * Copyright 2013 the original author or authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,31 +15,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.schildbach.pte.dto;
+package de.schildbach.pte.exception;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * @author Andreas Schildbach
  */
-public final class GetConnectionDetailsResult implements Serializable
+public class NotFoundException extends IOException
 {
-	public final Date currentDate;
-	public final Connection connection;
+	private final URL url;
 
-	public GetConnectionDetailsResult(Date currentDate, Connection connection)
+	public NotFoundException()
 	{
-		this.currentDate = currentDate;
-		this.connection = connection;
+		this.url = null;
 	}
 
-	@Override
-	public String toString()
+	public NotFoundException(final URL url)
 	{
-		final SimpleDateFormat FORMAT = new SimpleDateFormat("EE dd.MM.yy", Locale.US);
-		return FORMAT.format(currentDate) + "|" + connection.toString();
+		super(url.toString());
+
+		this.url = url;
+	}
+
+	public URL getUrl()
+	{
+		return url;
 	}
 }

@@ -21,6 +21,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
@@ -81,7 +82,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	private final String apiUri;
 	private final int numProductBits;
 	private final String accessId;
-	private final Charset jsonEncoding;
+	private Charset jsonGetStopsEncoding;
+	private Charset jsonNearbyStationsEncoding;
 	private final Charset xmlMlcResEncoding;
 	private boolean dominantPlanStopTime = false;
 
@@ -114,12 +116,14 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		public final String ident;
 		public final int seqNr;
 		public final String ld;
+		public final int usedBufferSize;
 
-		public QueryConnectionsBinaryContext(final String ident, final int seqNr, final String ld)
+		public QueryConnectionsBinaryContext(final String ident, final int seqNr, final String ld, final int usedBufferSize)
 		{
 			this.ident = ident;
 			this.seqNr = seqNr;
 			this.ld = ld;
+			this.usedBufferSize = usedBufferSize;
 		}
 
 		public boolean canQueryLater()
@@ -133,28 +137,35 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		}
 	}
 
+	public AbstractHafasProvider(final String apiUri, final int numProductBits, final String accessId)
+	{
+		this(apiUri, numProductBits, accessId, ISO_8859_1, ISO_8859_1);
+	}
+
 	public AbstractHafasProvider(final String apiUri, final int numProductBits, final String accessId, final Charset jsonEncoding,
 			final Charset xmlMlcResEncoding)
 	{
 		this.apiUri = apiUri;
 		this.numProductBits = numProductBits;
 		this.accessId = accessId;
-		this.jsonEncoding = jsonEncoding;
+		this.jsonGetStopsEncoding = jsonEncoding;
+		this.jsonNearbyStationsEncoding = jsonEncoding;
 		this.xmlMlcResEncoding = xmlMlcResEncoding;
-	}
-
-	public AbstractHafasProvider(final String apiUri, final int numProductBits, final String accessId)
-	{
-		this.apiUri = apiUri;
-		this.numProductBits = numProductBits;
-		this.accessId = accessId;
-		this.jsonEncoding = ISO_8859_1;
-		this.xmlMlcResEncoding = ISO_8859_1;
 	}
 
 	protected void setDominantPlanStopTime(final boolean dominantPlanStopTime)
 	{
 		this.dominantPlanStopTime = dominantPlanStopTime;
+	}
+
+	protected void setJsonGetStopsEncoding(Charset jsonGetStopsEncoding)
+	{
+		this.jsonGetStopsEncoding = jsonGetStopsEncoding;
+	}
+
+	protected void setJsonNearbyStationsEncoding(Charset jsonNearbyStationsEncoding)
+	{
+		this.jsonNearbyStationsEncoding = jsonNearbyStationsEncoding;
 	}
 
 	protected TimeZone timeZone()
@@ -336,7 +347,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 
 	protected final List<Location> jsonGetStops(final String uri) throws IOException
 	{
-		final CharSequence page = ParserUtils.scrape(uri, null, jsonEncoding, null);
+		final CharSequence page = ParserUtils.scrape(uri, null, jsonGetStopsEncoding, null);
 
 		final Matcher mJson = P_AJAX_GET_STOPS_JSON.matcher(page);
 		if (mJson.matches())
@@ -1077,17 +1088,12 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 						XmlPullUtil.next(pp);
 					XmlPullUtil.enter(pp, "Status");
 					XmlPullUtil.exit(pp, "Status");
-					if (XmlPullUtil.test(pp, "Capacity1st"))
-					{
-						final int capacity1st = Integer.parseInt(XmlPullUtil.text(pp));
-						XmlPullUtil.require(pp, "Capacity2nd");
-						final int capacity2nd = Integer.parseInt(XmlPullUtil.text(pp));
+					final int capacity1st = XmlPullUtil.test(pp, "Capacity1st") ? Integer.parseInt(XmlPullUtil.text(pp)) : 0;
+					final int capacity2nd = XmlPullUtil.test(pp, "Capacity2nd") ? Integer.parseInt(XmlPullUtil.text(pp)) : 0;
+					if (capacity1st > 0 || capacity2nd > 0)
 						capacity = new int[] { capacity1st, capacity2nd };
-					}
 					else
-					{
 						capacity = null;
-					}
 					XmlPullUtil.exit(pp, "StopPrognosis");
 				}
 				else
@@ -1488,6 +1494,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 	{
 	}
 
+	private final static int QUERY_CONNECTIONS_BINARY_BUFFER_SIZE = 128 * 1024;
+
 	protected final QueryConnectionsResult queryConnectionsBinary(Location from, Location via, Location to, final Date date, final boolean dep,
 			final int maxNumConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
 			final Set<Option> options) throws IOException
@@ -1528,7 +1536,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		appendConnectionsQueryUri(uri, from, via, to, date, dep, products, accessibility, options);
 		appendCustomConnectionsQueryBinaryUri(uri);
 
-		return queryConnectionsBinary(uri.toString(), from, via, to);
+		return queryConnectionsBinary(uri.toString(), from, via, to, QUERY_CONNECTIONS_BINARY_BUFFER_SIZE);
 	}
 
 	protected QueryConnectionsResult queryMoreConnectionsBinary(final QueryConnectionsContext contextObj, final boolean later,
@@ -1544,11 +1552,24 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		uri.append("&REQ0HafasScrollDir=").append(later ? 1 : 2);
 		appendCustomConnectionsQueryBinaryUri(uri);
 
-		return queryConnectionsBinary(uri.toString(), null, null, null);
+		return queryConnectionsBinary(uri.toString(), null, null, null, QUERY_CONNECTIONS_BINARY_BUFFER_SIZE + context.usedBufferSize);
 	}
 
-	private QueryConnectionsResult queryConnectionsBinary(final String uri, final Location from, final Location via, final Location to)
-			throws IOException
+	private class CustomBufferedInputStream extends BufferedInputStream
+	{
+		public CustomBufferedInputStream(final InputStream in)
+		{
+			super(in);
+		}
+
+		public int getCount()
+		{
+			return count;
+		}
+	}
+
+	private QueryConnectionsResult queryConnectionsBinary(final String uri, final Location from, final Location via, final Location to,
+			final int expectedBufferSize) throws IOException
 	{
 		/*
 		 * Many thanks to Malte Starostik and Robert, who helped a lot with analyzing this API!
@@ -1560,8 +1581,9 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 
 		try
 		{
-			is = new LittleEndianDataInputStream(new BufferedInputStream(ParserUtils.scrapeInputStream(uri)));
-			is.mark(256 * 1024);
+			final CustomBufferedInputStream bis = new CustomBufferedInputStream(ParserUtils.scrapeInputStream(uri));
+			is = new LittleEndianDataInputStream(bis);
+			is.mark(expectedBufferSize);
 
 			// quick check of status
 			final int version = is.readShortReverse();
@@ -1926,7 +1948,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 				}
 
 				final QueryConnectionsResult result = new QueryConnectionsResult(header, uri, from, via, to, new QueryConnectionsBinaryContext(
-						requestId, seqNr, ld), connections);
+						requestId, seqNr, ld, bis.getCount()), connections);
 
 				return result;
 			}
@@ -2231,7 +2253,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 
 	protected final NearbyStationsResult jsonNearbyStations(final String uri) throws IOException
 	{
-		final CharSequence page = ParserUtils.scrape(uri, null, jsonEncoding, null);
+		final CharSequence page = ParserUtils.scrape(uri, null, jsonNearbyStationsEncoding, null);
 
 		try
 		{
@@ -2651,6 +2673,8 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 		// Tram
 		if (P_LINE_TRAM.matcher(ucType).matches()) // Generic Tram
 			return 'T';
+		if ("NFT".equals(ucType)) // Niederflur-Tram
+			return 'B';
 		if ("TRAM".equals(ucType))
 			return 'T';
 		if ("TRA".equals(ucType))
@@ -2866,7 +2890,7 @@ public abstract class AbstractHafasProvider extends AbstractNetworkProvider
 
 	protected Line newLine(final char product, final String normalizedName, final String comment, final Line.Attr... attrs)
 	{
-		final String lineStr = product + (normalizedName != null ? normalizedName : "?");
+		final String lineStr = (product != 0 ? Character.toString(product) : Product.UNKNOWN) + (normalizedName != null ? normalizedName : "?");
 
 		if (attrs.length == 0)
 		{
