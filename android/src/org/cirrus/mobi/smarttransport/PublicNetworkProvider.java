@@ -33,7 +33,7 @@ public class PublicNetworkProvider {
 
 	interface ResultCallbacks {
 		public void nearbyStationsReceived(NearbyStationsResult result);
-		public void depaturesReceived(QueryDeparturesResult result);
+		public void departuresReceived(QueryDeparturesResult result);
 	}
 
 	private ResultCallbacks callbackInterface;
@@ -63,7 +63,7 @@ public class PublicNetworkProvider {
 
 	private void recievedDepatures(QueryDeparturesResult result) {
 		if(this.callbackInterface != null)
-			this.callbackInterface.depaturesReceived(result);
+			this.callbackInterface.departuresReceived(result);
 
 	}
 

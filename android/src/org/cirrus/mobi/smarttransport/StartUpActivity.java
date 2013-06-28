@@ -116,7 +116,7 @@ public class StartUpActivity extends Activity implements ResultCallbacks {
 		
 	}
 	@Override
-	public void depaturesReceived(QueryDeparturesResult result) {
+	public void departuresReceived(QueryDeparturesResult result) {
 		
 		
 	}
