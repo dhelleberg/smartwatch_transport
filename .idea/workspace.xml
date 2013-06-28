@@ -32,8 +32,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f4764399-1c5e-4a8d-8d54-13159ea9e043" name="Default" comment="update copyright">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartWatchControlExtension.java" afterPath="$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartWatchControlExtension.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/settings.gradle" afterPath="$PROJECT_DIR$/settings.gradle" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/AndroidManifest.xml" afterPath="$PROJECT_DIR$/android/AndroidManifest.xml" />
     </list>
     <ignored path="smart_transit.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -119,16 +118,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SmartWatchControlExtension.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="SmartWatchControlExtension.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartWatchControlExtension.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="422" column="27" selection-start="14087" selection-end="14087" vertical-scroll-proportion="0.5816619" vertical-offset="6127" max-vertical-offset="7800">
+            <state line="422" column="27" selection-start="14087" selection-end="14087" vertical-scroll-proportion="-3.9803922" vertical-offset="6127" max-vertical-offset="7800">
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#4387#4449#0" expanded="true" />
                 <element signature="e#4451#4524#0" expanded="true" />
                 <element signature="e#13202#13250#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AndroidManifest.xml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/android/AndroidManifest.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="26" selection-start="140" selection-end="140" vertical-scroll-proportion="0.07263923" vertical-offset="0" max-vertical-offset="1080">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -239,7 +247,6 @@
         <option value="$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartTransportExtensionService.java" />
         <option value="$PROJECT_DIR$/android/res/xml/smart_preferences.xml" />
         <option value="$PROJECT_DIR$/android/gradle.properties" />
-        <option value="$PROJECT_DIR$/android/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/gradlew.bat" />
         <option value="$PROJECT_DIR$/android/build.gradle" />
         <option value="$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartTransportApplication.java" />
@@ -250,6 +257,7 @@
         <option value="$PROJECT_DIR$/android/res/layout-nodpi/locating.xml" />
         <option value="$PROJECT_DIR$/android/res/layout-nodpi/loading.xml" />
         <option value="$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartWatchControlExtension.java" />
+        <option value="$PROJECT_DIR$/android/AndroidManifest.xml" />
       </list>
     </option>
   </component>
@@ -661,10 +669,10 @@
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32826748" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2694257" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24978903" sideWeight="0.67021275" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24978903" sideWeight="0.67021275" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21012658" sideWeight="0.67021275" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21012658" sideWeight="0.67021275" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32978722" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -740,11 +748,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/ExtensionReceiver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="13" selection-start="2570" selection-end="2570" vertical-scroll-proportion="0.5714286" vertical-offset="0" max-vertical-offset="630" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/android/gradle.properties">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="21" selection-start="41" selection-end="41" vertical-scroll-proportion="0.023809524" vertical-offset="0" max-vertical-offset="630" />
@@ -853,13 +856,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/org/cirrus/mobi/smarttransport/SmartWatchControlExtension.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="422" column="27" selection-start="14087" selection-end="14087" vertical-scroll-proportion="0.5816619" vertical-offset="6127" max-vertical-offset="7800">
+        <state line="422" column="27" selection-start="14087" selection-end="14087" vertical-scroll-proportion="-3.9803922" vertical-offset="6127" max-vertical-offset="7800">
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#4387#4449#0" expanded="true" />
             <element signature="e#4451#4524#0" expanded="true" />
             <element signature="e#13202#13250#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/android/AndroidManifest.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="26" selection-start="140" selection-end="140" vertical-scroll-proportion="0.07263923" vertical-offset="0" max-vertical-offset="1080">
+          <folding />
         </state>
       </provider>
     </entry>
