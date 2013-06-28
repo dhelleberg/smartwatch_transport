@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="SmartExtensionUtils.aar">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/android/build/exploded-bundles/SmartExtensionUtils.aar/classes.jar" />
+      <root url="jar://$PROJECT_DIR$/android/build/exploded-bundles/SmartExtensionUtils.aar/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

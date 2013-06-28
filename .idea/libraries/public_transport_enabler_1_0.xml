@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="public-transport-enabler-1.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/public-transport-enabler/build/libs/public-transport-enabler-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/public-transport-enabler/build/libs/public-transport-enabler-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

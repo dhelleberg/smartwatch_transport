@@ -330,6 +330,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 				
 				List<StationDepartures> dep = mQueryDeparturesResults.get(mStationIndex).stationDepartures;
 
+                //filter list for already gone departures first
+                filterGoneDepartures(dep);
+
 				for (StationDepartures stationDepartures : dep) {
 					List<Departure> depatures = stationDepartures.departures;
 					for(int i = 0; i < depatures.size(); i++)
@@ -381,24 +384,49 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	}
 
 
-	private CharSequence getDepartureText(Departure depature) {
+	private CharSequence getDepartureText(Departure departure) {
 
 		long now = System.currentTimeMillis();
-		long planned = (((depature.plannedTime.getTime() - now)/1000)/60);
-		String depatureTimePlanned = planned+"";
-		String depatureTimePredict = "-";
-		if(depature.predictedTime != null)
+		long planned = (((departure.plannedTime.getTime() - now)/1000)/60);
+		String departureTimePlanned = planned+"";
+		String departureTimePredict = "-";
+		if(departure.predictedTime != null)
 		{
-			long predict = (((depature.predictedTime.getTime() - now)/1000)/60);
+			long predict = (((departure.predictedTime.getTime() - now)/1000)/60);
 			long delay = predict - planned;
 			if(delay > 0)
-				depatureTimePredict = "+"+delay;
+				departureTimePredict = "+"+delay;
 		}
 
-		String depatureTimeText = String.format(mContext.getString(R.string.text_depature_times), depatureTimePlanned, depatureTimePredict);
+		String depatureTimeText = String.format(mContext.getString(R.string.text_depature_times), departureTimePlanned, departureTimePredict);
 
 		return depatureTimeText;
 	}
+
+    private void filterGoneDepartures(List<StationDepartures> departuresList) {
+        for (StationDepartures stationDepartures : departuresList) {
+            List<Departure> depatures = stationDepartures.departures;
+            for(int i = 0; i < depatures.size(); i++)
+            {
+                if(alreadyDeparted(depatures.get(i)))
+                    depatures.remove(i);
+            }
+        }
+    }
+
+    private boolean alreadyDeparted(Departure departure) {
+        long now = System.currentTimeMillis();
+        long planned = (((departure.plannedTime.getTime() - now)/1000)/60);
+        if(departure.predictedTime != null)
+        {
+            long predict = (((departure.predictedTime.getTime() - now)/1000)/60);
+            if(predict <= 0)
+                return true;
+        }
+        if(planned <= 0)
+            return true;
+        return false;
+    }
 
 
 	private CharSequence getLineText(Line line) {
