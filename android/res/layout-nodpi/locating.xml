@@ -7,11 +7,10 @@
         android:id="@+id/locationText"
         style="@style/textHeader"
         android:layout_width="wrap_content"
-        android:layout_marginTop="5px"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/locationimage"
-        android:layout_centerHorizontal="true"
-        android:text="@string/text_locating" />
+        android:text="@string/text_locating"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
 
     <ImageView
         android:id="@+id/locationimage"
@@ -19,7 +18,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="24px"
+        android:layout_marginTop="12px"
         android:src="@drawable/stat_sys_gps_on" />
+
+    <TextView
+            style="@style/textHeader"
+            android:id="@+id/networkText"
+            android:layout_width="128px"
+            android:layout_height="wrap_content"
+            android:text="Europe - long distance"
+            android:singleLine="false"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="2px"/>
 
 </RelativeLayout>

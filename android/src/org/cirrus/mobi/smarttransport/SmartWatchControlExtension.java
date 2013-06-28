@@ -80,9 +80,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private List<QueryDeparturesResult> mQueryDeparturesResults;
 	private LayoutInflater mInflater;
 	private int mScrollIndex;
+    private String mNetwork;
 
 
-	public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
+    public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
 		super(context, hostAppPackageName);
 		if (handler == null) {
 			throw new IllegalArgumentException("handler == null");
@@ -129,7 +130,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		if(BuildConfig.DEBUG)
 			Log.v(TAG, "Loading class: "+providerClass);
 		
-		
+		//we do need the network as well
+        this.mNetwork = getNetworkForProvider(providerClass);
 		
 		try {
 			networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).newInstance();
@@ -240,6 +242,11 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		RelativeLayout locatingLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.locating, null);
 		locatingLayout.setLayoutParams(new LayoutParams(width, height));
 
+        //getTextView and set current network
+        TextView textView = (TextView) locatingLayout.findViewById(R.id.networkText);
+        textView.setText(mNetwork);
+
+
 		//layout
 		locatingLayout.measure(width, height); 
 		locatingLayout.layout(0, 0, locatingLayout.getMeasuredWidth(),
@@ -260,7 +267,11 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		RelativeLayout loadingLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.loading, null);
 		loadingLayout.setLayoutParams(new LayoutParams(width, height));
 
-		//layout
+        //getTextView and set current network
+        TextView textView = (TextView) loadingLayout.findViewById(R.id.networkText);
+        textView.setText(mNetwork);
+
+        //layout
 		loadingLayout.measure(width, height); 
 		loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
 				loadingLayout.getMeasuredHeight());		
@@ -426,7 +437,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 
 	@Override
-	public void depaturesReceived(QueryDeparturesResult result) {
+	public void departuresReceived(QueryDeparturesResult result) {
 		if(this.mQueryDeparturesResults == null)
 			this.mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
 		this.mQueryDeparturesResults.add(result);
@@ -434,7 +445,24 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	}
 
-	// Define a listener that responds to location updates
+    private String getNetworkForProvider(final String providerClass) {
+        //lookup in arrays
+        final String[] values = mContext.getResources().getStringArray(R.array.pref_transportNetwork_values);
+        //find index in values
+        int index = -1;
+        for (int i = 0; i < values.length; i++) {
+            if(values[i].equals(providerClass))
+            {
+                index = i;
+                break;
+            }
+        }
+        final String network = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries)[index];
+        return network;
+    }
+
+
+    // Define a listener that responds to location updates
 	LocationListener locationListener = new LocationListener() {
 
 		private Location clocation;
