@@ -3,36 +3,51 @@
 <!-- VVN ? BsvagProvider ? BSAG? -->
     <array name="pref_transportNetwork_Entries">
         <item>Europe - long distance</item><!-- 0 -->
-        <item>Germany - long distance &amp; regional (Bahn)</item>
+        <item>Belgium - SNCB</item>
+        <item>Denmark - DSB</item>
+        <item>Germany - Bahn</item>
         <item>Germany - Augsburg</item>
-        <item>Germany - Bavaria</item>
+        <!--<item>Germany - Bayern</item>-->
         <item>Germany - Berlin</item>
         <item>Germany - Berlin-Brandenburg</item>
+        <item>Germany - Braunschweig</item>
+        <item>Germany - Bremen</item>
         <item>Germany - Ingolstadt</item>
         <item>Germany - VMV Mecklenburg Vorpommern</item>
         <item>Germany - Munich</item>
         <item>Germany - Niedersachen / Bremen</item>
-        <item>Germany - Nordhessischer Verkehrsverbung</item>
+        <item>Germany - Nordhessischer Verkehrsverbund</item>
         <item>Germany - Schleswig Holstein</item>
-        
+        <item>Netherlands - NS</item>
+        <item>Austria - ÖBB</item>
+        <item>Austria - VOR</item>
+        <item>Sweden</item>
+        <item>Switzerland - SBB</item>
+
+
         <!-- <item>Germany - Hamburg</item> -->
     </array>
     <array name="pref_transportNetwork_values">
         <item>RtProvider</item>		<!-- 0 Europe -->
+        <item>SncbProvider</item>   <!-- belgien sncb-->
+        <item>DsbProvider</item>    <!-- Denmark DSB -->
         <item>BahnProvider</item>	<!-- Germany -->
         <item>AvvProvider</item>	<!-- Augsburg -->
-        <item>BayernProvider</item> <!-- bayern -->        
-        <item>BsvagProvider</item>	<!-- Berlin -->
+        <!--<item>BayernProvider</item>--> <!-- bayern -->
+        <item>BvgProvider</item>	<!-- Berlin -->
         <item>VbbProvider</item>	<!-- Berlin Brandenburg -->
+        <item>BsvagProvider</item>  <!-- Braunschweig -->
+        <item>BsagProvider</item>  <!-- Bremen -->
         <item>InvgProvider</item>	<!-- Ingolstadt -->
         <item>VmvProvider</item> 	<!-- Mecklenburg -->
         <item>MvvProvider</item>	<!--  Minga -->
         <item>GvhProvider</item>	<!-- Niedersachsen / Bremen -->
         <item>RmvProvider</item>	<!-- nordhessen -->
         <item>ShProvider</item>		<!-- Schleswig Holstein -->
-        
-        
-        <item>r</item><!-- Hamburg -->
+        <item>OebbProvider</item>   <!-- Österreich Oebb -->
+        <item>VorProvider</item>    <!-- Österreich VOR -->
+        <item>SeProvider</item>     <!-- Schweden -->
+        <item>SbbProvider</item>    <!-- Schweiz SBB -->
     </array>
 
 </resources>
