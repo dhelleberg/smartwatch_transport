@@ -12,5 +12,5 @@ local.properties
 public-transport-enabler/enabler/src/de/schildbach/pte/SadProvider.java
 **/build/**
 *.iml
-.idea/**
-.gradle/**
+**/.idea/**
+**/.gradle/**
