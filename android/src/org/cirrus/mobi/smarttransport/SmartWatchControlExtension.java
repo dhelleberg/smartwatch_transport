@@ -20,6 +20,7 @@ package org.cirrus.mobi.smarttransport;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
 import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
 
 import android.content.Context;
@@ -136,13 +137,19 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		return context.getResources().getDimensionPixelSize(R.dimen.smart_watch_control_height);
 	}
 
+    private void startSearch()
+    {
+        state = STATE_SEARCHING;
+        mStationIndex = 0;
+
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+        redraw();
+    }
+
 	@Override
 	public void onStart() {
 		super.onStart();
-		//intial call, kick search
-		state = STATE_SEARCHING;
-
-		mStationIndex = 0;
 
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 
@@ -159,14 +166,15 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 			Log.e(TAG, "Could not load networkprovider. should not happen");
 		}
-		// Acquire a reference to the system Location Manager
+
+
+        // Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 		publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
-
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
 		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        //intial call, kick search
+        startSearch();
 	}
 
 	@Override
@@ -238,7 +246,23 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		}
 	}
 
-	private void handleSwipe(int direction) {
+    @Override
+    public void onTouch(ControlTouchEvent event) {
+        super.onTouch(event);
+        switch (event.getAction())
+        {
+            case Control.Intents.TOUCH_ACTION_PRESS:
+                switch (state)
+                {
+                    case STATE_DISPLAY_NOT_FOUND:
+                        startSearch();
+                        break;
+                }
+                break;
+        }
+    }
+
+    private void handleSwipe(int direction) {
 		switch (direction) {
 		case Control.Intents.SWIPE_DIRECTION_LEFT:
 			if(mNearbyStationsResult != null)

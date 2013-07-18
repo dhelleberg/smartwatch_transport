@@ -59,6 +59,7 @@ public class PublicNetworkProvider {
 	private void recievedStations(NearbyStationsResult result) {
 		if(this.callbackInterface != null)
 			this.callbackInterface.nearbyStationsReceived(result);
+        this.fnbst = null;
 	}
 
 	private void recievedDepatures(QueryDeparturesResult result) {
