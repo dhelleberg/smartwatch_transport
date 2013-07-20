@@ -50,23 +50,32 @@
   ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
-    <string name="app_name">SmartTrans</string>
-    <string name="text_depature_times">%1$s min (%2$s)</string>
-    <string name="text_locating">locating...</string>
-    <string name="text_loading">loading...</string>
-    <string name="pref_publicnetwork_title">Transport Network</string>    
-    <string name="pref_donate">Donate</string>
-    <string name="pref_about">About</string>
-    <string name="pref_feedback">Feedback</string>
-    <string name="configuration">Configure SmartTrans</string>
-    <string name="dialog_notimplemented">Not implemented yet</string>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
 
-    <string name="pref_publicnetwork">pre_network</string>
-    <string name="pref_transportNetwork_default">RtProvider</string>
-    <string name="feedback_subject">SmartTransport Feedback</string>
-    <string name="feedback_mailaddress">dominik.helleberg+SmartTrans@gmail.com</string>
-    <string name="feedback_mailsend">Send Mail</string>
-    <string name="text_nostations">Ups, no stations found nearby. Click to retry</string>
-    <string name="text_selectProvider">Swipe and click to select provider</string>
-</resources>
+
+    <TextView
+        android:id="@+id/textSelectProvider"
+        style="@style/textSmaller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_selectProvider"
+        android:gravity="center_horizontal"
+        android:paddingTop="5px"
+        android:singleLine="false"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+            style="@style/textHeader"
+            android:id="@+id/textSelectedProvider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Europe - long distance"
+            android:singleLine="false"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginBottom="2px"/>
+
+</RelativeLayout>

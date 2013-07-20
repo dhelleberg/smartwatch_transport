@@ -15,6 +15,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import java.util.ArrayList;
@@ -76,6 +93,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	private static final int MAX_DEPATURE_ROWS = 3;
 
+
     private Handler mHandler;
 	private Context mContext;
 	private int width;
@@ -88,6 +106,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private static final int STATE_DISPLAY_DATA = 3;
 	private static final int STATE_LOADING = 4;
     private static final int STATE_DISPLAY_NOT_FOUND = 5;
+    private static final int STATE_SELECT_PROVIDER = 6;
 
 	protected static final String TAG = "SMT/SWCE";
 	private static final String PACKAGE = "de.schildbach.pte.";
@@ -102,6 +121,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private LayoutInflater mInflater;
 	private int mScrollIndex;
     private String mNetwork;
+    private SharedPreferences mSharedPref;
+    private int mProviderIndex;
 
 
     public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
@@ -151,33 +172,54 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	public void onStart() {
 		super.onStart();
 
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-		String providerClass = sharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
-		if(BuildConfig.DEBUG)
-			Log.v(TAG, "Loading class: "+providerClass);
-
-		//we do need the network as well
-        this.mNetwork = getNetworkForProvider(providerClass);
-
-		try {
-			networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).newInstance();
-		} catch (Exception e) {
-
-			Log.e(TAG, "Could not load networkprovider. should not happen");
-		}
-
-
         // Acquire a reference to the system Location Manager
-		locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-		publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
-		mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        //intial call, kick search
-        startSearch();
+
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+
+        //detect not selected provider
+        if(!mSharedPref.contains(mContext.getResources().getString(R.string.pref_publicnetwork)))
+        {
+            selectProvider();
+        }
+        else
+        {
+            initNetworkProvider();
+            //intial call, kick search
+            startSearch();
+        }
+
+
+
+
 	}
 
-	@Override
+    private void selectProvider() {
+        state = STATE_SELECT_PROVIDER;
+        redraw();
+    }
+
+    private void initNetworkProvider() {
+        String providerClass = mSharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
+        if(BuildConfig.DEBUG)
+            Log.v(TAG, "Loading class: "+providerClass);
+
+        //we do need the network as well
+        this.mNetwork = getNetworkForProvider(providerClass);
+
+        try {
+            networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).newInstance();
+        } catch (Exception e) {
+
+            Log.e(TAG, "Could not load networkprovider. should not happen");
+        }
+
+        publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
+    }
+
+    @Override
 	public void onPause() {
 		super.onPause();
 		locationManager.removeUpdates(locationListener);
@@ -206,11 +248,40 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         case STATE_DISPLAY_NOT_FOUND:
             showNotFoundMessage();
             break;
+        case STATE_SELECT_PROVIDER:
+            showProviderSelection();
+            break;
 		}
 
 
 
 	}
+
+    private void showProviderSelection() {
+        // Create background bitmap for animation.
+        mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+        mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+        RelativeLayout selectProviderLayout = (RelativeLayout) RelativeLayout.inflate(mContext, R.layout.select_provider,null);
+        selectProviderLayout.setLayoutParams(new LayoutParams(width, height));
+
+        String[] providerEntries = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries);
+
+        TextView selectedProviderText = (TextView) selectProviderLayout.findViewById(R.id.textSelectedProvider);
+        selectedProviderText.setText(providerEntries[mProviderIndex]);
+
+        layout(selectProviderLayout);
+        drawLayout(selectProviderLayout);
+
+
+    }
+
+    private void drawLayout(RelativeLayout selectProviderLayout) {
+        // Draw on canvas
+        Canvas canvas = new Canvas(mBackground);
+        selectProviderLayout.draw(canvas);
+        // Send bitmap to accessory
+        showBitmap(mBackground);
+    }
 
     private void showNotFoundMessage() {
         // Create background bitmap for animation.
@@ -219,15 +290,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         RelativeLayout loadingLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.no_stations, null);
         loadingLayout.setLayoutParams(new LayoutParams(width, height));
         //layout
-        loadingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
-        loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
-                loadingLayout.getMeasuredHeight());
+        layout(loadingLayout);
 
         // Draw on canvas
-        Canvas canvas = new Canvas(mBackground);
-        loadingLayout.draw(canvas);
-        // Send bitmap to accessory
-        showBitmap(mBackground);
+        drawLayout(loadingLayout);
 
 
     }
@@ -317,15 +383,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 
 		//layout
-        locatingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
-
-        locatingLayout.layout(0, 0, locatingLayout.getMeasuredWidth(),
-				locatingLayout.getMeasuredHeight());
+        layout(locatingLayout);
 		// Draw on canvas
-		Canvas canvas = new Canvas(mBackground);
-		locatingLayout.draw(canvas);
-		// Send bitmap to accessory
-		showBitmap(mBackground);
+        drawLayout(locatingLayout);
 
 	}
 
@@ -342,20 +402,20 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         textView.setText(mNetwork);
 
         //layout
-        loadingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
-
-        loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
-				loadingLayout.getMeasuredHeight());
+        layout(loadingLayout);
 		// Draw on canvas
-		Canvas canvas = new Canvas(mBackground);
-		loadingLayout.draw(canvas);
-		// Send bitmap to accessory
-		showBitmap(mBackground);
+        drawLayout(loadingLayout);
 
 	}
 
+    private void layout(RelativeLayout loadingLayout) {
+        loadingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
+        loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
+				loadingLayout.getMeasuredHeight());
+    }
 
-	public void showData()
+
+    public void showData()
 	{
 		// Create background bitmap for animation.
 		mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
