@@ -32,6 +32,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import java.util.ArrayList;
@@ -66,7 +83,6 @@ import android.widget.TextView;
 import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 
-import de.schildbach.pte.BahnProvider;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.Line;
@@ -123,6 +139,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     private String mNetwork;
     private SharedPreferences mSharedPref;
     private int mProviderIndex;
+    private String mErrorMessage = "";
+    private String[] mProviderEntries;
 
 
     public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
@@ -162,9 +180,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     {
         state = STATE_SEARCHING;
         mStationIndex = 0;
-
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
         redraw();
     }
 
@@ -179,6 +195,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 
+        mProviderEntries = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries);
+
         //detect not selected provider
         if(!mSharedPref.contains(mContext.getResources().getString(R.string.pref_publicnetwork)))
         {
@@ -186,7 +204,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         }
         else
         {
-            initNetworkProvider();
+            //loadProvider from Preferences
+            String providerClass = mSharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
+            initNetworkProvider(providerClass);
             //intial call, kick search
             startSearch();
         }
@@ -201,8 +221,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         redraw();
     }
 
-    private void initNetworkProvider() {
-        String providerClass = mSharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
+    private void initNetworkProvider(String providerClass) {
+
         if(BuildConfig.DEBUG)
             Log.v(TAG, "Loading class: "+providerClass);
 
@@ -246,7 +266,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			showLoadingImage();
 			break;
         case STATE_DISPLAY_NOT_FOUND:
-            showNotFoundMessage();
+            this.mErrorMessage = mContext.getResources().getString(R.string.text_nostations);
+            showErrorMessage();
             break;
         case STATE_SELECT_PROVIDER:
             showProviderSelection();
@@ -264,15 +285,11 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         RelativeLayout selectProviderLayout = (RelativeLayout) RelativeLayout.inflate(mContext, R.layout.select_provider,null);
         selectProviderLayout.setLayoutParams(new LayoutParams(width, height));
 
-        String[] providerEntries = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries);
-
         TextView selectedProviderText = (TextView) selectProviderLayout.findViewById(R.id.textSelectedProvider);
-        selectedProviderText.setText(providerEntries[mProviderIndex]);
+        selectedProviderText.setText(mProviderEntries[mProviderIndex]);
 
         layout(selectProviderLayout);
         drawLayout(selectProviderLayout);
-
-
     }
 
     private void drawLayout(RelativeLayout selectProviderLayout) {
@@ -283,17 +300,21 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         showBitmap(mBackground);
     }
 
-    private void showNotFoundMessage() {
+    private void showErrorMessage() {
         // Create background bitmap for animation.
         mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
         mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-        RelativeLayout loadingLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.no_stations, null);
-        loadingLayout.setLayoutParams(new LayoutParams(width, height));
+        RelativeLayout errorLayout = (RelativeLayout)RelativeLayout.inflate(mContext, R.layout.no_stations, null);
+        errorLayout.setLayoutParams(new LayoutParams(width, height));
+
+        TextView textViewErrorMsg = (TextView) errorLayout.findViewById(R.id.errortext);
+        textViewErrorMsg.setText(mErrorMessage);
+
         //layout
-        layout(loadingLayout);
+        layout(errorLayout);
 
         // Draw on canvas
-        drawLayout(loadingLayout);
+        drawLayout(errorLayout);
 
 
     }
@@ -304,13 +325,40 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		super.onSwipe(direction);
 		switch (state) {
 		case STATE_DISPLAY_DATA:
-			handleSwipe(direction);
+			handleSwipeStationView(direction);
 			break;
+        case STATE_SELECT_PROVIDER:
+            handleSwipeSelectProvider(direction);
+            break;
+
 
 		default:
 			break;
 		}
 	}
+
+    private void handleSwipeSelectProvider(int direction) {
+        switch (direction) {
+            case Control.Intents.SWIPE_DIRECTION_LEFT:
+                if(mProviderEntries != null)
+                {
+                    mProviderIndex--;
+                    if(mProviderIndex < 0)
+                        mProviderIndex = mProviderEntries.length-1;
+                    redraw();
+                }
+                break;
+            case Control.Intents.SWIPE_DIRECTION_RIGHT:
+                if(mProviderEntries != null)
+                {
+                    mProviderIndex++;
+                    if(mProviderIndex >= mProviderEntries.length)
+                        mProviderIndex = 0;
+                    redraw();
+                }
+                break;
+        }
+    }
 
     @Override
     public void onTouch(ControlTouchEvent event) {
@@ -323,12 +371,29 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
                     case STATE_DISPLAY_NOT_FOUND:
                         startSearch();
                         break;
+                    case STATE_SELECT_PROVIDER:
+                        selectCurrentProvider();
+                        break;
                 }
                 break;
         }
     }
 
-    private void handleSwipe(int direction) {
+    private void selectCurrentProvider() {
+        //get Provider class and write it to prefs etc.
+        String providerclass = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries)[mProviderIndex];
+
+        SharedPreferences.Editor editor = mSharedPref.edit();
+        editor.putString(mContext.getResources().getString(R.string.pref_publicnetwork), providerclass);
+        editor.commit();
+
+        initNetworkProvider(providerclass);
+
+        startSearch();
+
+    }
+
+    private void handleSwipeStationView(int direction) {
 		switch (direction) {
 		case Control.Intents.SWIPE_DIRECTION_LEFT:
 			if(mNearbyStationsResult != null)
