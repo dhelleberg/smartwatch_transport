@@ -49,6 +49,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import java.util.ArrayList;
@@ -233,7 +250,17 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).newInstance();
         } catch (Exception e) {
 
-            Log.e(TAG, "Could not load networkprovider. should not happen");
+            Log.e(TAG, "Could not load networkprovider. should not happen", e);
+            //maybe it needs additional params
+            try {
+                networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).getDeclaredConstructor(String.class).newInstance("");
+                Log.w(TAG, "second try");
+            } catch (Exception e1) {
+                e1.printStackTrace();
+                Log.e(TAG, "2nd try to load provider failed!",e1);
+            }
+
+
         }
 
         publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
@@ -381,7 +408,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
     private void selectCurrentProvider() {
         //get Provider class and write it to prefs etc.
-        String providerclass = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries)[mProviderIndex];
+        String providerclass = mContext.getResources().getStringArray(R.array.pref_transportNetwork_values)[mProviderIndex];
 
         SharedPreferences.Editor editor = mSharedPref.edit();
         editor.putString(mContext.getResources().getString(R.string.pref_publicnetwork), providerclass);

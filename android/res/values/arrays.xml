@@ -1,24 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of SmartTransport
+  ~
+  ~ SmartTransport is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ SmartTransport is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
 <!-- VVN ? BsvagProvider ? BSAG? -->
     <array name="pref_transportNetwork_Entries">
         <item>Europe - long distance</item><!-- 0 -->
-        <item>Belgium - SNCB</item>
+        <!--<item>Belgium - SNCB</item>-->
         <item>Denmark - DSB</item>
         <item>Germany - Bahn</item>
         <item>Germany - Augsburg</item>
-        <!--<item>Germany - Bayern</item>-->
-        <item>Germany - Berlin</item>
+        <!--<item>Germany - Bayern</item>
+        <item>Germany - Berlin</item>-->
         <item>Germany - Berlin-Brandenburg</item>
         <item>Germany - Braunschweig</item>
         <item>Germany - Bremen</item>
-        <item>Germany - Ingolstadt</item>
+        <!--<item>Germany - Ingolstadt</item>-->
         <item>Germany - VMV Mecklenburg Vorpommern</item>
         <item>Germany - Munich</item>
         <item>Germany - Niedersachen / Bremen</item>
         <item>Germany - Nordhessischer Verkehrsverbund</item>
-        <item>Germany - Schleswig Holstein</item>
-        <item>Netherlands - NS</item>
+        <!--<item>Germany - Schleswig Holstein</item>-->
+        <!--<item>Netherlands - NS</item>-->
         <item>Austria - ÖBB</item>
         <item>Austria - VOR</item>
         <item>Sweden</item>
@@ -29,21 +46,21 @@
     </array>
     <array name="pref_transportNetwork_values">
         <item>RtProvider</item>		<!-- 0 Europe -->
-        <item>SncbProvider</item>   <!-- belgien sncb-->
+       <!-- <item>SncbProvider</item>-->   <!-- belgien sncb-->
         <item>DsbProvider</item>    <!-- Denmark DSB -->
         <item>BahnProvider</item>	<!-- Germany -->
         <item>AvvProvider</item>	<!-- Augsburg -->
         <!--<item>BayernProvider</item>--> <!-- bayern -->
-        <item>BvgProvider</item>	<!-- Berlin -->
+        <!--<item>BvgProvider</item>-->	<!-- Berlin -->
         <item>VbbProvider</item>	<!-- Berlin Brandenburg -->
         <item>BsvagProvider</item>  <!-- Braunschweig -->
         <item>BsagProvider</item>  <!-- Bremen -->
-        <item>InvgProvider</item>	<!-- Ingolstadt -->
+        <!--<item>InvgProvider</item>-->	<!-- Ingolstadt -->
         <item>VmvProvider</item> 	<!-- Mecklenburg -->
         <item>MvvProvider</item>	<!--  Minga -->
         <item>GvhProvider</item>	<!-- Niedersachsen / Bremen -->
         <item>RmvProvider</item>	<!-- nordhessen -->
-        <item>ShProvider</item>		<!-- Schleswig Holstein -->
+        <!--<item>ShProvider</item>	-->	<!-- Schleswig Holstein -->
         <item>OebbProvider</item>   <!-- Österreich Oebb -->
         <item>VorProvider</item>    <!-- Österreich VOR -->
         <item>SeProvider</item>     <!-- Schweden -->
