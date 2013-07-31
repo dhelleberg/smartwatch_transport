@@ -138,7 +138,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private static final int STATE_SEARCHING = 2;
 	private static final int STATE_DISPLAY_DATA = 3;
 	private static final int STATE_LOADING = 4;
-    private static final int STATE_DISPLAY_NOT_FOUND = 5;
+    private static final int STATE_ERROR = 5;
     private static final int STATE_SELECT_PROVIDER = 6;
 
 	protected static final String TAG = "SMT/SWCE";
@@ -197,7 +197,16 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     {
         state = STATE_SEARCHING;
         mStationIndex = 0;
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+        else if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+        else
+        {
+            //errorState!
+            this.mErrorMessage = "ouch";
+            state = STATE_ERROR;
+        }
         redraw();
     }
 
@@ -292,7 +301,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		case STATE_LOADING:
 			showLoadingImage();
 			break;
-        case STATE_DISPLAY_NOT_FOUND:
+        case STATE_ERROR:
             this.mErrorMessage = mContext.getResources().getString(R.string.text_nostations);
             showErrorMessage();
             break;
@@ -395,7 +404,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             case Control.Intents.TOUCH_ACTION_PRESS:
                 switch (state)
                 {
-                    case STATE_DISPLAY_NOT_FOUND:
+                    case STATE_ERROR:
                         startSearch();
                         break;
                     case STATE_SELECT_PROVIDER:
@@ -689,7 +698,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         }
         else
         {
-            state = STATE_DISPLAY_NOT_FOUND;
+            state = STATE_ERROR;
             redraw();
         }
 

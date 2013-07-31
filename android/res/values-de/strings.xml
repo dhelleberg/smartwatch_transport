@@ -67,5 +67,6 @@
     <string name="feedback_subject">SmartTransport Feedback</string>
     <string name="feedback_mailaddress">dominik.helleberg+SmartTrans@gmail.com</string>
     <string name="feedback_mailsend">Mail senden</string>
-    <string name="text_selectProvider">Swipe and click to select provider</string>
+    <string name="text_nostations">Ups, keine Stationen gefunden. Click zur neuen Suche.</string>
+    <string name="text_selectProvider">Swipen um anderen Provdider auszuwählen</string>
 </resources>
