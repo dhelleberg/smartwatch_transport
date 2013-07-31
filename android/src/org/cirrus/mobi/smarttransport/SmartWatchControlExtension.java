@@ -509,7 +509,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	}
 
-    private void layout(RelativeLayout loadingLayout) {
+    private void layout(ViewGroup loadingLayout) {
         loadingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
         loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
 				loadingLayout.getMeasuredHeight());
@@ -538,11 +538,6 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
 			TextView stationName = (TextView) stationsLayout.findViewById(R.id.Station);
 			stationName.setText(shortStationName(station));
-
-			stationsLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
-
-            stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
-					stationsLayout.getMeasuredHeight());
 
 			int lines = stationName.getLineCount();
 			departureRows = MAX_DEPATURE_ROWS - lines+1;
@@ -605,9 +600,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			}
 
 		}
-		stationsLayout.measure(width, height);
-		stationsLayout.layout(0, 0, stationsLayout.getMeasuredWidth(),
-				stationsLayout.getMeasuredHeight());
+        layout(stationsLayout);
 
 		// Draw on canvas
 		Canvas canvas = new Canvas(mBackground);

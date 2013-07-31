@@ -37,7 +37,7 @@
 <!-- VVN ? BsvagProvider ? BSAG? -->
     <array name="pref_transportNetwork_Entries">
         <item>Europa - Fernverkehr</item><!-- 0 -->
-        <item>Belgien - SNCB</item>
+        <!--<item>Belgien - SNCB</item>-->
         <item>Dänemark - DSB</item>
         <item>Deutschland - Bahn</item>
         <item>Deutschland - Augsburg</item>
@@ -46,13 +46,13 @@
         <item>Deutschland - Berlin-Brandenburg</item>
         <item>Deutschland - Braunschweig</item>
         <item>Deutschland - Bremen</item>
-        <item>Deutschland - Ingolstadt</item>
+        <!--<item>Deutschland - Ingolstadt</item>-->
         <item>Deutschland - VMV Mecklenburg Vorpommern</item>
         <item>Deutschland - München</item>
         <item>Deutschland - Niedersachen / Bremen</item>
         <item>Deutschland - Nordhessischer Verkehrsverbund</item>
-        <item>Deutschland - Schleswig Holstein</item>
-        <item>Niederlande - NS</item>
+        <!--<item>Deutschland - Schleswig Holstein</item>
+        <item>Niederlande - NS</item>-->
         <item>Österreich - ÖBB</item>
         <item>Österreich - VOR</item>
         <item>Schweden</item>
