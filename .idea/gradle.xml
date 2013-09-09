@@ -3,8 +3,8 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="externalProjectPath" value="$PROJECT_DIR$/build.gradle" />
-        <option name="gradleHome" value="$USER_HOME$/dev/gradle/gradle-1.6" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleHome" value="$USER_HOME$/dev/gradle/gradle-1.7" />
       </GradleProjectSettings>
     </option>
   </component>
