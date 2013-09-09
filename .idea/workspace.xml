@@ -1742,7 +1742,11 @@
       <created>1378746681337</created>
       <updated>1378746681337</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="upgrade to gradle 1.7&#10;added TestConfig">
+      <created>1378746690340</created>
+      <updated>1378746690340</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
