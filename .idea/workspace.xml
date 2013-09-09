@@ -48,14 +48,9 @@
     </layouts>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f4764399-1c5e-4a8d-8d54-13159ea9e043" name="Default" comment="update copyright">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SmartExtensionAPI/build.gradle" afterPath="$PROJECT_DIR$/SmartExtensionAPI/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SmartExtensionUtils/build.gradle" afterPath="$PROJECT_DIR$/SmartExtensionUtils/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/android/build.gradle" afterPath="$PROJECT_DIR$/android/build.gradle" />
+    <list default="true" id="f4764399-1c5e-4a8d-8d54-13159ea9e043" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SmartExtensionAPI/project.properties" afterPath="$PROJECT_DIR$/SmartExtensionAPI/project.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SmartExtensionUtils/project.properties" afterPath="$PROJECT_DIR$/SmartExtensionUtils/project.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="smart_transit.iws" />
@@ -1743,7 +1738,11 @@
       <created>1374526720795</created>
       <updated>1374526720795</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="upgrade to gradle 1.7&#10;added TestConfig">
+      <created>1378746681337</created>
+      <updated>1378746681337</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -1761,6 +1760,7 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28138164" sideWeight="0.66109425" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33890578" sideWeight="0.49957877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.387538" sideWeight="0.49957877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18128163" sideWeight="0.67173254" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1775,7 +1775,6 @@
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19240506" sideWeight="0.67021275" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3242424" sideWeight="0.49915683" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33890578" sideWeight="0.49957877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39969605" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1798,7 +1797,8 @@
     <MESSAGE value="refactoring, selectProviderScreen" />
     <MESSAGE value="added network provider selection on smartwatch" />
     <MESSAGE value="getting into the provider disaster... what a mess...." />
-    <option name="LAST_COMMIT_MESSAGE" value="getting into the provider disaster... what a mess...." />
+    <MESSAGE value="upgrade to gradle 1.7&#10;added TestConfig" />
+    <option name="LAST_COMMIT_MESSAGE" value="upgrade to gradle 1.7&#10;added TestConfig" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
