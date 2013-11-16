@@ -21,17 +21,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Product;
-import de.schildbach.pte.dto.QueryConnectionsContext;
-import de.schildbach.pte.dto.QueryConnectionsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
-import de.schildbach.pte.util.ParserUtils;
+import de.schildbach.pte.dto.QueryTripsContext;
+import de.schildbach.pte.dto.QueryTripsResult;
 
 /**
  * @author Andreas Schildbach
@@ -43,7 +41,7 @@ public class OebbProvider extends AbstractHafasProvider
 
 	public OebbProvider()
 	{
-		super(API_BASE + "query.exe/dn", 13, null);
+		super(API_BASE + "stboard.exe/dn", API_BASE + "ajax-getstop.exe/dny", API_BASE + "query.exe/dn", 13, null);
 
 		setDominantPlanStopTime(true);
 		setJsonGetStopsEncoding(UTF_8);
@@ -58,7 +56,7 @@ public class OebbProvider extends AbstractHafasProvider
 	{
 		for (final Capability capability : capabilities)
 			if (capability == Capability.NEARBY_STATIONS || capability == Capability.DEPARTURES || capability == Capability.AUTOCOMPLETE_ONE_LINE
-					|| capability == Capability.CONNECTIONS)
+					|| capability == Capability.TRIPS)
 				return true;
 
 		return false;
@@ -148,11 +146,10 @@ public class OebbProvider extends AbstractHafasProvider
 
 	public NearbyStationsResult queryNearbyStations(final Location location, final int maxDistance, final int maxStations) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder(API_BASE);
-
 		if (location.hasLocation())
 		{
-			uri.append("query.exe/dny");
+			final StringBuilder uri = new StringBuilder(queryEndpoint);
+			uri.append('y');
 			uri.append("?performLocating=2&tpl=stop2json");
 			uri.append("&look_maxno=").append(maxStations != 0 ? maxStations : 200);
 			uri.append("&look_maxdist=").append(maxDistance != 0 ? maxDistance : 5000);
@@ -164,7 +161,8 @@ public class OebbProvider extends AbstractHafasProvider
 		}
 		else if (location.type == LocationType.STATION && location.hasId())
 		{
-			uri.append("stboard.exe/dn?near=Suchen");
+			final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+			uri.append("?near=Suchen");
 			uri.append("&distance=").append(maxDistance != 0 ? maxDistance / 1000 : 50);
 			uri.append("&input=").append(location.id);
 
@@ -178,27 +176,18 @@ public class OebbProvider extends AbstractHafasProvider
 
 	public QueryDeparturesResult queryDepartures(final int stationId, final int maxDepartures, final boolean equivs) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder();
-		uri.append(API_BASE).append("stboard.exe/dn");
-		uri.append("?productsFilter=").append(allProductsString());
-		uri.append("&boardType=dep");
-		uri.append("&disableEquivs=yes"); // don't use nearby stations
-		uri.append("&maxJourneys=50"); // ignore maxDepartures because result contains other stations
-		uri.append("&start=yes");
-		uri.append("&L=vs_java3");
-		uri.append("&input=").append(stationId);
+		final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+		uri.append(xmlQueryDeparturesParameters(stationId));
 
 		return xmlQueryDepartures(uri.toString(), stationId);
 	}
 
-	private static final String AUTOCOMPLETE_URI = API_BASE
-			+ "ajax-getstop.exe/dny?start=1&tpl=suggest2json&REQ0JourneyStopsS0A=255&REQ0JourneyStopsB=12&S=%s?&js=true&";
-
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final StringBuilder uri = new StringBuilder(getStopEndpoint);
+		uri.append(jsonGetStopsParameters(constraint));
 
-		return jsonGetStops(uri);
+		return jsonGetStops(uri.toString());
 	}
 
 	@Override
@@ -208,24 +197,23 @@ public class OebbProvider extends AbstractHafasProvider
 	}
 
 	@Override
-	protected void appendCustomConnectionsQueryBinaryUri(final StringBuilder uri)
+	protected void appendCustomTripsQueryBinaryUri(final StringBuilder uri)
 	{
 		uri.append("&h2g-direct=11");
 	}
 
 	@Override
-	public QueryConnectionsResult queryConnections(final Location from, final Location via, final Location to, final Date date, final boolean dep,
-			final int maxNumConnections, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+	public QueryTripsResult queryTrips(final Location from, final Location via, final Location to, final Date date, final boolean dep,
+			final int numTrips, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
 			final Set<Option> options) throws IOException
 	{
-		return queryConnectionsBinary(from, via, to, date, dep, maxNumConnections, products, walkSpeed, accessibility, options);
+		return queryTripsBinary(from, via, to, date, dep, numTrips, products, walkSpeed, accessibility, options);
 	}
 
 	@Override
-	public QueryConnectionsResult queryMoreConnections(final QueryConnectionsContext contextObj, final boolean later, final int numConnections)
-			throws IOException
+	public QueryTripsResult queryMoreTrips(final QueryTripsContext contextObj, final boolean later, final int numTrips) throws IOException
 	{
-		return queryMoreConnectionsBinary(contextObj, later, numConnections);
+		return queryMoreTripsBinary(contextObj, later, numTrips);
 	}
 
 	@Override

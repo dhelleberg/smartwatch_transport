@@ -20,6 +20,7 @@ package de.schildbach.pte;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import de.schildbach.pte.dto.Point;
@@ -35,6 +36,8 @@ public abstract class AbstractNetworkProvider implements NetworkProvider
 	protected static final Charset ISO_8859_1 = Charset.forName("ISO-8859-1");
 	protected static final Set<Product> ALL_EXCEPT_HIGHSPEED;
 
+	private Map<String, Style> styles = null;
+
 	static
 	{
 		ALL_EXCEPT_HIGHSPEED = new HashSet<Product>(Product.ALL);
@@ -46,11 +49,62 @@ public abstract class AbstractNetworkProvider implements NetworkProvider
 		return ALL_EXCEPT_HIGHSPEED;
 	}
 
-	public Style lineStyle(final String line)
+	protected void setStyles(final Map<String, Style> styles)
 	{
-		if (line.length() == 0)
+		this.styles = styles;
+	}
+
+	private static final char STYLES_SEP = '|';
+
+	public Style lineStyle(final String network, final String line)
+	{
+		if (line == null || line.length() == 0)
 			return null;
-		return StandardColors.LINES.get(line.charAt(0));
+
+		if (styles != null)
+		{
+			if (network != null)
+			{
+				// check for line match
+				final Style lineStyle = styles.get(network + STYLES_SEP + line);
+				if (lineStyle != null)
+					return lineStyle;
+
+				// check for product match
+				final Style productStyle = styles.get(network + STYLES_SEP + line.charAt(0));
+				if (productStyle != null)
+					return productStyle;
+
+				// check for night bus, as that's a common special case
+				if (line.startsWith("BN"))
+				{
+					final Style nightStyle = styles.get(network + STYLES_SEP + "BN");
+					if (nightStyle != null)
+						return nightStyle;
+				}
+			}
+
+			// check for line match
+			final Style lineStyle = styles.get(line);
+			if (lineStyle != null)
+				return lineStyle;
+
+			// check for product match
+			final Style productStyle = styles.get(new Character(line.charAt(0)).toString());
+			if (productStyle != null)
+				return productStyle;
+
+			// check for night bus, as that's a common special case
+			if (line.startsWith("BN"))
+			{
+				final Style nightStyle = styles.get("BN");
+				if (nightStyle != null)
+					return nightStyle;
+			}
+		}
+
+		// standard colors
+		return Standard.STYLES.get(line.charAt(0));
 	}
 
 	public Point[] getArea()

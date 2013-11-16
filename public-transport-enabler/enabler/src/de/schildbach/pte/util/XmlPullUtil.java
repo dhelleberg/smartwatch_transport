@@ -21,15 +21,6 @@ public final class XmlPullUtil
 {
 	public static final String XSI_NS = "http://www.w3.org/2001/XMLSchema-instance";
 
-	/**
-	 * directly jumps forward to start tag, ignoring any structure
-	 */
-	public static void jump(final XmlPullParser pp, final String tagName) throws XmlPullParserException, IOException
-	{
-		if (!jumpToStartTag(pp, null, tagName))
-			throw new IllegalStateException("cannot find <" + tagName + " />");
-	}
-
 	public static void require(final XmlPullParser pp, final String tagName) throws XmlPullParserException, IOException
 	{
 		pp.require(XmlPullParser.START_TAG, null, tagName);
@@ -91,6 +82,27 @@ public final class XmlPullUtil
 		return pp.getEventType() == XmlPullParser.START_TAG && pp.getName().equals(tagName);
 	}
 
+	public static void requireSkip(final XmlPullParser pp, final String tagName) throws XmlPullParserException, IOException
+	{
+		require(pp, tagName);
+
+		if (!pp.isEmptyElementTag())
+		{
+			enter(pp);
+			exit(pp);
+		}
+		else
+		{
+			next(pp);
+		}
+	}
+
+	public static void optSkip(final XmlPullParser pp, final String tagName) throws XmlPullParserException, IOException
+	{
+		if (test(pp, tagName))
+			requireSkip(pp, tagName);
+	}
+
 	public static void next(final XmlPullParser pp) throws XmlPullParserException, IOException
 	{
 		skipSubTree(pp);
@@ -99,26 +111,55 @@ public final class XmlPullUtil
 
 	public static String attr(final XmlPullParser pp, final String attrName)
 	{
-		return pp.getAttributeValue(null, attrName).trim();
+		final String attr = optAttr(pp, attrName, null);
+
+		if (attr != null)
+			return attr;
+		else
+			throw new IllegalStateException("expecting attribute: " + attrName);
+	}
+
+	public static String optAttr(final XmlPullParser pp, final String attrName, final String defaultValue)
+	{
+		final String attr = pp.getAttributeValue(null, attrName);
+
+		if (attr != null)
+		{
+			final String trimmedAttr = attr.trim();
+
+			if (trimmedAttr.length() > 0)
+				return trimmedAttr;
+		}
+
+		return defaultValue;
 	}
 
 	public static int intAttr(final XmlPullParser pp, final String attrName)
 	{
-		return Integer.parseInt(pp.getAttributeValue(null, attrName).trim());
+		return Integer.parseInt(attr(pp, attrName));
 	}
 
 	public static int optIntAttr(final XmlPullParser pp, final String attrName, final int defaultValue)
 	{
-		final String attr = pp.getAttributeValue(null, attrName);
+		final String attr = optAttr(pp, attrName, null);
 		if (attr != null)
-			return Integer.parseInt(attr.trim());
+			return Integer.parseInt(attr);
 		else
 			return defaultValue;
 	}
 
 	public static float floatAttr(final XmlPullParser pp, final String attrName)
 	{
-		return Float.parseFloat(pp.getAttributeValue(null, attrName).trim());
+		return Float.parseFloat(attr(pp, attrName));
+	}
+
+	public static float optFloatAttr(final XmlPullParser pp, final String attrName, final float defaultValue)
+	{
+		final String attr = optAttr(pp, attrName, null);
+		if (attr != null)
+			return Float.parseFloat(attr);
+		else
+			return defaultValue;
 	}
 
 	public static void requireAttr(final XmlPullParser pp, final String attrName, final String requiredValue)

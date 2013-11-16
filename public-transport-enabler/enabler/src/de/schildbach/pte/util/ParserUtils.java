@@ -48,7 +48,7 @@ import de.schildbach.pte.exception.UnexpectedRedirectException;
  */
 public final class ParserUtils
 {
-	private static final String SCRAPE_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:19.0) Gecko/20100101 Firefox/19.0";
+	private static final String SCRAPE_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:23.0) Gecko/20100101 Firefox/23.0";
 	private static final String SCRAPE_ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
 	private static final int SCRAPE_INITIAL_CAPACITY = 4096;
 	private static final int SCRAPE_CONNECT_TIMEOUT = 5000;
@@ -413,8 +413,8 @@ public final class ParserUtils
 		return builder.toString();
 	}
 
-	private static final Pattern P_ISO_DATE = Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})");
-	private static final Pattern P_ISO_DATE_REVERSE = Pattern.compile("(\\d{2})-(\\d{2})-(\\d{4})");
+	private static final Pattern P_ISO_DATE = Pattern.compile("(\\d{4})-?(\\d{2})-?(\\d{2})");
+	private static final Pattern P_ISO_DATE_REVERSE = Pattern.compile("(\\d{2})[-\\.](\\d{2})[-\\.](\\d{4})");
 
 	public static final void parseIsoDate(final Calendar calendar, final CharSequence str)
 	{
@@ -437,7 +437,21 @@ public final class ParserUtils
 		}
 
 		throw new RuntimeException("cannot parse: '" + str + "'");
+	}
 
+	private static final Pattern P_ISO_TIME = Pattern.compile("(\\d{2})-?(\\d{2})");
+
+	public static final void parseIsoTime(final Calendar calendar, final CharSequence str)
+	{
+		final Matcher mIso = P_ISO_TIME.matcher(str);
+		if (mIso.matches())
+		{
+			calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(mIso.group(1)));
+			calendar.set(Calendar.MINUTE, Integer.parseInt(mIso.group(2)));
+			return;
+		}
+
+		throw new RuntimeException("cannot parse: '" + str + "'");
 	}
 
 	private static final Pattern P_GERMAN_DATE = Pattern.compile("(\\d{2})[\\./-](\\d{2})[\\./-](\\d{2,4})");

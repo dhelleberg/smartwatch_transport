@@ -19,8 +19,9 @@ package de.schildbach.pte;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,8 @@ import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
-import de.schildbach.pte.util.ParserUtils;
+import de.schildbach.pte.dto.QueryTripsContext;
+import de.schildbach.pte.dto.QueryTripsResult;
 
 /**
  * @author Andreas Schildbach
@@ -38,11 +40,18 @@ import de.schildbach.pte.util.ParserUtils;
 public class SeProvider extends AbstractHafasProvider
 {
 	public static final NetworkId NETWORK_ID = NetworkId.SE;
-	private static final String API_BASE = "http://reseplanerare.resrobot.se/bin/"; // http://api.vasttrafik.se/bin/query.exe/sn
+	private static final String API_BASE = "http://samtrafiken.hafas.de/bin/";
+
+	// http://reseplanerare.resrobot.se/bin/
+	// http://api.vasttrafik.se/bin/
 
 	public SeProvider()
 	{
-		super(API_BASE + "query.exe/sn", 14, null, UTF_8, null);
+		super(API_BASE + "stboard.exe/sn", API_BASE + "ajax-getstop.exe/sny", API_BASE + "query.exe/sn", 14, null, UTF_8, null);
+
+		setClientType("ANDROID");
+		setCanDoEquivs(false);
+		setUseIso8601(true);
 	}
 
 	public NetworkId id()
@@ -133,25 +142,24 @@ public class SeProvider extends AbstractHafasProvider
 		}
 	}
 
-	private static final Pattern P_SPLIT_NAME_KN = Pattern.compile("(.*?) \\((.*?) kn\\)");
+	private static final Pattern P_SPLIT_NAME_PAREN = Pattern.compile("(.*) \\((.{3,}?) kn\\)");
 
 	@Override
 	protected String[] splitPlaceAndName(final String name)
 	{
-		final Matcher m = P_SPLIT_NAME_KN.matcher(name);
-		if (m.matches())
-			return new String[] { m.group(2), m.group(1) };
+		final Matcher mParen = P_SPLIT_NAME_PAREN.matcher(name);
+		if (mParen.matches())
+			return new String[] { mParen.group(2), mParen.group(1) };
 
 		return super.splitPlaceAndName(name);
 	}
 
 	public NearbyStationsResult queryNearbyStations(final Location location, final int maxDistance, final int maxStations) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder(API_BASE);
-
 		if (location.hasLocation())
 		{
-			uri.append("query.exe/sny");
+			final StringBuilder uri = new StringBuilder(queryEndpoint);
+			uri.append('y');
 			uri.append("?performLocating=2&tpl=stop2json");
 			uri.append("&look_maxno=").append(maxStations != 0 ? maxStations : 150);
 			uri.append("&look_maxdist=").append(maxDistance != 0 ? maxDistance : 5000);
@@ -163,11 +171,8 @@ public class SeProvider extends AbstractHafasProvider
 		}
 		else if (location.type == LocationType.STATION && location.hasId())
 		{
-			uri.append("stboard.exe/sn");
-			uri.append("?productsFilter=").append(allProductsString());
-			uri.append("&boardType=dep");
-			uri.append("&input=").append(location.id);
-			uri.append("&sTI=1&start=yes&hcount=0&L=vs_java3");
+			final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+			uri.append(xmlNearbyStationsParameters(location.id));
 
 			return xmlNearbyStations(uri.toString());
 		}
@@ -179,27 +184,38 @@ public class SeProvider extends AbstractHafasProvider
 
 	public QueryDeparturesResult queryDepartures(final int stationId, final int maxDepartures, final boolean equivs) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder();
-		uri.append(API_BASE).append("stboard.exe/sn");
-		uri.append("?productsFilter=").append(allProductsString());
-		uri.append("&boardType=dep");
-		uri.append("&disableEquivs=yes"); // don't use nearby stations
-		uri.append("&maxJourneys=50"); // ignore maxDepartures because result contains other stations
-		uri.append("&start=yes");
-		uri.append("&L=vs_java3");
-		uri.append("&input=").append(stationId);
+		final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+		uri.append(xmlQueryDeparturesParameters(stationId));
 
 		return xmlQueryDepartures(uri.toString(), stationId);
 	}
 
-	private static final String AUTOCOMPLETE_URI = API_BASE
-			+ "ajax-getstop.exe/sny?start=1&tpl=suggest2json&REQ0JourneyStopsS0A=7&getstop=1&noSession=yes&REQ0JourneyStopsB=12&REQ0JourneyStopsS0G=&S=%s";
-
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final StringBuilder uri = new StringBuilder(getStopEndpoint);
+		uri.append(jsonGetStopsParameters(constraint));
 
-		return jsonGetStops(uri);
+		return jsonGetStops(uri.toString());
+	}
+
+	@Override
+	protected void appendCustomTripsQueryBinaryUri(final StringBuilder uri)
+	{
+		uri.append("&h2g-direct=11");
+	}
+
+	@Override
+	public QueryTripsResult queryTrips(final Location from, final Location via, final Location to, final Date date, final boolean dep,
+			final int numTrips, final Collection<Product> products, final WalkSpeed walkSpeed, final Accessibility accessibility,
+			final Set<Option> options) throws IOException
+	{
+		return queryTripsBinary(from, via, to, date, dep, numTrips, products, walkSpeed, accessibility, options);
+	}
+
+	@Override
+	public QueryTripsResult queryMoreTrips(final QueryTripsContext contextObj, final boolean later, final int numTrips) throws IOException
+	{
+		return queryMoreTripsBinary(contextObj, later, numTrips);
 	}
 
 	@Override

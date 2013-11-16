@@ -20,14 +20,12 @@ package de.schildbach.pte;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
-import de.schildbach.pte.util.ParserUtils;
 
 /**
  * @author Andreas Schildbach
@@ -39,7 +37,7 @@ public class NriProvider extends AbstractHafasProvider
 
 	public NriProvider()
 	{
-		super(API_BASE + "query.exe/on", 8, null);
+		super(API_BASE + "stboard.exe/on", API_BASE + "ajax-getstop.exe/ony", API_BASE + "query.exe/on", 8, null);
 	}
 
 	public NetworkId id()
@@ -50,7 +48,7 @@ public class NriProvider extends AbstractHafasProvider
 	public boolean hasCapabilities(final Capability... capabilities)
 	{
 		for (final Capability capability : capabilities)
-			if (capability == Capability.AUTOCOMPLETE_ONE_LINE || capability == Capability.DEPARTURES || capability == Capability.CONNECTIONS)
+			if (capability == Capability.AUTOCOMPLETE_ONE_LINE || capability == Capability.DEPARTURES || capability == Capability.TRIPS)
 				return true;
 
 		return false;
@@ -133,11 +131,10 @@ public class NriProvider extends AbstractHafasProvider
 
 	public NearbyStationsResult queryNearbyStations(final Location location, final int maxDistance, final int maxStations) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder(API_BASE);
-
 		if (location.hasLocation())
 		{
-			uri.append("query.exe/ony");
+			final StringBuilder uri = new StringBuilder(queryEndpoint);
+			uri.append('y');
 			uri.append("?performLocating=2&tpl=stop2json");
 			uri.append("&look_maxno=").append(maxStations != 0 ? maxStations : 150);
 			uri.append("&look_maxdist=").append(maxDistance != 0 ? maxDistance : 5000);
@@ -149,12 +146,8 @@ public class NriProvider extends AbstractHafasProvider
 		}
 		else if (location.type == LocationType.STATION && location.hasId())
 		{
-			uri.append("stboard.exe/on");
-			uri.append("?productsFilter=").append(allProductsString());
-			uri.append("&boardType=dep");
-			uri.append("&input=").append(location.id);
-			uri.append("&sTI=1&start=yes&hcount=0");
-			uri.append("&L=vs_java3");
+			final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+			uri.append(xmlNearbyStationsParameters(location.id));
 
 			return xmlNearbyStations(uri.toString());
 		}
@@ -166,27 +159,18 @@ public class NriProvider extends AbstractHafasProvider
 
 	public QueryDeparturesResult queryDepartures(final int stationId, final int maxDepartures, final boolean equivs) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder();
-		uri.append(API_BASE).append("stboard.exe/on");
-		uri.append("?productsFilter=").append(allProductsString());
-		uri.append("&boardType=dep");
-		uri.append("&disableEquivs=yes"); // don't use nearby stations
-		uri.append("&maxJourneys=50"); // ignore maxDepartures because result contains other stations
-		uri.append("&start=yes");
-		uri.append("&L=vs_java3");
-		uri.append("&input=").append(stationId);
+		final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+		uri.append(xmlQueryDeparturesParameters(stationId));
 
 		return xmlQueryDepartures(uri.toString(), stationId);
 	}
 
-	private static final String AUTOCOMPLETE_URI = API_BASE
-			+ "ajax-getstop.exe/ony?start=1&tpl=suggest2json&REQ0JourneyStopsS0A=255&REQ0JourneyStopsS0B=5&REQ0JourneyStopsB=12&getstop=1&noSession=yes&REQ0JourneyStopsS0G=%s?&js=true&";
-
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final StringBuilder uri = new StringBuilder(getStopEndpoint);
+		uri.append(jsonGetStopsParameters(constraint));
 
-		return jsonGetStops(uri);
+		return jsonGetStops(uri.toString());
 	}
 
 	@Override

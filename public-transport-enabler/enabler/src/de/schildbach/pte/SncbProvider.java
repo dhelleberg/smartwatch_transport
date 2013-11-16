@@ -20,14 +20,12 @@ package de.schildbach.pte;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import de.schildbach.pte.dto.Location;
 import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.Product;
 import de.schildbach.pte.dto.QueryDeparturesResult;
-import de.schildbach.pte.util.ParserUtils;
 
 /**
  * @author Andreas Schildbach
@@ -39,7 +37,9 @@ public class SncbProvider extends AbstractHafasProvider
 
 	public SncbProvider()
 	{
-		super(API_BASE + "query.exe/nn", 16, null);
+		super(API_BASE + "stboard.exe/nn", API_BASE + "ajax-getstop.exe/nny", API_BASE + "query.exe/nn", 16, null);
+
+		setJsonGetStopsEncoding(UTF_8);
 	}
 
 	public NetworkId id()
@@ -50,10 +50,31 @@ public class SncbProvider extends AbstractHafasProvider
 	public boolean hasCapabilities(final Capability... capabilities)
 	{
 		for (final Capability capability : capabilities)
-			if (capability == Capability.AUTOCOMPLETE_ONE_LINE || capability == Capability.DEPARTURES || capability == Capability.CONNECTIONS)
+			if (capability == Capability.AUTOCOMPLETE_ONE_LINE || capability == Capability.DEPARTURES || capability == Capability.TRIPS)
 				return true;
 
 		return false;
+	}
+
+	@Override
+	protected char intToProduct(final int value)
+	{
+		if (value == 1)
+			return 'I';
+		if (value == 4)
+			return 'I';
+		if (value == 32)
+			return 'B';
+		if (value == 64)
+			return 'R';
+		if (value == 256)
+			return 'U';
+		if (value == 512)
+			return 'B';
+		if (value == 1024)
+			return 'T';
+
+		throw new IllegalArgumentException("cannot handle: " + value);
 	}
 
 	@Override
@@ -78,6 +99,7 @@ public class SncbProvider extends AbstractHafasProvider
 		}
 		else if (product == Product.BUS || product == Product.ON_DEMAND)
 		{
+			productBits.setCharAt(5, '1'); // Bus
 			productBits.setCharAt(9, '1'); // Bus
 		}
 		else if (product == Product.FERRY || product == Product.CABLECAR)
@@ -103,11 +125,10 @@ public class SncbProvider extends AbstractHafasProvider
 
 	public NearbyStationsResult queryNearbyStations(final Location location, final int maxDistance, final int maxStations) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder(API_BASE);
-
 		if (location.type == LocationType.STATION && location.hasId())
 		{
-			uri.append("stboard.exe/nn?near=Zoek");
+			final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+			uri.append("?near=Zoek");
 			uri.append("&distance=").append(maxDistance != 0 ? maxDistance / 1000 : 50);
 			uri.append("&input=").append(location.id);
 
@@ -121,27 +142,18 @@ public class SncbProvider extends AbstractHafasProvider
 
 	public QueryDeparturesResult queryDepartures(final int stationId, final int maxDepartures, final boolean equivs) throws IOException
 	{
-		final StringBuilder uri = new StringBuilder();
-		uri.append(API_BASE).append("stboard.exe/nn");
-		uri.append("?productsFilter=").append(allProductsString());
-		uri.append("&boardType=dep");
-		uri.append("&disableEquivs=yes"); // don't use nearby stations
-		uri.append("&maxJourneys=50"); // ignore maxDepartures because result contains other stations
-		uri.append("&start=yes");
-		uri.append("&L=vs_java3");
-		uri.append("&input=").append(stationId);
+		final StringBuilder uri = new StringBuilder(stationBoardEndpoint);
+		uri.append(xmlQueryDeparturesParameters(stationId));
 
 		return xmlQueryDepartures(uri.toString(), stationId);
 	}
 
-	private static final String AUTOCOMPLETE_URI = API_BASE
-			+ "ajax-getstop.exe/nny?start=1&tpl=suggest2json&REQ0JourneyStopsS0A=255&REQ0JourneyStopsB=12&S=%s?&js=true&";
-
 	public List<Location> autocompleteStations(final CharSequence constraint) throws IOException
 	{
-		final String uri = String.format(Locale.ENGLISH, AUTOCOMPLETE_URI, ParserUtils.urlEncode(constraint.toString(), ISO_8859_1));
+		final StringBuilder uri = new StringBuilder(getStopEndpoint);
+		uri.append(jsonGetStopsParameters(constraint));
 
-		return jsonGetStops(uri);
+		return jsonGetStops(uri.toString());
 	}
 
 	@Override
