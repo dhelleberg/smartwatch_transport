@@ -77,6 +77,10 @@ public class ProviderTestCase extends AndroidTestCase {
     private static final double[] LOCATION_COPENHAGEN = {55.673374,12.561321};
     private static final double[] LOCATION_VIENNA = {48.208174,16.373819};
     private static final double[] LOCATION_STOCKHOLM_GAMLASTAN = {59.323085,18.067843};
+    private static final double[] LOCATION_ZUERICH_HBF = {47.378122,8.539317};
+    private static final double[] LOCATION_NEUBRANDENBURG  = {53.561461,13.263717};
+    private static final double[] LOCATION_KASSEL  = {51.316926,9.491544};
+
     private List<AbstractNetworkProvider> successProvider;
     List<AbstractNetworkProvider>failedProvider;
 
@@ -142,11 +146,42 @@ public class ProviderTestCase extends AndroidTestCase {
         checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Wien Stephansplatz (Schulerstraße)");
     }
 
+    public void testVorProvider() throws Exception
+    {
+        VorProvider provider = new VorProvider();
+        checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Stephansplatz");
+    }
+
     public void testSeProvider() throws Exception
     {
         SeProvider provider = new SeProvider();
         checkProvider(provider, LOCATION_STOCKHOLM_GAMLASTAN[0], LOCATION_STOCKHOLM_GAMLASTAN[1], 10, "Gamla Stan T-bana");
     }
+
+    public void testAvvProvider() throws Exception
+    {
+        AvvProvider provider = new AvvProvider();
+        checkProvider(provider, LOCATION_AUGSBURG[0], LOCATION_AUGSBURG[1], 10, "Hauptbahnhof");
+    }
+
+    public void testVmvProvider() throws Exception
+    {
+        VmvProvider provider = new VmvProvider();
+        checkProvider(provider, LOCATION_NEUBRANDENBURG[0], LOCATION_NEUBRANDENBURG[1], 10, "Bahnhof");
+    }
+
+    public void testGvhProvider() throws Exception
+    {
+        GvhProvider provider = new GvhProvider("");
+        checkProvider(provider, LOCATION_BREMEN[0], LOCATION_BREMEN[1], 10, "Hauptbahnhof (Central Station)");
+    }
+
+    /* currently failing
+    public void testSbbProvider() throws Exception
+    {
+        SbbProvider provider = new SbbProvider(null);
+        checkProvider(provider, LOCATION_ZUERICH_HBF[0], LOCATION_ZUERICH_HBF[1], 10, "Zürich HB");
+    }*/
 
 
     private void checkProvider(AbstractNetworkProvider provider, double lat, double lon, int expectedStations, String expectedStation) throws Exception {

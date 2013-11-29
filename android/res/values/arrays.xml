@@ -33,13 +33,12 @@
         <item>Germany - VMV Mecklenburg Vorpommern</item>
         <item>Germany - Munich</item>
         <item>Germany - Niedersachen / Bremen</item>
-        <item>Germany - Nordhessischer Verkehrsverbund</item>
         <!--<item>Germany - Schleswig Holstein</item>-->
         <!--<item>Netherlands - NS</item>-->
         <item>Austria - ÖBB</item>
         <item>Austria - VOR</item>
         <item>Sweden</item>
-        <item>Switzerland - SBB</item>
+        <!--<item>Switzerland - SBB</item>-->
 
 
         <!-- <item>Germany - Hamburg</item> -->
@@ -49,22 +48,21 @@
        <!-- <item>SncbProvider</item>-->   <!-- belgien sncb-->
         <item>DsbProvider</item>    <!-- Denmark DSB -->            <!-- T -->
         <item>BahnProvider</item>	<!-- Germany -->                <!-- T -->
-        <item>AvvProvider</item>	<!-- Augsburg -->
+        <item>AvvProvider</item>	<!-- Augsburg -->               <!-- T -->
         <!--<item>BayernProvider</item>--> <!-- bayern -->
         <!--<item>BvgProvider</item>-->	<!-- Berlin -->
         <item>VbbProvider</item>	<!-- Berlin Brandenburg -->      <!-- T -->
         <item>BsvagProvider</item>  <!-- Braunschweig -->            <!-- T -->
         <item>BsagProvider</item>  <!-- Bremen -->                   <!-- T -->
         <!--<item>InvgProvider</item>-->	<!-- Ingolstadt -->
-        <item>VmvProvider</item> 	<!-- Mecklenburg -->
+        <item>VmvProvider</item> 	<!-- Mecklenburg -->             <!-- T -->
         <item>MvvProvider</item>	<!--  Minga -->                  <!-- T -->
-        <item>GvhProvider</item>	<!-- Niedersachsen / Bremen -->
-        <item>RmvProvider</item>	<!-- nordhessen -->
+        <item>GvhProvider</item>	<!-- Niedersachsen / Bremen -->  <!-- T -->
         <!--<item>ShProvider</item>	-->	<!-- Schleswig Holstein -->
         <item>OebbProvider</item>   <!-- Österreich Oebb -->         <!-- T -->
-        <item>VorProvider</item>    <!-- Österreich VOR -->
-        <item>SeProvider</item>     <!-- Schweden -->
-        <item>SbbProvider</item>    <!-- Schweiz SBB -->
+        <item>VorProvider</item>    <!-- Österreich VOR -->          <!-- T -->
+        <item>SeProvider</item>     <!-- Schweden -->                <!-- T -->
+        <!--<item>SbbProvider</item>-->    <!-- Schweiz SBB currently failing -->
     </array>
 
 </resources>

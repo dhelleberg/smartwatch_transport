@@ -33,13 +33,12 @@
         <item>Deutschland - VMV Mecklenburg Vorpommern</item>
         <item>Deutschland - München</item>
         <item>Deutschland - Niedersachen / Bremen</item>
-        <item>Deutschland - Nordhessischer Verkehrsverbund</item>
         <!--<item>Deutschland - Schleswig Holstein</item>
         <item>Niederlande - NS</item>-->
         <item>Österreich - ÖBB</item>
         <item>Österreich - VOR</item>
         <item>Schweden</item>
-        <item>Schweiz - SBB</item>
+        <!--<item>Schweiz - SBB</item>--> <!-- currently failing -->
 
         
         <!-- <item>Deutschland - Hamburg</item> -->
