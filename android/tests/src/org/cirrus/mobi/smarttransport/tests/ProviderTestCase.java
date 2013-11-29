@@ -76,6 +76,7 @@ public class ProviderTestCase extends AndroidTestCase {
     private static final double[] LOCATION_MUENCHEN = {48.140232,11.558335  };
     private static final double[] LOCATION_COPENHAGEN = {55.673374,12.561321};
     private static final double[] LOCATION_VIENNA = {48.208174,16.373819};
+    private static final double[] LOCATION_STOCKHOLM_GAMLASTAN = {59.323085,18.067843};
     private List<AbstractNetworkProvider> successProvider;
     List<AbstractNetworkProvider>failedProvider;
 
@@ -95,6 +96,13 @@ public class ProviderTestCase extends AndroidTestCase {
         //test resolve of stations
         BahnProvider provider = new BahnProvider();
         checkProvider(provider, LOCATION_DUSSELDORF[0], LOCATION_DUSSELDORF[1], 5, "Düsseldorf Hauptbahnhof");
+    }
+
+    public void testEuropeProvider() throws Exception
+    {
+        //test resolve of stations
+        RtProvider provider = new RtProvider();
+        checkProvider(provider, LOCATION_DUSSELDORF[0], LOCATION_DUSSELDORF[1], 2, "Düsseldorf Hbf");
     }
 
     public void testBerlinBrandendburgProvider() throws Exception
@@ -134,12 +142,18 @@ public class ProviderTestCase extends AndroidTestCase {
         checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Wien Stephansplatz (Schulerstraße)");
     }
 
+    public void testSeProvider() throws Exception
+    {
+        SeProvider provider = new SeProvider();
+        checkProvider(provider, LOCATION_STOCKHOLM_GAMLASTAN[0], LOCATION_STOCKHOLM_GAMLASTAN[1], 10, "Gamla Stan T-bana");
+    }
+
 
     private void checkProvider(AbstractNetworkProvider provider, double lat, double lon, int expectedStations, String expectedStation) throws Exception {
         Location dusLocation = new Location("FakeProvider");
         dusLocation.setLatitude(lat);
         dusLocation.setLongitude(lon);
-        NearbyStationsResult nearbyStationsResult = provider.queryNearbyStations(convertLoction(dusLocation), 1000, 10);
+        NearbyStationsResult nearbyStationsResult = provider.queryNearbyStations(convertLocation(dusLocation), 1000, 10);
         Assert.assertNotNull("nearbyStationsResult is null provider: "+provider.getClass(), nearbyStationsResult);
         Assert.assertEquals("nearbyStationsResult is not correct " + provider.getClass(), expectedStations, nearbyStationsResult.stations.size());
         Assert.assertEquals("First Station is not correct" + provider.getClass(), expectedStation, nearbyStationsResult.stations.get(0).name);
@@ -147,7 +161,7 @@ public class ProviderTestCase extends AndroidTestCase {
     }
 
 
-    private de.schildbach.pte.dto.Location convertLoction(Location location)
+    private de.schildbach.pte.dto.Location convertLocation(Location location)
     {
         return new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
     }
