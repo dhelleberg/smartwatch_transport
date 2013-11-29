@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class ProviderTestCase extends AndroidTestCase {
 
     private static final double[] LOCATION_DUSSELDORF = {51.220250,6.793177};

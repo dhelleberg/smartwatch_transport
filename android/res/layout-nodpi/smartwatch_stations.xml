@@ -17,6 +17,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/SmartWatchLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -42,7 +43,7 @@
             android:layout_height="wrap_content"
             android:paddingLeft="3px"
             android:singleLine="false"
-            android:text="St.Vinzenzk"
+            tools:text="St.Vinzenzk"
             android:textColor="@color/white"
             android:textStyle="bold" />
     </LinearLayout>
