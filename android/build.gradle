@@ -42,12 +42,6 @@ buildscript {
 }
 apply plugin: 'android'
 
-dependencies {
-    compile project(':SmartExtensionUtils')
-    compile files('../public-transport-enabler/build/libs/public-transport-enabler-1.0.jar')
-    compile files('libs/acra-4.4.0.jar')
-    //compile project(':public-transport-enabler')
-}
 
 android {
     compileSdkVersion 19
@@ -56,6 +50,14 @@ android {
     defaultConfig {
         testPackageName "org.cirrus.mobi.smarttransport.tests"
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    dependencies {
+        compile project(':SmartExtensionUtils')
+        compile files('../public-transport-enabler/build/libs/public-transport-enabler-1.0.jar')
+        compile files('libs/acra-4.4.0.jar')
+        compile 'com.android.support:support-v4:18.0.0'
+        //compile project(':public-transport-enabler')
     }
 
     sourceSets {
