@@ -16,3 +16,5 @@ public-transport-enabler/enabler/src/de/schildbach/pte/SadProvider.java
 **/.gradle/**
 .gradle
 /.idea/workspace.xml
+android/gradle.properties
+smartrans.keystore
