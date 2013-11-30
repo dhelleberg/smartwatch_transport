@@ -32,8 +32,27 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
+import android.os.Build;
+import android.util.Log;
 import org.acra.ACRA;
 import org.acra.ACRAConfiguration;
 import org.acra.annotation.ReportsCrashes;
@@ -50,9 +69,16 @@ public class SmartTransportApplication extends Application {
 		config.setFormUriBasicAuthLogin(getString(R.string.acra_form_user));
 		config.setFormUriBasicAuthPassword(getString(R.string.acra_form_pwd));
 		ACRA.setConfig(config);
-		ACRA.init(this);
+
+        if(!isEmulator())
+		    ACRA.init(this);
 
 		super.onCreate();
 	}
+
+    private boolean isEmulator() {
+        //detect emulator,
+        return (Build.PRODUCT.equalsIgnoreCase("sdk") || Build.PRODUCT.equalsIgnoreCase("google_sdk"));
+    }
 
 }

@@ -15,6 +15,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import android.app.Activity;
@@ -55,17 +72,17 @@ public class DonateActivity extends Activity implements OnItemSelectedListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.donate);
+		setContentView(R.layout.donate);
 
-	//	this.mSpinner = (Spinner) findViewById(R.id.donate_option_spinner);
+		this.mSpinner = (Spinner) findViewById(R.id.donate_option_spinner);
 		mSpinner.setOnItemSelectedListener(this);
 
-	//	this.mButton = (Button) findViewById(R.id.donate_button);
+		this.mButton = (Button) findViewById(R.id.donate_button);
 
 
 		mContext = this;
 
-//		mHelper = new IabHelper(this, getString(R.string.lkey));
+		mHelper = new IabHelper(this, getString(R.string.lkey));
 
 		mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
 			public void onIabSetupFinished(IabResult result) {
@@ -82,8 +99,8 @@ public class DonateActivity extends Activity implements OnItemSelectedListener {
 						additionalSkuList.add(SKUS[i]);
 					}
 					mHelper.queryInventoryAsync(true, additionalSkuList, mQueryFinishedListener);
-//					progress = ProgressDialog.show(DonateActivity.this, getString(R.string.donate_progress_dialog_title),
-//						    getString(R.string.donate_progress_dialog_message), true);
+					progress = ProgressDialog.show(DonateActivity.this, getString(R.string.donate_progress_dialog_title),
+						    getString(R.string.donate_progress_dialog_message), true);
 				}
 
 			}
@@ -124,7 +141,7 @@ public class DonateActivity extends Activity implements OnItemSelectedListener {
 
 					donateItems[i] = inventory.getSkuDetails(SKUS[i]).getTitle()+" "+inventory.getSkuDetails(SKUS[i]).getPrice(); 
 				}
-//				mAdapter = new ArrayAdapter<String>(DonateActivity.this, R.layout.donate_item, donateItems);
+				mAdapter = new ArrayAdapter<String>(DonateActivity.this, R.layout.donate_item, donateItems);
 				mSpinner.setAdapter(mAdapter); 
 				mButton.setEnabled(true);
 			}
