@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <TextView
+        android:id="@+id/donate_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="6dp"
+        android:text="@string/donate_text"
+        android:textColor="#FFF"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/donate_option_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/donate_text"
+        android:layout_below="@+id/donate_text" />
+
+    <Button
+        android:id="@+id/donate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/donate_option_spinner"
+        android:layout_below="@+id/donate_option_spinner"
+        android:layout_marginTop="23dp"
+        android:enabled="false"
+        android:text="@string/donate_button_text" />
+
+</merge>
