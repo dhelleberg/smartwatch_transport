@@ -83,6 +83,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import java.util.ArrayList;
@@ -526,16 +543,30 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	}
 
-    private void layout(View loadingLayout) {
-        loadingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
-        loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
-				loadingLayout.getMeasuredHeight());
+    private void layout(View layout) {
+        long startmillis = 0;
+        if(BuildConfig.DEBUG)
+            startmillis = System.currentTimeMillis();
+
+        layout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY));
+
+        if(BuildConfig.DEBUG)
+            Log.d(TAG, "measure took: "+(System.currentTimeMillis()-startmillis));
+
+        if(BuildConfig.DEBUG)
+            startmillis = System.currentTimeMillis();
+
+        layout.layout(0, 0, layout.getMeasuredWidth(),
+                layout.getMeasuredHeight());
+        if(BuildConfig.DEBUG)
+            Log.d(TAG, "layout took: "+(System.currentTimeMillis()-startmillis));
+
     }
 
 
     public void showData()
 	{
-		// Create background bitmap for animation.
+		// Create background bitmap.
 		mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
 		//LinearLayout root = new LinearLayout(mContext); root.setLayoutParams(new LayoutParams(width, height));
 		//mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
