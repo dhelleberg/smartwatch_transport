@@ -66,6 +66,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import java.util.ArrayList;
@@ -356,7 +373,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     }
 
 
-    @Override
+     @Override
 	public void onSwipe(int direction) {
 		super.onSwipe(direction);
 		switch (state) {
@@ -509,7 +526,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	}
 
-    private void layout(ViewGroup loadingLayout) {
+    private void layout(View loadingLayout) {
         loadingLayout.measure(View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(height,View.MeasureSpec.EXACTLY));
         loadingLayout.layout(0, 0, loadingLayout.getMeasuredWidth(),
 				loadingLayout.getMeasuredHeight());
@@ -535,19 +552,21 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "mStation index: "+mStationIndex+ " stations size: "+mNearbyStationsResult.stations.size());
 
+            LinearLayout stationHeader = (LinearLayout) stationsLayout.findViewById(R.id.station_header);
 			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
 			TextView stationName = (TextView) stationsLayout.findViewById(R.id.Station);
 			stationName.setText(shortStationName(station));
+            layout(stationHeader);
 
 			int lines = stationName.getLineCount();
-			departureRows = MAX_DEPATURE_ROWS - lines+1;
+			departureRows = MAX_DEPATURE_ROWS - lines+2;
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "calculated rows: "+ departureRows+ " line count header: "+ lines);
 		}
 		//depatures
 		if(mQueryDeparturesResults.size() > 0)
 		{
-			int offset = mScrollIndex * departureRows;
+			int offset = mScrollIndex * (departureRows-1);
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+mQueryDeparturesResults.size()+ "offset: "+offset);
 
