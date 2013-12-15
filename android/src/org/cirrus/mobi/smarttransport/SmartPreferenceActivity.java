@@ -49,6 +49,23 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 
 import android.app.AlertDialog;
@@ -100,6 +117,10 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
         final Preference donatePreference = getPreferenceManager().findPreference(
                 getString(R.string.pref_donate));
         donatePreference.setOnPreferenceClickListener(this);
+
+        final Preference aboutPreference = getPreferenceManager().findPreference(
+                getString(R.string.pref_about));
+        aboutPreference.setOnPreferenceClickListener(this);
     }
 
 
@@ -138,6 +159,11 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
             if(BuildConfig.DEBUG)
                 Log.v(TAG, "clicked on donate");
             Intent intent = new Intent(this, DonateActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if(preference.getKey().equals(getString(R.string.pref_about))){
+            Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
             return true;
         }
