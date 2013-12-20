@@ -67,6 +67,23 @@
   ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
+<!--
+  ~ This file is part of SmartTransport
+  ~
+  ~ SmartTransport is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ SmartTransport is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="app_name">SmartTrans</string>
     <string name="text_depature_times">%1$s min (%2$s)</string>
@@ -86,7 +103,7 @@
     <string name="feedback_mailsend">Send Mail</string>
     <string name="text_nostations">Ups, no stations found nearby. Click to retry</string>
     <string name="text_selectProvider">Swipe and click to select provider</string>
-    <string name="lkey">TBD</string>
+    <string name="lkey">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz352KXfGipr7Sg7C9t9Wfp4kA6WR5p5Y/pb22eav7ugb0O1qSsHWJgkqYRgPSqqNyJLy274Yvz0CRl36QQUtmCVHLpL8pvLwa8rsaFVvsrAz987bFEWKYmO0npJOjh6ticRfFW9+rw9RwpUMuA6ti1vce5+PqTnBw7VLQxGVq6reSTsKfN6qtUiy0jZHUxnO9wbdAzz+xhdZO+1XHEAlrDwDyIvacCF+8r4DYf/nhMlVEM63wUKVdHKn2Dnwx5AvgS3kdNfFJftz/QTNwTq1eti8yu9vCbE8cVQl18psTaggsS73HWNSLjK+SmijVaKKRDF1WdiRrPyqKeuaxsWk5QIDAQAB</string>
     <string name="donate_button_text">Donate!</string>
     <string name="donate_1">small donation: %1s</string>
     <string name="donate_2">donation: %1s</string>
