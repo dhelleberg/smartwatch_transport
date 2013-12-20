@@ -1,3 +1,20 @@
+/*
+ * This file is part of SmartTransport
+ *
+ * SmartTransport is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SmartTransport is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.cirrus.mobi.smarttransport;
 /**
  *	 This file is part of SmartTransport
@@ -28,6 +45,7 @@ import de.schildbach.pte.dto.LocationType;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
+import org.acra.ACRA;
 
 public class PublicNetworkProvider {
 
@@ -106,8 +124,10 @@ public class PublicNetworkProvider {
 				}
 			} catch (IOException e) {
 				Log.e(TAG, "IOException fetching stations");
-				e.printStackTrace();
-			}
+                ACRA.getErrorReporter().putCustomData("NetworkProvider", networkProvider.id().toString());
+                ACRA.getErrorReporter().handleException(e);
+
+            }
 			return null;
 		}
 		@Override
@@ -146,9 +166,9 @@ public class PublicNetworkProvider {
 				return qdr;
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                ACRA.getErrorReporter().putCustomData("NetworkProvider", networkProvider.id().toString());
+                ACRA.getErrorReporter().handleException(e);
+            }
 
 			return null;
 		}
