@@ -260,7 +260,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         {
             //errorState!
             state = STATE_ERROR_NOPROVIDER;
-            ACRA.getErrorReporter().putCustomData("No locationProvider enabled!", locationManager.getAllProviders().toString());
+            ACRA.getErrorReporter().putCustomData("No locationProvider enabled!", locationManager.getProviders(true).toString());
             ACRA.getErrorReporter().handleException(null);
 
         }
