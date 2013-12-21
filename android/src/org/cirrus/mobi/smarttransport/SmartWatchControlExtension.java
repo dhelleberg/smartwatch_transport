@@ -192,6 +192,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private static final int STATE_LOADING = 4;
     private static final int STATE_ERROR = 5;
     private static final int STATE_SELECT_PROVIDER = 6;
+    private static final int STATE_ERROR_NOPROVIDER = 7;
 
 	protected static final String TAG = "SMT/SWCE";
 	private static final String PACKAGE = "de.schildbach.pte.";
@@ -249,6 +250,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     {
         state = STATE_SEARCHING;
         mStationIndex = 0;
+        if(BuildConfig.DEBUG)
+            Log.d(TAG, "start location updates, enabled providers: "+locationManager.getProviders(true));
         if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
         else if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -256,8 +259,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         else
         {
             //errorState!
-            this.mErrorMessage = "ouch";
-            state = STATE_ERROR;
+            state = STATE_ERROR_NOPROVIDER;
             ACRA.getErrorReporter().putCustomData("No locationProvider enabled!", locationManager.getAllProviders().toString());
             ACRA.getErrorReporter().handleException(null);
 
@@ -360,6 +362,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			break;
         case STATE_ERROR:
             this.mErrorMessage = mContext.getResources().getString(R.string.text_nostations);
+            showErrorMessage();
+            break;
+        case STATE_ERROR_NOPROVIDER:
+            this.mErrorMessage = mContext.getResources().getString(R.string.text_nolocationprovider);
             showErrorMessage();
             break;
         case STATE_SELECT_PROVIDER:
@@ -638,6 +644,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 					List<Departure> depatures = stationDepartures.departures;
 					for(int i = 0; i < depatures.size(); i++)
 					{
+                        if(i+offset >= depatures.size())
+                            break;
+
 						Departure depature = depatures.get(i+offset);
 						View table = mInflater.inflate(R.layout.table_row_departure, tl, true);
 

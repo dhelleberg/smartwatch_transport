@@ -104,6 +104,7 @@
     under certain conditions;\n\n
     This software uses the great work of Andreas Schildbach by integrating the "public-transport-enabler" lib. \n
     https://code.google.com/p/public-transport-enabler/\n</string>
+    <string name="text_nolocationprovider">Sorry, Sie erlauben keine Orts-Bestimmung!</string>
 
 
 </resources>
