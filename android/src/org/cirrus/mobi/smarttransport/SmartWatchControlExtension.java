@@ -222,6 +222,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		mContext = context;
 		width = getSupportedControlWidth(context);
 		height = getSupportedControlHeight(context);
+
 		mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
 	}
 
@@ -622,6 +623,13 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			departureRows = MAX_DEPATURE_ROWS - lines+2;
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "calculated rows: "+ departureRows+ " line count header: "+ lines);
+            if(departureRows > 1)
+            {
+                ACRA.getErrorReporter().putCustomData("Message","Calculated less then one depature row, set to one. height:"+height+" width: "+width+ " lines "+lines+ " depRows: "+departureRows);
+                ACRA.getErrorReporter().handleException(null);
+                departureRows = 1;
+
+            }
 		}
 		//depatures
 		if(mQueryDeparturesResults.size() > 0)
