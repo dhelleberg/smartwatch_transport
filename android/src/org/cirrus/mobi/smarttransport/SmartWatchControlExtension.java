@@ -623,7 +623,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 			departureRows = MAX_DEPATURE_ROWS - lines+2;
 			if(BuildConfig.DEBUG)
 				Log.d(TAG, "calculated rows: "+ departureRows+ " line count header: "+ lines);
-            if(departureRows > 1)
+            if(departureRows < 1)
             {
                 ACRA.getErrorReporter().putCustomData("Message","Calculated less then one depature row, set to one. height:"+height+" width: "+width+ " lines "+lines+ " depRows: "+departureRows);
                 ACRA.getErrorReporter().handleException(null);
