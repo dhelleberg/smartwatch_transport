@@ -50,6 +50,7 @@
         <item>Germany - VMV Mecklenburg Vorpommern</item>
         <item>Germany - Munich</item>
         <item>Germany - Niedersachen / Bremen</item>
+        <item>Germany - NRW (VRR)</item>
         <!--<item>Germany - Schleswig Holstein</item>-->
         <!--<item>Netherlands - NS</item>-->
         <item>Austria - ÖBB</item>
@@ -75,6 +76,7 @@
         <item>VmvProvider</item> 	<!-- Mecklenburg -->             <!-- T -->
         <item>MvvProvider</item>	<!--  Minga -->                  <!-- T -->
         <item>GvhProvider</item>	<!-- Niedersachsen / Bremen -->  <!-- T -->
+        <item>VrrProvider</item>	<!-- VRR-->                      <!-- T -->
         <!--<item>ShProvider</item>	-->	<!-- Schleswig Holstein -->
         <item>OebbProvider</item>   <!-- Österreich Oebb -->         <!-- T -->
         <!--<item>VorProvider</item> -->   <!-- Österreich VOR -->          <!-- T -->

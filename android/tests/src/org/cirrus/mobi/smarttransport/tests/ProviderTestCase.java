@@ -86,6 +86,7 @@ import java.util.List;
 public class ProviderTestCase extends AndroidTestCase {
 
     private static final double[] LOCATION_DUSSELDORF = {51.220250,6.793177};
+    private static final double[] LOCATION_BONN = {50.736439, 7.095698};
     private static final double[] LOCATION_BERLIN = {52.526110,13.368752};
     private static final double[] LOCATION_BRAUNSCHWEIG = {52.252934,10.538678};
     private static final double[] LOCATION_BREMEN = {53.083481,8.813834};
@@ -187,6 +188,12 @@ public class ProviderTestCase extends AndroidTestCase {
     {
         VmvProvider provider = new VmvProvider();
         checkProvider(provider, LOCATION_NEUBRANDENBURG[0], LOCATION_NEUBRANDENBURG[1], 10, "Bahnhof");
+    }
+
+    public void testVRRProvider() throws Exception
+    {
+        VrrProvider provider = new VrrProvider();
+        checkProvider(provider, LOCATION_DUSSELDORF[0], LOCATION_DUSSELDORF[1], 10, "Hbf");
     }
 
     public void testGvhProvider() throws Exception
