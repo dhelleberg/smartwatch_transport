@@ -99,6 +99,7 @@ public class ProviderTestCase extends AndroidTestCase {
     private static final double[] LOCATION_ZUERICH_HBF = {47.378122,8.539317};
     private static final double[] LOCATION_NEUBRANDENBURG  = {53.561461,13.263717};
     private static final double[] LOCATION_KASSEL  = {51.316926,9.491544};
+    private static final double[] LOCATION_LONDON  = {51.508258,-0.125256};
 
     private List<AbstractNetworkProvider> successProvider;
     List<AbstractNetworkProvider>failedProvider;
@@ -218,6 +219,11 @@ public class ProviderTestCase extends AndroidTestCase {
     {
         SbbProvider provider = new SbbProvider(null);
         checkProvider(provider, LOCATION_ZUERICH_HBF[0], LOCATION_ZUERICH_HBF[1], 10, "Zürich HB");
+    }
+    public void testTFLProvider() throws Exception
+    {
+        TflProvider provider = new TflProvider();
+        checkProvider(provider, LOCATION_LONDON[0], LOCATION_LONDON[1], 10, "Charing Cross");
     }
 
 

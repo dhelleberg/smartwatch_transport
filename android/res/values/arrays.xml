@@ -41,6 +41,7 @@
         <item>Sweden</item>
         <item>Sweden - Stockholm</item>
         <item>Switzerland - SBB</item>
+        <item>UK - TFL</item>
 
 
         <!-- <item>Germany - Hamburg</item> -->
@@ -67,6 +68,7 @@
         <item>SeProvider</item>     <!-- Schweden -->                <!-- T -->
         <item>StockholmProvider</item>     <!-- Schweden -->                <!-- T -->
         <item>SbbProvider</item>    <!-- Schweiz SBB currently failing --> <!--T-->
+        <item>TflProvider</item>    <!-- UK - TFL -->               <!-- T -->
     </array>
 
 </resources>
