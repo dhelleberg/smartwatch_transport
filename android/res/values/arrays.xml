@@ -38,6 +38,7 @@
         <!--<item>Netherlands - NS</item>-->
         <item>Austria - ÖBB</item>
         <item>Austria - VOR</item>
+        <item>Norway - NRI</item>
         <item>Sweden</item>
         <item>Sweden - Stockholm</item>
         <item>Switzerland - SBB</item>
@@ -65,6 +66,7 @@
         <!--<item>ShProvider</item>	-->	<!-- Schleswig Holstein -->
         <item>OebbProvider</item>   <!-- Österreich Oebb -->         <!-- T -->
         <item>VorProvider</item>   <!-- Österreich VOR -->          <!-- T -->
+        <item>NriProvider</item>   <!-- Norway -->                   <!-- T -->
         <item>SeProvider</item>     <!-- Schweden -->                <!-- T -->
         <item>StockholmProvider</item>     <!-- Schweden -->                <!-- T -->
         <item>SbbProvider</item>    <!-- Schweiz SBB currently failing --> <!--T-->

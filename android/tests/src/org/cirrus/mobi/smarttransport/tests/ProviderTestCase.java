@@ -100,6 +100,8 @@ public class ProviderTestCase extends AndroidTestCase {
     private static final double[] LOCATION_NEUBRANDENBURG  = {53.561461,13.263717};
     private static final double[] LOCATION_KASSEL  = {51.316926,9.491544};
     private static final double[] LOCATION_LONDON  = {51.508258,-0.125256};
+    private static final double[] LOCATION_AMSTERDAM  = {52.378198,4.899725};
+    private static final double[] LOCATION_OSLO  = {59.911191,10.750637};
 
     private List<AbstractNetworkProvider> successProvider;
     List<AbstractNetworkProvider>failedProvider;
@@ -220,11 +222,23 @@ public class ProviderTestCase extends AndroidTestCase {
         SbbProvider provider = new SbbProvider(null);
         checkProvider(provider, LOCATION_ZUERICH_HBF[0], LOCATION_ZUERICH_HBF[1], 10, "Zürich HB");
     }
+
     public void testTFLProvider() throws Exception
     {
         TflProvider provider = new TflProvider();
         checkProvider(provider, LOCATION_LONDON[0], LOCATION_LONDON[1], 10, "Charing Cross");
     }
+    public void testNRIProvider() throws Exception
+    {
+        NriProvider provider = new NriProvider();
+        checkProvider(provider, LOCATION_OSLO[0], LOCATION_OSLO[1], 10, "Jernbanetorget foran Oslo S");
+    }
+
+    /*public void testNSProvider() throws Exception
+    {
+        NsProvider provider = new NsProvider();
+        checkProvider(provider, LOCATION_AMSTERDAM[0], LOCATION_AMSTERDAM[1], 10, "Amsterdam Centraal");
+    }*/
 
 
     private void checkProvider(AbstractNetworkProvider provider, double lat, double lon, int expectedStations, String expectedStation) throws Exception {
