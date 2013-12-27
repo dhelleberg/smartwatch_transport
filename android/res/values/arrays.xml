@@ -37,9 +37,10 @@
         <!--<item>Germany - Schleswig Holstein</item>-->
         <!--<item>Netherlands - NS</item>-->
         <item>Austria - ÖBB</item>
-        <!--<item>Austria - VOR</item>-->
+        <item>Austria - VOR</item>
         <item>Sweden</item>
-        <!--<item>Switzerland - SBB</item>-->
+        <item>Sweden - Stockholm</item>
+        <item>Switzerland - SBB</item>
 
 
         <!-- <item>Germany - Hamburg</item> -->
@@ -62,9 +63,10 @@
         <item>VrrProvider</item>	<!-- VRR-->                      <!-- T -->
         <!--<item>ShProvider</item>	-->	<!-- Schleswig Holstein -->
         <item>OebbProvider</item>   <!-- Österreich Oebb -->         <!-- T -->
-        <!--<item>VorProvider</item> -->   <!-- Österreich VOR -->          <!-- T -->
+        <item>VorProvider</item>   <!-- Österreich VOR -->          <!-- T -->
         <item>SeProvider</item>     <!-- Schweden -->                <!-- T -->
-        <!--<item>SbbProvider</item>-->    <!-- Schweiz SBB currently failing -->
+        <item>StockholmProvider</item>     <!-- Schweden -->                <!-- T -->
+        <item>SbbProvider</item>    <!-- Schweiz SBB currently failing --> <!--T-->
     </array>
 
 </resources>

@@ -38,9 +38,10 @@
         <!--<item>Deutschland - Schleswig Holstein</item>
         <item>Niederlande - NS</item>-->
         <item>Österreich - ÖBB</item>
-       <!-- <item>Österreich - VOR</item>-->
+        <item>Österreich - VOR</item>
         <item>Schweden</item>
-        <!--<item>Schweiz - SBB</item>--> <!-- currently failing -->
+        <item>Schweden - Stockholm</item>
+        <item>Schweiz - SBB</item>
 
         
         <!-- <item>Deutschland - Hamburg</item> -->

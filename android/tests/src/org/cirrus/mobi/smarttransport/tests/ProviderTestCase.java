@@ -165,13 +165,13 @@ public class ProviderTestCase extends AndroidTestCase {
         checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Wien Stephansplatz (Schulerstraße)");
     }
 
-/*
+
     public void testVorProvider() throws Exception
     {
         VorProvider provider = new VorProvider();
         checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Stephansplatz");
     }
-*/
+
 
     public void testSeProvider() throws Exception
     {
@@ -208,13 +208,17 @@ public class ProviderTestCase extends AndroidTestCase {
         SncbProvider provider = new SncbProvider();
         checkProvider(provider, LOCATION_GENT[0], LOCATION_GENT[1], 10, "Sint-Pieters [NMBS/SNCB]");
     }
+    public void testStockholmProvider() throws Exception
+    {
+        StockholmProvider provider = new StockholmProvider();
+        checkProvider(provider, LOCATION_STOCKHOLM_GAMLASTAN[0], LOCATION_STOCKHOLM_GAMLASTAN[1], 10, "Stationsentré Gamla stan");
+    }
 
-    /* currently failing
     public void testSbbProvider() throws Exception
     {
         SbbProvider provider = new SbbProvider(null);
         checkProvider(provider, LOCATION_ZUERICH_HBF[0], LOCATION_ZUERICH_HBF[1], 10, "Zürich HB");
-    }*/
+    }
 
 
     private void checkProvider(AbstractNetworkProvider provider, double lat, double lon, int expectedStations, String expectedStation) throws Exception {
