@@ -16,28 +16,11 @@
   ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<!--
-  ~ This file is part of SmartTransport
-  ~
-  ~ SmartTransport is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU General Public License as published by
-  ~ the Free Software Foundation, either version 3 of the License, or
-  ~ (at your option) any later version.
-  ~
-  ~ SmartTransport is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU General Public License
-  ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
-  -->
-
 <resources>
 <!-- VVN ? BsvagProvider ? BSAG? -->
     <array name="pref_transportNetwork_Entries">
         <item>Europe - long distance</item><!-- 0 -->
-        <!--<item>Belgium - SNCB</item>-->
+        <item>Belgium - SNCB</item>
         <item>Denmark - DSB</item>
         <item>Germany - Bahn</item>
         <item>Germany - Augsburg</item>
@@ -63,7 +46,7 @@
     </array>
     <array name="pref_transportNetwork_values">
         <item>RtProvider</item>		<!-- 0 Europe -->               <!-- T -->
-       <!-- <item>SncbProvider</item>-->   <!-- belgien sncb-->
+        <item>SncbProvider</item>   <!-- belgien sncb-->            <!-- T -->
         <item>DsbProvider</item>    <!-- Denmark DSB -->            <!-- T -->
         <item>BahnProvider</item>	<!-- Germany -->                <!-- T -->
         <item>AvvProvider</item>	<!-- Augsburg -->               <!-- T -->

@@ -87,6 +87,7 @@ public class ProviderTestCase extends AndroidTestCase {
 
     private static final double[] LOCATION_DUSSELDORF = {51.220250,6.793177};
     private static final double[] LOCATION_BONN = {50.736439, 7.095698};
+    private static final double[] LOCATION_GENT = {51.035561, 3.710697};
     private static final double[] LOCATION_BERLIN = {52.526110,13.368752};
     private static final double[] LOCATION_BRAUNSCHWEIG = {52.252934,10.538678};
     private static final double[] LOCATION_BREMEN = {53.083481,8.813834};
@@ -200,6 +201,12 @@ public class ProviderTestCase extends AndroidTestCase {
     {
         GvhProvider provider = new GvhProvider("");
         checkProvider(provider, LOCATION_BREMEN[0], LOCATION_BREMEN[1], 10, "Hauptbahnhof (Central Station)");
+    }
+
+    public void testSncbProvider() throws Exception
+    {
+        SncbProvider provider = new SncbProvider();
+        checkProvider(provider, LOCATION_GENT[0], LOCATION_GENT[1], 10, "Sint-Pieters [NMBS/SNCB]");
     }
 
     /* currently failing

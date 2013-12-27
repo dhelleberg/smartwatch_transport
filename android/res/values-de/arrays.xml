@@ -21,7 +21,7 @@
 <!-- VVN ? BsvagProvider ? BSAG? -->
     <array name="pref_transportNetwork_Entries">
         <item>Europa - Fernverkehr</item><!-- 0 -->
-        <!--<item>Belgien - SNCB</item>-->
+        <item>Belgien - SNCB</item>
         <item>Dänemark - DSB</item>
         <item>Deutschland - Bahn</item>
         <item>Deutschland - Augsburg</item>
