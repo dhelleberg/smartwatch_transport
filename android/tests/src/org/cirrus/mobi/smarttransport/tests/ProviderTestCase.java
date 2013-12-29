@@ -102,6 +102,9 @@ public class ProviderTestCase extends AndroidTestCase {
     private static final double[] LOCATION_LONDON  = {51.508258,-0.125256};
     private static final double[] LOCATION_AMSTERDAM  = {52.378198,4.899725};
     private static final double[] LOCATION_OSLO  = {59.911191,10.750637};
+    private static final double[] LOCATION_TAUNTON = {51.019843, -3.105088};
+    private static final double[] LOCATION_LEICESTER = {52.633304, -1.125960};
+    private static final double[] LOCATION_BIRMINGHAM = {52.483630, -1.899456};
 
     private List<AbstractNetworkProvider> successProvider;
     List<AbstractNetworkProvider>failedProvider;
@@ -232,6 +235,21 @@ public class ProviderTestCase extends AndroidTestCase {
     {
         NriProvider provider = new NriProvider();
         checkProvider(provider, LOCATION_OSLO[0], LOCATION_OSLO[1], 10, "Jernbanetorget foran Oslo S");
+    }
+    public void testTLSWProvider() throws Exception
+    {
+        TlswProvider provider = new TlswProvider();
+        checkProvider(provider, LOCATION_TAUNTON[0], LOCATION_TAUNTON[1], 10, "Flook House");
+    }
+    public void testTLEMrovider() throws Exception
+    {
+        TlemProvider provider = new TlemProvider();
+        checkProvider(provider, LOCATION_LEICESTER[0], LOCATION_LEICESTER[1], 10, "Leicester Mercury");
+    }
+    public void testTLWMrovider() throws Exception
+    {
+        TlwmProvider provider = new TlwmProvider();
+        checkProvider(provider, LOCATION_BIRMINGHAM[0], LOCATION_BIRMINGHAM[1], 10, "Snow Hill (Midland Metro Stop)");
     }
 
     /*public void testNSProvider() throws Exception

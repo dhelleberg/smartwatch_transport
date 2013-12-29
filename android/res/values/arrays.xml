@@ -43,6 +43,9 @@
         <item>Sweden - Stockholm</item>
         <item>Switzerland - SBB</item>
         <item>UK - TFL</item>
+        <item>UK - TL - South West</item>
+        <item>UK - TL - West Midlands</item>
+        <item>UK - TL - East Midlands</item>
 
 
         <!-- <item>Germany - Hamburg</item> -->
@@ -71,6 +74,9 @@
         <item>StockholmProvider</item>     <!-- Schweden -->                <!-- T -->
         <item>SbbProvider</item>    <!-- Schweiz SBB currently failing --> <!--T-->
         <item>TflProvider</item>    <!-- UK - TFL -->               <!-- T -->
+        <item>TlswProvider</item>    <!-- UK - TFSW -->               <!-- T -->
+        <item>TlwmProvider</item>    <!-- UK - TFWM -->               <!-- T -->
+        <item>TlemProvider</item>    <!-- UK - TFEM -->               <!-- T -->
     </array>
 
 </resources>
