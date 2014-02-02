@@ -751,17 +751,24 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	}
 
 
-	private CharSequence shortStationName(de.schildbach.pte.dto.Location station) {
-		String stationName = "unknown";
-		if(!TextUtils.isEmpty(station.name))
-		{
-			stationName = station.name;
-			int index = station.name.indexOf(",");
-			if(index > 0)
-				stationName = station.name.substring(0, index);
-		}
-		return stationName;
-	}
+    private CharSequence shortStationName(de.schildbach.pte.dto.Location station) {
+        //try shortname, if not available cut the station-name
+        String stationName = "unknown";
+
+        if(!TextUtils.isEmpty(station.uniqueShortName()))
+            stationName = station.uniqueShortName();
+        else {
+
+            if(!TextUtils.isEmpty(station.name))
+            {
+                stationName = station.name;
+                int index = station.name.indexOf(",");
+                if(index > 0)
+                    stationName = station.name.substring(0, index);
+            }
+        }
+        return stationName;
+    }
 
 
 	@Override
