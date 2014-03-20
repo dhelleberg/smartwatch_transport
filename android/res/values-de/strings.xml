@@ -105,6 +105,8 @@
     This software uses the great work of Andreas Schildbach by integrating the "public-transport-enabler" lib. \n
     https://code.google.com/p/public-transport-enabler/\n</string>
     <string name="text_nolocationprovider">Sorry, Sie erlauben keine Orts-Bestimmung!</string>
+    <string name="mode_select_nearby">Umfeld</string>
+    <string name="mode_selection_favourites">Favoriten</string>
 
 
 </resources>
