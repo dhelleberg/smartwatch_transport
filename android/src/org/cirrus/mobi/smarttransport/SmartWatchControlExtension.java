@@ -507,7 +507,26 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
                         break;
                 }
                 break;
+            case Control.Intents.TOUCH_ACTION_LONGPRESS:
+                switch (state)
+                {
+                    case STATE_DISPLAY_DATA:
+                        addCurrentStationToFavs();
+                        break;
+                }
+                break;
+
         }
+    }
+
+    private void addCurrentStationToFavs() {
+        if(mNearbyStationsResult != null) {
+            de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
+            if(BuildConfig.DEBUG)
+                Log.d(TAG, "saving: "+station.name+" id: "+station.id+" type: "+station.type + "lat: "+station.lat+ " lon: "+station.lon);
+
+        }
+
     }
 
     private void selectCurrentProvider() {
