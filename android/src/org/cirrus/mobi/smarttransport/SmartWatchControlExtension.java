@@ -193,6 +193,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     private static final int STATE_ERROR = 5;
     private static final int STATE_SELECT_PROVIDER = 6;
     private static final int STATE_ERROR_NOPROVIDER = 7;
+    private static final int STATE_SELECT_MODE = 8;
 
 	protected static final String TAG = "SMT/SWCE";
 	private static final String PACKAGE = "de.schildbach.pte.";
@@ -291,14 +292,22 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             //loadProvider from Preferences
             String providerClass = mSharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
             initNetworkProvider(providerClass);
+
+            //select mode
+            selectMode();
             //intial call, kick search
-            startSearch();
+            //startSearch();
         }
 
 
 
 
 	}
+
+    private void selectMode() {
+        state = STATE_SELECT_MODE;
+        redraw();
+    }
 
     private void selectProvider() {
         state = STATE_SELECT_PROVIDER;
@@ -372,14 +381,28 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         case STATE_SELECT_PROVIDER:
             showProviderSelection();
             break;
+        case STATE_SELECT_MODE:
+            showModeSelection();
+            break;
+
 		}
 
 
 
 	}
 
+    private void showModeSelection() {
+        mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+        mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+        LinearLayout selectModeLayout = (LinearLayout) LinearLayout.inflate(mContext, R.layout.mode_selection,null);
+        selectModeLayout.setLayoutParams(new LayoutParams(width, height));
+
+        layout(selectModeLayout);
+        drawLayout(selectModeLayout);
+    }
+
     private void showProviderSelection() {
-        // Create background bitmap for animation.
+
         mBackground = Bitmap.createBitmap(width, height, BITMAP_CONFIG); // Set default density to avoid scaling. background.setDensity(DisplayMetrics.DENSITY_DEFAULT);
         mBackground.setDensity(DisplayMetrics.DENSITY_DEFAULT);
         RelativeLayout selectProviderLayout = (RelativeLayout) RelativeLayout.inflate(mContext, R.layout.select_provider,null);
@@ -392,7 +415,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         drawLayout(selectProviderLayout);
     }
 
-    private void drawLayout(RelativeLayout selectProviderLayout) {
+    private void drawLayout(ViewGroup selectProviderLayout) {
         // Draw on canvas
         Canvas canvas = new Canvas(mBackground);
         selectProviderLayout.draw(canvas);
@@ -473,6 +496,14 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
                         break;
                     case STATE_SELECT_PROVIDER:
                         selectCurrentProvider();
+                        break;
+                    case STATE_SELECT_MODE:
+                        //upper or lower selection
+                        int y = event.getY();
+                        if(y <= (height/ 2))
+                            startSearch();
+                        else
+                            Log.d(TAG, "TODO "+y);
                         break;
                 }
                 break;
