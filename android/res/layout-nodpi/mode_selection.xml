@@ -43,6 +43,10 @@
                 android:paddingLeft="8px"
                 android:layout_gravity="center_vertical"/>
     </LinearLayout>
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#FFFFFF"/>
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -63,6 +67,9 @@
                 android:text="@string/mode_selection_favourites"
                 android:paddingLeft="8px"
                 android:id="@+id/mode_select_textview_fav"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical"
+
                 />
+        />
     </LinearLayout>
+</LinearLayout>
