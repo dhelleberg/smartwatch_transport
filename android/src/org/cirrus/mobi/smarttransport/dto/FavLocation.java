@@ -44,6 +44,20 @@ public class FavLocation {
     public String place;
     @Column
     public String name;
+/*
+    @Column
+    public String type;
+*/
 
+    public FavLocation(String id, int lat, int lon, String place, String name) {
+        this.id = id;
+        this.lat = lat;
+        this.lon = lon;
+        this.place = place;
+        this.name = name;
 
+    }
+
+    public FavLocation() {
+    }
 }

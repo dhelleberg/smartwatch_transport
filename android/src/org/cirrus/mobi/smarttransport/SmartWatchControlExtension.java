@@ -536,7 +536,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         favLocationService.close();
 
         if(favLocations != null && favLocations.size() > 0) {
-            //TODO: display location
+            if(BuildConfig.DEBUG)
+                Log.d(TAG, "found: "+favLocations.size()+" favs");
         }
         else {
             //show help text
@@ -550,6 +551,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
             if(BuildConfig.DEBUG)
                 Log.d(TAG, "saving: "+station.name+" id: "+station.id+" type: "+station.type + "lat: "+station.lat+ " lon: "+station.lon);
+            EntityService favLocationService = new EntityService(mContext, FavLocation.class);
+            FavLocation favLocation = new FavLocation(station.id, station.lat, station.lon, station.place, station.name);
+            favLocationService.save(favLocation);
+            favLocationService.close();
 
         }
 
