@@ -124,6 +124,7 @@ import java.util.List;
 
 import com.arconsis.android.datarobot.EntityService;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
+import de.schildbach.pte.dto.*;
 import org.acra.ACRA;
 import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
 
@@ -154,11 +155,6 @@ import com.sonyericsson.extras.liveware.aef.control.Control;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlExtension;
 
 import de.schildbach.pte.NetworkProvider;
-import de.schildbach.pte.dto.Departure;
-import de.schildbach.pte.dto.Line;
-import de.schildbach.pte.dto.NearbyStationsResult;
-import de.schildbach.pte.dto.QueryDeparturesResult;
-import de.schildbach.pte.dto.StationDepartures;
 import org.cirrus.mobi.smarttransport.dto.FavLocation;
 
 /**
@@ -540,6 +536,18 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             if(BuildConfig.DEBUG)
                 Log.d(TAG, "found: "+favLocations.size()+" favs");
             //set the favs as new result and search
+            stations = new ArrayList<de.schildbach.pte.dto.Location>();
+            for (int i = 0; i < favLocations.size(); i++) {
+                FavLocation favLocation = favLocations.get(i);
+                stations.add(new de.schildbach.pte.dto.Location(LocationType.STATION, favLocation.id, favLocation.lat, favLocation.lon, favLocation.place, favLocation.name));
+            }
+
+            state = STATE_DISPLAY_DATA;
+            redraw();
+            // for eacht station, request depatures
+            for (de.schildbach.pte.dto.Location station: stations ) {
+                publicNetworkProvider.getDepatures(station);
+            }
 
         }
         else {
