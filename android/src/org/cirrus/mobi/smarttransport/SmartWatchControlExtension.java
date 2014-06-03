@@ -206,7 +206,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	private NetworkProvider networkProvider;
 	private LocationManager locationManager;
 	private PublicNetworkProvider publicNetworkProvider;
-	private NearbyStationsResult mNearbyStationsResult;
+	//private NearbyStationsResult mNearbyStationsResult;
 	private int mStationIndex;
 	private List<QueryDeparturesResult> mQueryDeparturesResults;
 	private LayoutInflater mInflater;
@@ -216,6 +216,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     private int mProviderIndex;
     private String mErrorMessage = "";
     private String[] mProviderEntries;
+    private List<de.schildbach.pte.dto.Location> stations = null;
 
 
     public SmartWatchControlExtension(Context context, String hostAppPackageName, Handler handler) {
@@ -538,6 +539,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         if(favLocations != null && favLocations.size() > 0) {
             if(BuildConfig.DEBUG)
                 Log.d(TAG, "found: "+favLocations.size()+" favs");
+            //set the favs as new result and search
+
         }
         else {
             //show help text
@@ -547,8 +550,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     }
 
     private void addCurrentStationToFavs() {
-        if(mNearbyStationsResult != null) {
-            de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
+        if(stations != null) {
+            de.schildbach.pte.dto.Location station = stations.get(mStationIndex);
             if(BuildConfig.DEBUG)
                 Log.d(TAG, "saving: "+station.name+" id: "+station.id+" type: "+station.type + "lat: "+station.lat+ " lon: "+station.lon);
             EntityService favLocationService = new EntityService(mContext, FavLocation.class);
@@ -577,21 +580,21 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     private void handleSwipeStationView(int direction) {
 		switch (direction) {
 		case Control.Intents.SWIPE_DIRECTION_LEFT:
-			if(mNearbyStationsResult != null)
+			if(stations != null)
 			{
 				mScrollIndex = 0; //reset scroll index in case we switch stations
 				mStationIndex--;
 				if(mStationIndex < 0)
-					mStationIndex = mNearbyStationsResult.stations.size()-1;
+					mStationIndex = stations.size()-1;
 				redraw();
 			}
 			break;
 		case Control.Intents.SWIPE_DIRECTION_RIGHT:
-			if(mNearbyStationsResult != null)
+			if(stations != null)
 			{
 				mScrollIndex = 0; //reset scroll index in case we switch stations
 				mStationIndex++;
-				if(mStationIndex > mNearbyStationsResult.stations.size()-1)
+				if(mStationIndex > stations.size()-1)
 					mStationIndex = 0;
 				redraw();
 			}
@@ -689,13 +692,13 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		//fill Data
 		//station name
 		int departureRows = -1;
-		if(mNearbyStationsResult != null)
+		if(stations != null)
 		{
 			if(BuildConfig.DEBUG)
-				Log.d(TAG, "mStation index: "+mStationIndex+ " stations size: "+mNearbyStationsResult.stations.size());
+				Log.d(TAG, "mStation index: "+mStationIndex+ " stations size: "+ stations.size());
 
             LinearLayout stationHeader = (LinearLayout) stationsLayout.findViewById(R.id.station_header);
-			de.schildbach.pte.dto.Location station = mNearbyStationsResult.stations.get(mStationIndex);
+			de.schildbach.pte.dto.Location station = stations.get(mStationIndex);
 			TextView stationName = (TextView) stationsLayout.findViewById(R.id.Station);
 			stationName.setText(shortStationName(station));
             layout(stationHeader);
@@ -717,7 +720,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		{
 			int offset = mScrollIndex * (departureRows-1);
 			if(BuildConfig.DEBUG)
-				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+mQueryDeparturesResults.size()+ "offset: "+offset);
+				Log.d(TAG, "mStation index: "+mStationIndex+ " departure size: "+stations.size()+ "offset: "+offset);
 
 			TableLayout tl = (TableLayout) stationsLayout.findViewById(R.id.departuesTable);
 			//check if we have the depatures already...
@@ -855,9 +858,9 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 	@Override
 	public void nearbyStationsReceived(NearbyStationsResult result) {
 		this.mQueryDeparturesResults.clear();
-		this.mNearbyStationsResult = result;
         if(result != null && result.stations != null && result.stations.size() > 0)
         {
+            this.stations = result.stations;
             state = STATE_DISPLAY_DATA;
             if(BuildConfig.DEBUG)
                 Log.d(TAG, "Found: "+result.stations.size()+" stations");
