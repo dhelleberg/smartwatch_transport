@@ -127,5 +127,6 @@
     <string name="text_nolocationprovider">Sorry, you have no active location provider!</string>
     <string name="mode_select_nearby">Nearby</string>
     <string name="mode_selection_favourites">Favourites</string>
+    <string name="text_nofavs">No favorite stations so far. Long press in search results to add one!</string>
 
 </resources>

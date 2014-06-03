@@ -15,54 +15,25 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 buildscript {
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.9.+'
+        classpath 'com.android.tools.build:gradle:0.10.+'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2+'
     }
 }
 apply plugin: 'android'
+apply plugin: 'android-apt'
 
+repositories {
+    mavenCentral()
+}
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         testPackageName "org.cirrus.mobi.smarttransport.tests"
@@ -71,9 +42,9 @@ android {
 
     dependencies {
         compile project(':SmartExtensionUtils')
-        compile files('../public-transport-enabler/build/libs/public-transport-enabler-1.0.jar')
+        compile files('libs/public-transport-enabler-1.0.jar')
         compile files('libs/acra-4.4.0.jar')
-        compile 'com.android.support:support-v4:18.0.0'
+        compile 'com.android.support:support-v4:19.1.0'
         //compile project(':public-transport-enabler')
     }
 
@@ -107,4 +78,14 @@ if (project.hasProperty('keypass')) {
 }
 if (project.hasProperty('storepass')) {
     android.signingConfigs.release.storePassword = storepass
+}
+
+apt {
+    arguments {
+        manifest 'android/AndroidManifest.xml'
+    }
+}
+dependencies {
+    apt 'com.arconsis:datarobot.processor:0.1'
+    compile 'com.arconsis:datarobot.api:0.1'
 }

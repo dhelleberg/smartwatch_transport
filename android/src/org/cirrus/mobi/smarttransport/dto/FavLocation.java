@@ -15,32 +15,35 @@
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:0.10.+'
-    }
-}
-apply plugin: 'android-library'
+package org.cirrus.mobi.smarttransport.dto;
+
+import com.arconsis.android.datarobot.entity.AutoIncrement;
+import com.arconsis.android.datarobot.entity.Column;
+import com.arconsis.android.datarobot.entity.Entity;
+import com.arconsis.android.datarobot.entity.PrimaryKey;
+
+/**
+ * Created by dhelleberg on 03/06/14.
+ */
+@Entity
+public class FavLocation {
+
+    @PrimaryKey
+    @AutoIncrement
+    @Column
+    private Integer _id;
+
+    //Fields I do need for the location class of öffi
+    @Column
+    public String id;
+    @Column
+    public int lat;
+    @Column
+    public int lon;
+    @Column
+    public String place;
+    @Column
+    public String name;
 
 
-android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
-
-    sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-
-        instrumentTest.setRoot('tests')
-    }
 }

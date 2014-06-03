@@ -122,6 +122,7 @@ package org.cirrus.mobi.smarttransport;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.arconsis.android.datarobot.EntityService;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
 import org.acra.ACRA;
 import org.cirrus.mobi.smarttransport.PublicNetworkProvider.ResultCallbacks;
@@ -158,6 +159,8 @@ import de.schildbach.pte.dto.Line;
 import de.schildbach.pte.dto.NearbyStationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
+import org.cirrus.mobi.smarttransport.dto.FavLocation;
+
 /**
  *	 This file is part of SmartTransport
  *
@@ -194,6 +197,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     private static final int STATE_SELECT_PROVIDER = 6;
     private static final int STATE_ERROR_NOPROVIDER = 7;
     private static final int STATE_SELECT_MODE = 8;
+    private static final int STATE_NO_FAVS_HELP_TEXT = 9;
 
 	protected static final String TAG = "SMT/SWCE";
 	private static final String PACKAGE = "de.schildbach.pte.";
@@ -384,7 +388,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         case STATE_SELECT_MODE:
             showModeSelection();
             break;
-
+        case STATE_NO_FAVS_HELP_TEXT:
+            this.mErrorMessage = mContext.getResources().getString(R.string.text_nofavs);
+            showErrorMessage();
+            break;
 		}
 
 
@@ -503,7 +510,10 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
                         if(y <= (height/ 2))
                             startSearch();
                         else
-                            Log.d(TAG, "TODO "+y);
+                            showFavs();
+                        break;
+                    case STATE_NO_FAVS_HELP_TEXT:
+                        startSearch();
                         break;
                 }
                 break;
@@ -516,6 +526,22 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
                 }
                 break;
 
+        }
+    }
+
+    private void showFavs() {
+        //query database, should be async
+        EntityService favLocationService = new EntityService(mContext, FavLocation.class);
+        List<FavLocation> favLocations = favLocationService.get();
+        favLocationService.close();
+
+        if(favLocations != null && favLocations.size() > 0) {
+            //TODO: display location
+        }
+        else {
+            //show help text
+            state = STATE_NO_FAVS_HELP_TEXT;
+            redraw();
         }
     }
 
