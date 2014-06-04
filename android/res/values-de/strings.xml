@@ -108,6 +108,7 @@
     <string name="mode_select_nearby">Umfeld</string>
     <string name="mode_selection_favourites">Favoriten</string>
     <string name="text_nofavs">Keine Favoriten! Drücke lange auf eine Station um sie hinzuzufügen.</string>
+    <string name="pref_favlist">Favoriten</string>
 
 
 </resources>

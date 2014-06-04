@@ -121,6 +121,11 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
         final Preference aboutPreference = getPreferenceManager().findPreference(
                 getString(R.string.pref_about));
         aboutPreference.setOnPreferenceClickListener(this);
+
+        final Preference favListPreference = getPreferenceManager().findPreference(
+                getString(R.string.pref_favlist));
+        favListPreference.setOnPreferenceClickListener(this);
+
     }
 
 
@@ -164,6 +169,11 @@ public class SmartPreferenceActivity extends PreferenceActivity implements OnPre
         }
         else if(preference.getKey().equals(getString(R.string.pref_about))){
             Intent intent = new Intent(this, AboutActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if(preference.getKey().equals(getString(R.string.pref_favlist))){
+            Intent intent = new Intent(this, FavListActivity.class);
             startActivity(intent);
             return true;
         }

@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 buildscript {
     repositories {
         mavenCentral()
@@ -24,12 +23,9 @@ buildscript {
     }
 }
 apply plugin: 'android-library'
-
-
 android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
-
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -43,4 +39,12 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    defaultConfig {}
+    productFlavors {
+    }
+    buildTypes {
+    }
+}
+
+dependencies {
 }

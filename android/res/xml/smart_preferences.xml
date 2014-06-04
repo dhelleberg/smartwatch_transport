@@ -18,6 +18,10 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <Preference
+            android:key="@string/pref_favlist"
+            android:title="@string/pref_favlist" />
+
     <ListPreference
         android:defaultValue="@string/pref_transportNetwork_default"
         android:dialogTitle="@string/pref_publicnetwork_title"

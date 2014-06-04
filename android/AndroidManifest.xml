@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ This file is part of SmartTransport
   ~
   ~ SmartTransport is free software: you can redistribute it and/or modify
@@ -13,68 +14,100 @@
   ~
   ~ You should have received a copy of the GNU General Public License
   ~ along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
-  --><manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:arconsis="http://arconsis.com" android:versionCode="19" android:versionName="1.4.5" package="org.cirrus.mobi.smarttransport">
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:arconsis="http://arconsis.com"
+    package="org.cirrus.mobi.smarttransport"
+    android:versionCode="19"
+    android:versionName="1.4.5" >
 
-    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="19"/>
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="19" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="com.android.vending.BILLING"/>
-    <uses-permission android:name="com.sonyericsson.extras.liveware.aef.EXTENSION_PERMISSION"/>
-    <uses-feature android:name="android.hardware.bluetooth" android:required="true"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
+    <uses-permission android:name="com.sonyericsson.extras.liveware.aef.EXTENSION_PERMISSION" />
 
-    <application android:allowBackup="true" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name="org.cirrus.mobi.smarttransport.SmartTransportApplication">
-        
-        <activity android:label="@string/app_name" android:name="org.cirrus.mobi.smarttransport.StartUpActivity">
+    <uses-feature
+        android:name="android.hardware.bluetooth"
+        android:required="true" />
+
+    <application
+        android:name=".SmartTransportApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".StartUpActivity"
+            android:label="@string/app_name" >
         </activity>
-        <activity android:label="@string/configuration" android:name="org.cirrus.mobi.smarttransport.SmartPreferenceActivity">
+        <activity
+            android:name=".SmartPreferenceActivity"
+            android:label="@string/configuration" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:label="@string/title_activity_donate" android:name="org.cirrus.mobi.smarttransport.DonateActivity">
+        <activity
+            android:name=".DonateActivity"
+            android:label="@string/title_activity_donate" >
         </activity>
-        <activity android:label="@string/title_activity_about" android:name="org.cirrus.mobi.smarttransport.AboutActivity">
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
+        <activity
+            android:name=".DonateThanksActivity"
+            android:label="@string/title_activity_donate_thanks" >
         </activity>
 
-        <activity android:label="@string/title_activity_donate_thanks" android:name="org.cirrus.mobi.smarttransport.DonateThanksActivity">
-        </activity>
+        <service android:name=".SmartTransportExtensionService" />
 
-        <service android:name="org.cirrus.mobi.smarttransport.SmartTransportExtensionService"/>
-
-        <receiver android:name=".ExtensionReceiver">
+        <receiver android:name=".ExtensionReceiver" >
             <intent-filter>
 
                 <!-- Generic extension intents. -->
-                <action android:name="com.sonyericsson.extras.liveware.aef.registration.EXTENSION_REGISTER_REQUEST"/>
-                <action android:name="com.sonyericsson.extras.liveware.aef.registration.ACCESSORY_CONNECTION"/>
-                <action android:name="android.intent.action.LOCALE_CHANGED"/>
+                <action android:name="com.sonyericsson.extras.liveware.aef.registration.EXTENSION_REGISTER_REQUEST" />
+                <action android:name="com.sonyericsson.extras.liveware.aef.registration.ACCESSORY_CONNECTION" />
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
 
                 <!-- Notification intents -->
-                <action android:name="com.sonyericsson.extras.liveware.aef.notification.VIEW_EVENT_DETAIL"/>
-                <action android:name="com.sonyericsson.extras.liveware.aef.notification.REFRESH_REQUEST"/>
+                <action android:name="com.sonyericsson.extras.liveware.aef.notification.VIEW_EVENT_DETAIL" />
+                <action android:name="com.sonyericsson.extras.liveware.aef.notification.REFRESH_REQUEST" />
 
                 <!-- Widget intents -->
-                <action android:name="com.sonyericsson.extras.aef.widget.START_REFRESH_IMAGE_REQUEST"/>
-                <action android:name="com.sonyericsson.extras.aef.widget.STOP_REFRESH_IMAGE_REQUEST"/>
-                <action android:name="com.sonyericsson.extras.aef.widget.ONTOUCH"/>
-                <action android:name="com.sonyericsson.extras.liveware.extension.util.widget.scheduled.refresh"/>
+                <action android:name="com.sonyericsson.extras.aef.widget.START_REFRESH_IMAGE_REQUEST" />
+                <action android:name="com.sonyericsson.extras.aef.widget.STOP_REFRESH_IMAGE_REQUEST" />
+                <action android:name="com.sonyericsson.extras.aef.widget.ONTOUCH" />
+                <action android:name="com.sonyericsson.extras.liveware.extension.util.widget.scheduled.refresh" />
 
                 <!-- Control intents -->
-                <action android:name="com.sonyericsson.extras.aef.control.START"/>
-                <action android:name="com.sonyericsson.extras.aef.control.STOP"/>
-                <action android:name="com.sonyericsson.extras.aef.control.PAUSE"/>
-                <action android:name="com.sonyericsson.extras.aef.control.RESUME"/>
-                <action android:name="com.sonyericsson.extras.aef.control.ERROR"/>
-                <action android:name="com.sonyericsson.extras.aef.control.KEY_EVENT"/>
-                <action android:name="com.sonyericsson.extras.aef.control.TOUCH_EVENT"/>
-                <action android:name="com.sonyericsson.extras.aef.control.SWIPE_EVENT"/>
+                <action android:name="com.sonyericsson.extras.aef.control.START" />
+                <action android:name="com.sonyericsson.extras.aef.control.STOP" />
+                <action android:name="com.sonyericsson.extras.aef.control.PAUSE" />
+                <action android:name="com.sonyericsson.extras.aef.control.RESUME" />
+                <action android:name="com.sonyericsson.extras.aef.control.ERROR" />
+                <action android:name="com.sonyericsson.extras.aef.control.KEY_EVENT" />
+                <action android:name="com.sonyericsson.extras.aef.control.TOUCH_EVENT" />
+                <action android:name="com.sonyericsson.extras.aef.control.SWIPE_EVENT" />
             </intent-filter>
         </receiver>
-    <provider android:authorities="org.cirrus.mobi.smarttransport.generated.provider.favlocation" android:exported="false" android:name="org.cirrus.mobi.smarttransport.generated.FavLocationContentProvider" arconsis:generated="true"/></application>
+
+        <provider
+            android:name=".generated.FavLocationContentProvider"
+            android:authorities="org.cirrus.mobi.smarttransport.generated.provider.favlocation"
+            android:exported="false"
+            arconsis:generated="true" />
+
+        <activity
+            android:name=".FavListActivity"
+            android:label="@string/title_activity_fav_list" >
+        </activity>
+    </application>
 
 </manifest>

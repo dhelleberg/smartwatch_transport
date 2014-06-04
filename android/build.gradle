@@ -34,20 +34,10 @@ repositories {
 android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
-
     defaultConfig {
         testPackageName "org.cirrus.mobi.smarttransport.tests"
-        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
-
-    dependencies {
-        compile project(':SmartExtensionUtils')
-        compile files('libs/public-transport-enabler-1.0.jar')
-        compile files('libs/acra-4.4.0.jar')
-        compile 'com.android.support:support-v4:19.1.0'
-        //compile project(':public-transport-enabler')
-    }
-
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -62,7 +52,7 @@ android {
     signingConfigs {
         release {
             storeFile file('../smartrans.keystore')
-            keyAlias "smartrans"
+            keyAlias 'smartrans'
         }
     }
     buildTypes {
@@ -71,6 +61,8 @@ android {
             jniDebugBuild false
             signingConfig signingConfigs.release
         }
+    }
+    productFlavors {
     }
 }
 if (project.hasProperty('keypass')) {
@@ -86,6 +78,13 @@ apt {
     }
 }
 dependencies {
+    compile project(':SmartExtensionUtils')
+    compile files('libs/public-transport-enabler-1.0.jar')
+    compile files('libs/acra-4.4.0.jar')
+    compile 'com.android.support:support-v4:19.1.0'
+    compile 'de.timroes.android:EnhancedListView:0.3.2@aar'
+    //compile project(':public-transport-enabler')
+
     apt 'com.arconsis:datarobot.processor:0.1'
     compile 'com.arconsis:datarobot.api:0.1'
 }
