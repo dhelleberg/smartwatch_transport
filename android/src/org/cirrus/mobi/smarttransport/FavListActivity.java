@@ -21,7 +21,11 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import com.arconsis.android.datarobot.EntityService;
 import org.cirrus.mobi.smarttransport.dto.FavLocation;
 
@@ -69,8 +73,25 @@ public class FavListActivity extends ListActivity {
 
 
     private class FavLocationAdapter extends ArrayAdapter<FavLocation> {
+
+        private LayoutInflater mLayoutInflator;
+
         public FavLocationAdapter(Context context, FavLocation[] favLocations) {
             super(context, R.layout.fav_list_item, R.id.fav_listitem_textview, favLocations);
+            mLayoutInflator = getLayoutInflater();
+        }
+
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view = convertView;
+            if(view == null) {
+                view = mLayoutInflator.inflate(R.layout.fav_list_item, parent, false);
+            }
+            TextView textView = (TextView) view.findViewById(R.id.fav_listitem_textview);
+            textView.setText(getItem(position).name);
+
+            return view;
         }
     }
 }

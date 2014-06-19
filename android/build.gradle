@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.10.+'
+        classpath 'com.android.tools.build:gradle:0.11.+'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2+'
     }
 }
@@ -35,7 +35,7 @@ android {
     compileSdkVersion 19
     buildToolsVersion '19.1.0'
     defaultConfig {
-        testPackageName "org.cirrus.mobi.smarttransport.tests"
+        testApplicationId "org.cirrus.mobi.smarttransport.tests"
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
     sourceSets {
