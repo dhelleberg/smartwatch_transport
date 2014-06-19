@@ -27,24 +27,56 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.arconsis.android.datarobot.EntityService;
+import de.timroes.android.listview.EnhancedListView;
 import org.cirrus.mobi.smarttransport.dto.FavLocation;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-public class FavListActivity extends ListActivity {
+public class FavListActivity extends ListActivity implements EnhancedListView.OnDismissCallback {
 
     ArrayAdapter<FavLocation> mArrayAdapter;
+    private DataLoader mdataLoader = null;
+    private EnhancedListView mEnhancedListView;
+    private Context mContext = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fav_list);
 
-        DataLoader dataLoader = new DataLoader(this);
-        dataLoader.execute();
+        mEnhancedListView = (EnhancedListView) findViewById(android.R.id.list);
 
+        mEnhancedListView.setDismissCallback(this);
+        mEnhancedListView.enableSwipeToDismiss();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mdataLoader = new DataLoader(this);
+        mdataLoader.execute();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mdataLoader != null)
+            mdataLoader.cancel(false);
+    }
+
+    @Override
+    public EnhancedListView.Undoable onDismiss(EnhancedListView enhancedListView, int i) {
+
+        EntityService favLocationService = new EntityService(mContext, FavLocation.class);
+        FavLocation location = mArrayAdapter.getItem(i);
+        favLocationService.delete(location);
+        mArrayAdapter.remove(location);
+        return null;
     }
 
     class DataLoader extends AsyncTask<Void, Void, List<FavLocation>> {
@@ -66,8 +98,10 @@ public class FavListActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(List<FavLocation> favLocations) {
-            mArrayAdapter = new FavLocationAdapter(mContext, favLocations.toArray(new FavLocation[favLocations.size()]));
-            setListAdapter(mArrayAdapter);
+            if(!isCancelled()) {
+                mArrayAdapter = new FavLocationAdapter(mContext, favLocations);
+                setListAdapter(mArrayAdapter);
+            }
         }
     }
 
@@ -76,7 +110,7 @@ public class FavListActivity extends ListActivity {
 
         private LayoutInflater mLayoutInflator;
 
-        public FavLocationAdapter(Context context, FavLocation[] favLocations) {
+        public FavLocationAdapter(Context context, List<FavLocation> favLocations) {
             super(context, R.layout.fav_list_item, R.id.fav_listitem_textview, favLocations);
             mLayoutInflator = getLayoutInflater();
         }
