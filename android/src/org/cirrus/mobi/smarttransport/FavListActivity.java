@@ -30,9 +30,6 @@ import com.arconsis.android.datarobot.EntityService;
 import de.timroes.android.listview.EnhancedListView;
 import org.cirrus.mobi.smarttransport.dto.FavLocation;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 

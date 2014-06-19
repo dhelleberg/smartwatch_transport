@@ -564,7 +564,12 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
                 Log.d(TAG, "saving: "+station.name+" id: "+station.id+" type: "+station.type + "lat: "+station.lat+ " lon: "+station.lon);
             EntityService favLocationService = new EntityService(mContext, FavLocation.class);
             FavLocation favLocation = new FavLocation(station.id, station.lat, station.lon, station.place, station.name);
-            favLocationService.save(favLocation);
+            //is it there already?
+            List <FavLocation> result = favLocationService.find("ID = ?",new String[]{station.id},null);
+            if(result.size() == 0)
+                favLocationService.save(favLocation);
+            else
+                Log.d(TAG, favLocation+ " already exists, do not store");
             favLocationService.close();
 
         }
