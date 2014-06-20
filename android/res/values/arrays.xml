@@ -28,7 +28,8 @@
         <item>Germany - Berlin</item>-->
         <item>Germany - Berlin-Brandenburg</item>
         <item>Germany - Braunschweig</item>
-        <item>Germany - Bremen</item>
+        <!--<item>Germany - Bremen</item>-->
+        <item>Germany - Freiburg</item>
         <!--<item>Germany - Ingolstadt</item>-->
         <item>Germany - VMV Mecklenburg Vorpommern</item>
         <item>Germany - Munich</item>
@@ -60,7 +61,8 @@
         <!--<item>BvgProvider</item>-->	<!-- Berlin -->
         <item>VbbProvider</item>	<!-- Berlin Brandenburg -->      <!-- T -->
         <item>BsvagProvider</item>  <!-- Braunschweig -->            <!-- T -->
-        <item>BsagProvider</item>  <!-- Bremen -->                   <!-- T -->
+        <!--<item>BsagProvider</item>  Bremen -->                   <!-- T -->
+        <item>VagfrProvider</item>  <!--Freiburg-->
         <!--<item>InvgProvider</item>-->	<!-- Ingolstadt -->
         <item>VmvProvider</item> 	<!-- Mecklenburg -->             <!-- T -->
         <item>MvvProvider</item>	<!--  Minga -->                  <!-- T -->

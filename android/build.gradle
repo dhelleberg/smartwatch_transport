@@ -48,6 +48,10 @@ android {
             res.srcDirs = ['res']
             assets.srcDirs = ['assets']
         }
+        androidTest {
+            java.srcDirs = ['tests']
+        }
+
     }
     signingConfigs {
         release {

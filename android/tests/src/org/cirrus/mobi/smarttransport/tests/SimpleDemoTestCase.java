@@ -36,7 +36,7 @@ public class SimpleDemoTestCase  extends AndroidTestCase {
 
     public void testSbbProvider() throws Exception
     {
-        SbbProvider provider = new SbbProvider(null);
+        SbbProvider provider = new SbbProvider();
         Location dusLocation = new Location("FakeProvider");
         dusLocation.setLatitude(TEST_LOCATION_BIEL_SCHWEITZ[0]);
         dusLocation.setLongitude(TEST_LOCATION_BIEL_SCHWEITZ[1]);
