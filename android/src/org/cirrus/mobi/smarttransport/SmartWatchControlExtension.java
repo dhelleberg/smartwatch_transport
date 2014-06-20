@@ -1,127 +1,9 @@
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
- * This file is part of SmartTransport
- *
- * SmartTransport is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * SmartTransport is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with SmartTransport.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package org.cirrus.mobi.smarttransport;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.AsyncTask;
 import com.arconsis.android.datarobot.EntityService;
 import com.sonyericsson.extras.liveware.extension.util.control.ControlTouchEvent;
 import de.schildbach.pte.dto.*;
@@ -176,27 +58,28 @@ import org.cirrus.mobi.smarttransport.dto.FavLocation;
 public class SmartWatchControlExtension extends ControlExtension implements ResultCallbacks {
 
 	private static final int MAX_DEPATURE_ROWS = 3;
-
-
     private Handler mHandler;
-	private Context mContext;
-	private int width;
-	private int height;
-	private Bitmap mBackground;
-	private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.RGB_565;
 
+
+    private Context mContext;
+    private int width;
+    private int height;
+    private Bitmap mBackground;
+    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.RGB_565;
 	private static final int STATE_INITIAL = 1;
-	private static final int STATE_SEARCHING = 2;
-	private static final int STATE_DISPLAY_DATA = 3;
-	private static final int STATE_LOADING = 4;
+
+    private static final int STATE_SEARCHING = 2;
+    private static final int STATE_DISPLAY_DATA = 3;
+    private static final int STATE_LOADING = 4;
     private static final int STATE_ERROR = 5;
     private static final int STATE_SELECT_PROVIDER = 6;
     private static final int STATE_ERROR_NOPROVIDER = 7;
     private static final int STATE_SELECT_MODE = 8;
     private static final int STATE_NO_FAVS_HELP_TEXT = 9;
+    private static final int STATE_SAVED_FAV = 10;
 
 	protected static final String TAG = "SMT/SWCE";
-	private static final String PACKAGE = "de.schildbach.pte.";
+    private static final String PACKAGE = "de.schildbach.pte.";
 
 	private int state = STATE_INITIAL;
 	private NetworkProvider networkProvider;
@@ -268,6 +151,12 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
         }
         redraw();
+    }
+
+    @Override
+    public void onStop() {
+        if(publicNetworkProvider != null)
+            publicNetworkProvider.cancelRequests();
     }
 
 	@Override
@@ -389,7 +278,12 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             this.mErrorMessage = mContext.getResources().getString(R.string.text_nofavs);
             showErrorMessage();
             break;
-		}
+        case STATE_SAVED_FAV:
+            this.mErrorMessage = mContext.getResources().getString(R.string.text_savefavs);
+            showErrorMessage();
+            break;
+
+        }
 
 
 
@@ -566,13 +460,23 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
             FavLocation favLocation = new FavLocation(station.id, station.lat, station.lon, station.place, station.name);
             //is it there already?
             List <FavLocation> result = favLocationService.find("ID = ?",new String[]{station.id},null);
-            if(result.size() == 0)
+            if(result.size() == 0) {
                 favLocationService.save(favLocation);
+                showFavSavedScreen();
+            }
             else
                 Log.d(TAG, favLocation+ " already exists, do not store");
             favLocationService.close();
-
         }
+
+    }
+
+    private void showFavSavedScreen() {
+        state = STATE_SAVED_FAV;
+        startVibrator(100,500, 1);
+        DelayDisplayChangeTask delayDisplayChangeTask = new DelayDisplayChangeTask();
+        delayDisplayChangeTask.execute();
+        redraw();
 
     }
 
@@ -939,5 +843,24 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 		public void onProviderDisabled(String provider) {}
 	};
+
+    class DelayDisplayChangeTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Thread.sleep(2000); //wait 2 seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            state = STATE_DISPLAY_DATA;
+            redraw();
+        }
+    }
 
 }

@@ -57,6 +57,8 @@ public class PublicNetworkProvider {
 	private ResultCallbacks callbackInterface;
 	private NetworkProvider networkProvider;
 	private FetchNearByStationsTask fnbst;
+
+    private boolean cancelled = false;
 	//private FetchDepaturesTask fetchDepaturesTask = null;
 
 	public PublicNetworkProvider(ResultCallbacks callbackInterface, NetworkProvider networkProvider)
@@ -66,6 +68,7 @@ public class PublicNetworkProvider {
 	}
 
 	public boolean getNearbyStations(Location location) {
+        cancelled = false;
 		if(fnbst != null) //we already search
 			return false;
 		fnbst = new FetchNearByStationsTask();
@@ -89,11 +92,15 @@ public class PublicNetworkProvider {
 
 	public void getDepatures(de.schildbach.pte.dto.Location station)
 	{
+        cancelled = false;
 		FetchDepaturesTask fetchDepaturesTask;
 		fetchDepaturesTask = new FetchDepaturesTask();
 		fetchDepaturesTask.execute(station);
 	}
 
+    public void cancelRequests() {
+        this.cancelled = true;
+    }
 
 	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
 	{
@@ -133,7 +140,8 @@ public class PublicNetworkProvider {
 		@Override
 		protected void onPostExecute(NearbyStationsResult result) {		
 			super.onPostExecute(result);
-			recievedStations(result);
+            if(!cancelled)
+			    recievedStations(result);
 		}
 	}
 
@@ -175,7 +183,8 @@ public class PublicNetworkProvider {
 		@Override
 		protected void onPostExecute(QueryDeparturesResult result) {		
 			super.onPostExecute(result);
-			recievedDepatures(result);
+            if(!cancelled)
+			    recievedDepatures(result);
 		}
 	}
 
