@@ -167,6 +167,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
         mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        //should fix NPE seen on ACRA
+        this.mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
 
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 
