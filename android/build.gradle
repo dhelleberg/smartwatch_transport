@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.android.tools.build:gradle:1.0.0'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2+'
     }
 }
@@ -62,7 +62,6 @@ android {
     buildTypes {
         release {
             debuggable false
-            jniDebugBuild false
             signingConfig signingConfigs.release
         }
     }
