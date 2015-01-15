@@ -34,6 +34,7 @@ package org.cirrus.mobi.smarttransport;
  */
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import android.location.Location;
@@ -155,7 +156,7 @@ public class PublicNetworkProvider {
 				de.schildbach.pte.dto.Location... params) {
 			de.schildbach.pte.dto.Location station = params[0];
 			try {
-				QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, 15, true);
+				QueryDeparturesResult qdr = networkProvider.queryDepartures(station.id, new Date(System.currentTimeMillis()), 15, true);
 				if(BuildConfig.DEBUG)
 				{
 					if(qdr.status == de.schildbach.pte.dto.QueryDeparturesResult.Status.OK)
