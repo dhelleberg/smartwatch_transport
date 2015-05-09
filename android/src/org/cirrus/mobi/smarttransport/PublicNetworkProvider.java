@@ -35,6 +35,7 @@ package org.cirrus.mobi.smarttransport;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 import android.location.Location;
@@ -43,7 +44,7 @@ import android.util.Log;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.LocationType;
-import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.NearbyLocationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
 import org.acra.ACRA;
@@ -51,7 +52,7 @@ import org.acra.ACRA;
 public class PublicNetworkProvider {
 
 	interface ResultCallbacks {
-		public void nearbyStationsReceived(NearbyStationsResult result);
+		public void nearbyStationsReceived(NearbyLocationsResult result);
 		public void departuresReceived(QueryDeparturesResult result);
 	}
 
@@ -78,7 +79,7 @@ public class PublicNetworkProvider {
 		return true;
 	}
 
-	private void recievedStations(NearbyStationsResult result) {
+	private void recievedStations(NearbyLocationsResult result) {
 		if(this.callbackInterface != null)
 			this.callbackInterface.nearbyStationsReceived(result);
         this.fnbst = null;
@@ -103,26 +104,26 @@ public class PublicNetworkProvider {
         this.cancelled = true;
     }
 
-	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyStationsResult>
+	class FetchNearByStationsTask extends AsyncTask<Location, Void, NearbyLocationsResult>
 	{
 		public static final String TAG = "SMT/FNBST";
 		private static final int MAX_STATIONS = 10;
 
 		@Override
-		protected NearbyStationsResult doInBackground(Location... params) {
+		protected NearbyLocationsResult doInBackground(Location... params) {
 
 			if(BuildConfig.DEBUG)
 				Log.v(TAG, "fetching stations....");
-			de.schildbach.pte.dto.Location pteLoc = new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(params[0].getLatitude()*1E6), (int)(params[0].getLongitude()*1E6));
+			de.schildbach.pte.dto.Location pteLoc = new de.schildbach.pte.dto.Location(LocationType.COORD,null, (int)(params[0].getLatitude()*1E6), (int)(params[0].getLongitude()*1E6));
 			try {
-				NearbyStationsResult nsr = networkProvider.queryNearbyStations(pteLoc, 0, MAX_STATIONS);
+				NearbyLocationsResult nsr = networkProvider.queryNearbyLocations(EnumSet.of(LocationType.STATION), pteLoc, 0, MAX_STATIONS);
 
 				if(nsr.status == nsr.status.OK)
 				{
 					if(BuildConfig.DEBUG)
 					{
-						Log.v(TAG, "!! Status ok, found "+nsr.stations.size()+ "stations");
-						List<de.schildbach.pte.dto.Location> stations = nsr.stations;
+						Log.v(TAG, "!! Status ok, found "+nsr.locations.size()+ "stations");
+						List<de.schildbach.pte.dto.Location> stations = nsr.locations;
 						for (de.schildbach.pte.dto.Location station : stations) {
 							if(BuildConfig.DEBUG)
 								Log.v(TAG, "Station: "+station.id+ " name: "+station.name+ "place "+station.place+ " short "+station.uniqueShortName());
@@ -139,7 +140,7 @@ public class PublicNetworkProvider {
 			return null;
 		}
 		@Override
-		protected void onPostExecute(NearbyStationsResult result) {		
+		protected void onPostExecute(NearbyLocationsResult result) {
 			super.onPostExecute(result);
             if(!cancelled)
 			    recievedStations(result);

@@ -36,7 +36,7 @@ import de.schildbach.pte.BahnProvider;
 import de.schildbach.pte.NetworkProvider;
 import de.schildbach.pte.dto.Departure;
 import de.schildbach.pte.dto.LocationType;
-import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.NearbyLocationsResult;
 import de.schildbach.pte.dto.QueryDeparturesResult;
 import de.schildbach.pte.dto.StationDepartures;
 
@@ -111,7 +111,7 @@ public class StartUpActivity extends Activity implements ResultCallbacks {
 	};
 
 	@Override
-	public void nearbyStationsReceived(NearbyStationsResult result) {
+	public void nearbyStationsReceived(NearbyLocationsResult result) {
 //		publicNetworkProvider.getDepatures(result.stations);
 		
 	}

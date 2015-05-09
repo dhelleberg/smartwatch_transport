@@ -75,10 +75,11 @@ import android.test.AndroidTestCase;
 import android.util.Log;
 import de.schildbach.pte.*;
 import de.schildbach.pte.dto.LocationType;
-import de.schildbach.pte.dto.NearbyStationsResult;
+import de.schildbach.pte.dto.NearbyLocationsResult;
 import junit.framework.Assert;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 
@@ -144,13 +145,13 @@ public class ProviderTestCase extends AndroidTestCase {
     public void testMuenchenProvider() throws Exception
     {
         MvvProvider provider = new MvvProvider();
-        checkProvider(provider, LOCATION_MUENCHEN[0], LOCATION_MUENCHEN[1], 10, "Hauptbahnhof Haupthalle");
+        checkProvider(provider, LOCATION_MUENCHEN[0], LOCATION_MUENCHEN[1], 10, "Hauptbahnhof (Haupthalle)");
     }
 
     public void testBraunschweigProvider() throws Exception
     {
         BsvagProvider provider = new BsvagProvider();
-        checkProvider(provider, LOCATION_BRAUNSCHWEIG[0], LOCATION_BRAUNSCHWEIG[1], 10, "Hauptbahnhof");
+        checkProvider(provider, LOCATION_BRAUNSCHWEIG[0], LOCATION_BRAUNSCHWEIG[1], 7, "Hauptbahnhof");
     }
 
   /*  public void testBremenProvider() throws Exception
@@ -169,7 +170,7 @@ public class ProviderTestCase extends AndroidTestCase {
     public void testOebbProvider() throws Exception
     {
         OebbProvider provider = new OebbProvider();
-        checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Wien Stephansplatz (Schulerstraße)");
+        checkProvider(provider, LOCATION_VIENNA[0], LOCATION_VIENNA[1], 10, "Stephansplatz (Schulerstraße)");
     }
 
 
@@ -213,12 +214,12 @@ public class ProviderTestCase extends AndroidTestCase {
     public void testSncbProvider() throws Exception
     {
         SncbProvider provider = new SncbProvider();
-        checkProvider(provider, LOCATION_GENT[0], LOCATION_GENT[1], 10, "Sint-Pieters [NMBS/SNCB]");
+        checkProvider(provider, LOCATION_GENT[0], LOCATION_GENT[1], 10, "Sint-Pieters");
     }
     public void testStockholmProvider() throws Exception
     {
         StockholmProvider provider = new StockholmProvider();
-        checkProvider(provider, LOCATION_STOCKHOLM_GAMLASTAN[0], LOCATION_STOCKHOLM_GAMLASTAN[1], 10, "Stationsentré Gamla stan");
+        checkProvider(provider, LOCATION_STOCKHOLM_GAMLASTAN[0], LOCATION_STOCKHOLM_GAMLASTAN[1], 10, "Mälartorget");
     }
 
     public void testSbbProvider() throws Exception
@@ -227,31 +228,31 @@ public class ProviderTestCase extends AndroidTestCase {
         checkProvider(provider, LOCATION_ZUERICH_HBF[0], LOCATION_ZUERICH_HBF[1], 10, "Zürich HB");
     }
 
-    public void testTFLProvider() throws Exception
+  /*  public void testTFLProvider() throws Exception
     {
         TflProvider provider = new TflProvider();
         checkProvider(provider, LOCATION_LONDON[0], LOCATION_LONDON[1], 10, "Charing Cross");
-    }
+    }*/
     public void testNRIProvider() throws Exception
     {
         NriProvider provider = new NriProvider();
-        checkProvider(provider, LOCATION_OSLO[0], LOCATION_OSLO[1], 10, "Jernbanetorget foran Oslo S");
+        checkProvider(provider, LOCATION_OSLO[0], LOCATION_OSLO[1], 10, "Jernbanetorget");
     }
-    public void testTLSWProvider() throws Exception
+  /*  public void testTLSWProvider() throws Exception
     {
         TlswProvider provider = new TlswProvider();
         checkProvider(provider, LOCATION_TAUNTON[0], LOCATION_TAUNTON[1], 10, "Flook House");
-    }
+    }*/
     public void testTLEMrovider() throws Exception
     {
         TlemProvider provider = new TlemProvider();
         checkProvider(provider, LOCATION_LEICESTER[0], LOCATION_LEICESTER[1], 10, "Leicester Mercury");
     }
-    public void testTLWMrovider() throws Exception
+  /*  public void testTLWMrovider() throws Exception
     {
         TlwmProvider provider = new TlwmProvider();
         checkProvider(provider, LOCATION_BIRMINGHAM[0], LOCATION_BIRMINGHAM[1], 10, "Snow Hill (Midland Metro Stop)");
-    }
+    }*/
     public void testVagfrProvider() throws Exception
     {
         VagfrProvider provider = new VagfrProvider();
@@ -268,16 +269,16 @@ public class ProviderTestCase extends AndroidTestCase {
         Location dusLocation = new Location("FakeProvider");
         dusLocation.setLatitude(lat);
         dusLocation.setLongitude(lon);
-        NearbyStationsResult nearbyStationsResult = provider.queryNearbyStations(convertLocation(dusLocation), 1000, 10);
+        NearbyLocationsResult nearbyStationsResult = provider.queryNearbyLocations(EnumSet.of(LocationType.STATION), convertLocation(dusLocation), 1000, 10);
         Assert.assertNotNull("nearbyStationsResult is null provider: "+provider.getClass(), nearbyStationsResult);
-        Assert.assertEquals("nearbyStationsResult is not correct " + provider.getClass(), expectedStations, nearbyStationsResult.stations.size());
-        Assert.assertEquals("First Station is not correct" + provider.getClass(), expectedStation, nearbyStationsResult.stations.get(0).name);
+        Assert.assertEquals("nearbyStationsResult is not correct " + provider.getClass(), expectedStations, nearbyStationsResult.locations.size());
+        Assert.assertEquals("First Station is not correct" + provider.getClass(), expectedStation, nearbyStationsResult.locations.get(0).name);
 
     }
 
 
     private de.schildbach.pte.dto.Location convertLocation(Location location)
     {
-        return new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
+        return new de.schildbach.pte.dto.Location(LocationType.COORD,null,  (int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
     }
 }

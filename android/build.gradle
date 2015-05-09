@@ -20,7 +20,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
+        classpath 'com.android.tools.build:gradle:1.2.3'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.2+'
     }
 }
@@ -29,11 +29,12 @@ apply plugin: 'android-apt'
 
 repositories {
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/groups/public/" }
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
     defaultConfig {
         testApplicationId "org.cirrus.mobi.smarttransport.tests"
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
@@ -49,7 +50,7 @@ android {
             assets.srcDirs = ['assets']
         }
         androidTest {
-            java.srcDirs = ['tests']
+            java.srcDirs = ['tests/src']
         }
 
     }
@@ -84,12 +85,18 @@ dependencies {
     compile project(':SmartExtensionUtils')
     compile files('libs/public-transport-enabler-1.0.jar')
     compile files('libs/acra-4.4.0.jar')
-    compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.android.support:support-v4:22.1.0'
     compile 'de.timroes.android:EnhancedListView:0.3.2@aar'
     compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.getpebble:pebblekit:3.0.0'
 
     //compile project(':public-transport-enabler')
 
     apt 'com.arconsis:datarobot.processor:0.1'
     compile 'com.arconsis:datarobot.api:0.1'
+
+    //for PTE
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.google.code.findbugs:jsr305:3.0.0'
+    compile 'org.slf4j:slf4j-api:1.7.12'
 }

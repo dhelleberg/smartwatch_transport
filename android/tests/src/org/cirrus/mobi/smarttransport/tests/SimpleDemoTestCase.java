@@ -23,6 +23,8 @@ import android.util.Log;
 import de.schildbach.pte.SbbProvider;
 import de.schildbach.pte.dto.*;
 
+import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -40,13 +42,13 @@ public class SimpleDemoTestCase  extends AndroidTestCase {
         Location dusLocation = new Location("FakeProvider");
         dusLocation.setLatitude(TEST_LOCATION_BIEL_SCHWEITZ[0]);
         dusLocation.setLongitude(TEST_LOCATION_BIEL_SCHWEITZ[1]);
-        NearbyStationsResult nearbyStationsResult = provider.queryNearbyStations(convertLocation(dusLocation), 1000, 10);
+        NearbyLocationsResult nearbyStationsResult = provider.queryNearbyLocations(EnumSet.of(LocationType.STATION),convertLocation(dusLocation), 1000, 10);
 
-        List<de.schildbach.pte.dto.Location> stations = nearbyStationsResult.stations;
+        List<de.schildbach.pte.dto.Location> stations = nearbyStationsResult.locations;
         for (de.schildbach.pte.dto.Location station : stations) {
             Log.d("TEST!","station: " + station.name);
 
-            QueryDeparturesResult queryDeparturesResult = provider.queryDepartures(station.id, 10, true);
+            QueryDeparturesResult queryDeparturesResult = provider.queryDepartures(station.id, new Date(),  10, true);
             List<StationDepartures> stationDepartures = queryDeparturesResult.stationDepartures;
             for (StationDepartures stationDeparture : stationDepartures) {
                 Log.d("TEST","Depature: "+stationDeparture);
@@ -61,6 +63,6 @@ public class SimpleDemoTestCase  extends AndroidTestCase {
     }
     private de.schildbach.pte.dto.Location convertLocation(Location location)
     {
-        return new de.schildbach.pte.dto.Location(LocationType.ANY, (int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
+        return new de.schildbach.pte.dto.Location(LocationType.COORD,null, (int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6));
     }
 }

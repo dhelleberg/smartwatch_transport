@@ -775,17 +775,17 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 
 	@Override
-	public void nearbyStationsReceived(NearbyStationsResult result) {
+	public void nearbyStationsReceived(NearbyLocationsResult result) {
 		this.mQueryDeparturesResults.clear();
-        if(result != null && result.stations != null && result.stations.size() > 0)
+        if(result != null && result.locations != null && result.locations.size() > 0)
         {
-            this.stations = result.stations;
+            this.stations = result.locations;
             state = STATE_DISPLAY_DATA;
             if(BuildConfig.DEBUG)
-                Log.d(TAG, "Found: "+result.stations.size()+" stations");
+                Log.d(TAG, "Found: "+result.locations.size()+" stations");
             redraw();
             // for eacht station, request depatures
-            for (de.schildbach.pte.dto.Location station: result.stations ) {
+            for (de.schildbach.pte.dto.Location station: result.locations ) {
                 publicNetworkProvider.getDepatures(station);
             }
         }
