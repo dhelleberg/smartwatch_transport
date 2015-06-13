@@ -35,6 +35,10 @@
         android:name="android.hardware.bluetooth"
         android:required="true" />
 
+    <android:uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".SmartTransportApplication"
         android:allowBackup="true"
@@ -108,6 +112,18 @@
             android:name=".FavListActivity"
             android:label="@string/title_activity_fav_list" >
         </activity>
+
+        <!-- Pebble stuff -->
+        <receiver android:name=".PebbleBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="com.getpebble.action.app.RECEIVE" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".PebbleService">
+
+        </service>
+
     </application>
 
 </manifest>

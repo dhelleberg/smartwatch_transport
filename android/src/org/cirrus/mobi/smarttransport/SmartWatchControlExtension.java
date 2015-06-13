@@ -58,6 +58,7 @@ import org.cirrus.mobi.smarttransport.dto.FavLocation;
 public class SmartWatchControlExtension extends ControlExtension implements ResultCallbacks {
 
 	private static final int MAX_DEPATURE_ROWS = 3;
+    private final PublicTransportationAPI mPublicTransportationAPI;
     private Handler mHandler;
 
 
@@ -79,7 +80,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
     private static final int STATE_SAVED_FAV = 10;
 
 	protected static final String TAG = "SMT/SWCE";
-    private static final String PACKAGE = "de.schildbach.pte.";
+
 
 	private int state = STATE_INITIAL;
 	private NetworkProvider networkProvider;
@@ -109,6 +110,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 		height = getSupportedControlHeight(context);
 
 		mQueryDeparturesResults = new ArrayList<QueryDeparturesResult>(0);
+
+        mPublicTransportationAPI = new PublicTransportationAPI(mContext);
 	}
 
 
@@ -183,7 +186,8 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         {
             //loadProvider from Preferences
             String providerClass = mSharedPref.getString(mContext.getResources().getString(R.string.pref_publicnetwork), mContext.getResources().getString(R.string.pref_transportNetwork_default));
-            initNetworkProvider(providerClass);
+            this.publicNetworkProvider = mPublicTransportationAPI.initNetworkProvider(this, providerClass);
+            this.mNetwork = mPublicTransportationAPI.getNetworkForProvider(providerClass);
 
             //select mode
             selectMode();
@@ -206,35 +210,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         redraw();
     }
 
-    private void initNetworkProvider(String providerClass) {
 
-        if(BuildConfig.DEBUG)
-            Log.v(TAG, "Loading class: "+providerClass);
-
-        //we do need the network as well
-        this.mNetwork = getNetworkForProvider(providerClass);
-
-        try {
-            networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).newInstance();
-        } catch (Exception e) {
-
-            Log.e(TAG, "Could not load networkprovider. should not happen", e);
-            //maybe it needs additional params
-            try {
-                networkProvider = (NetworkProvider) Class.forName(PACKAGE+providerClass).getDeclaredConstructor(String.class).newInstance("");
-                Log.w(TAG, "second try");
-            } catch (Exception e1) {
-                e1.printStackTrace();
-                Log.e(TAG, "2nd try to load provider failed!",e1);
-                ACRA.getErrorReporter().putCustomData("providerClass", providerClass);
-                ACRA.getErrorReporter().handleException(e);
-            }
-
-
-        }
-
-        publicNetworkProvider = new PublicNetworkProvider(this, networkProvider);
-    }
 
     @Override
 	public void onPause() {
@@ -490,7 +466,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
         editor.putString(mContext.getResources().getString(R.string.pref_publicnetwork), providerclass);
         editor.commit();
 
-        initNetworkProvider(providerclass);
+        this.publicNetworkProvider = mPublicTransportationAPI.initNetworkProvider(this, providerclass);
 
         startSearch();
 
@@ -807,21 +783,7 @@ public class SmartWatchControlExtension extends ControlExtension implements Resu
 
 	}
 
-    private String getNetworkForProvider(final String providerClass) {
-        //lookup in arrays
-        final String[] values = mContext.getResources().getStringArray(R.array.pref_transportNetwork_values);
-        //find index in values
-        int index = -1;
-        for (int i = 0; i < values.length; i++) {
-            if(values[i].equals(providerClass))
-            {
-                index = i;
-                break;
-            }
-        }
-        final String network = mContext.getResources().getStringArray(R.array.pref_transportNetwork_Entries)[index];
-        return network;
-    }
+
 
 
     // Define a listener that responds to location updates

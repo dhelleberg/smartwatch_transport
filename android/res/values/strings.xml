@@ -125,5 +125,6 @@
     <string name="action_settings">Settings</string>
     <string name="pref_favlist">Favourites</string>
     <string name="text_savefavs">Saved as Favorite</string>
+    <string name="title_activity_pebble">PebbleActivity</string>
 
 </resources>
